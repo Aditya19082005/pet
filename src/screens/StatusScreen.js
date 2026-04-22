@@ -1,8 +1,7 @@
 import { View, ScrollView } from "react-native";
-import BookingStatus from "../components/BookingStatus";
-import BookingInterface from "../components/BookingInterface";
+import LiveUpdates from "../components/LiveUpdates";
 
-export default function BookingScreen() {
+export default function StatusScreen() {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: "#f9fafb" }}
@@ -12,8 +11,7 @@ export default function BookingScreen() {
       }}
     >
       <View style={{ width: "100%" }}>
-        <BookingInterface />
-        <BookingStatus />
+        <LiveUpdates />
       </View>
     </ScrollView>
   );

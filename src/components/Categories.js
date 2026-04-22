@@ -113,6 +113,7 @@ export default function Categories() {
 const styles = StyleSheet.create({
   section: {
     paddingVertical: 20,
+    paddingHorizontal: 15,
     backgroundColor: "#fff",
   },
 
@@ -140,6 +141,8 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     padding: 20,
     marginRight: 15,
+    marginBottom: 10,
+    marginTop: 10,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 10,

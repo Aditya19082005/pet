@@ -2,6 +2,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../screens/HomeScreen";
 import BookingScreen from "../screens/BookingScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import StatusScreen from "../screens/StatusScreen";
 
 import { Ionicons } from "@expo/vector-icons";
 
@@ -20,6 +21,8 @@ export default function BottomTabs() {
             iconName = "home-outline";
           } else if (route.name === "Booking") {
             iconName = "calendar-outline";
+          }else if (route.name === "Status") {
+            iconName = "time-outline";
           } else if (route.name === "Profile") {
             iconName = "person-outline";
           }
@@ -33,6 +36,7 @@ export default function BottomTabs() {
     >
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Booking" component={BookingScreen} />
+      <Tab.Screen name="Status" component={StatusScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
