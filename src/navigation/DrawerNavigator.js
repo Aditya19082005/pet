@@ -31,7 +31,8 @@ function CustomDrawerContent({ navigation }) {
       </Pressable>
 
       {/* Privacy Policy */}
-      <Pressable style={styles.item}
+      <Pressable
+        style={styles.item}
         onPress={() => navigation.navigate("PrivacyPolicy")}
       >
         <Ionicons name="shield-checkmark-outline" size={22} />
@@ -39,7 +40,8 @@ function CustomDrawerContent({ navigation }) {
       </Pressable>
 
       {/* Terms */}
-      <Pressable style={styles.item}
+      <Pressable
+        style={styles.item}
         onPress={() => navigation.navigate("Terms")}
       >
         <Ionicons name="document-text-outline" size={22} />
@@ -47,7 +49,8 @@ function CustomDrawerContent({ navigation }) {
       </Pressable>
 
       {/* Refund Policy */}
-      <Pressable style={styles.item}
+      <Pressable
+        style={styles.item}
         onPress={() => navigation.navigate("RefundPolicy")}
       >
         <Ionicons name="cash-outline" size={22} />
@@ -88,7 +91,12 @@ export default function DrawerNavigator() {
         headerLeft: () => (
           <Pressable
             onPress={() => navigation.toggleDrawer()}
-            style={{ marginLeft: 15 }}
+            style={{
+              marginLeft: 15,
+              backgroundColor: "#f2f2f2",
+              padding: 8,
+              borderRadius: 10,
+            }}
           >
             <Ionicons name="menu" size={28} color="black" />
           </Pressable>
