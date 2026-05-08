@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function BookingStatus() {
@@ -18,11 +19,11 @@ export default function BookingStatus() {
       checkInDate: "Apr 15, 2024",
       checkOutDate: "Apr 18, 2024",
       totalCost: 135,
-      color: "#3b82f6",
-      badge: "Confirmed",
-      badgeBg: "#dbeafe",
+      gradient: ["#60a5fa", "#2563eb"], // blue
+      bg: "#eff6ff",
+      badgeBg: "#bfdbfe",
       badgeText: "#1d4ed8",
-      icon: "clock-outline",
+      iconColor: "#2563eb",
       status: "upcoming",
     },
     {
@@ -33,11 +34,11 @@ export default function BookingStatus() {
       checkInDate: "Apr 10, 2024",
       checkOutDate: "Apr 14, 2024",
       totalCost: 180,
-      color: "#22c55e",
-      badge: "In Progress",
-      badgeBg: "#dcfce7",
+      gradient: ["#4ade80", "#16a34a"], // green
+      bg: "#f0fdf4",
+      badgeBg: "#bbf7d0",
       badgeText: "#166534",
-      icon: "alert-circle-outline",
+      iconColor: "#16a34a",
       status: "active",
       daysRemaining: 2,
     },
@@ -49,179 +50,170 @@ export default function BookingStatus() {
       checkInDate: "Apr 1, 2024",
       checkOutDate: "Apr 7, 2024",
       totalCost: 270,
-      color: "#a855f7",
-      badge: "Completed",
-      badgeBg: "#f3e8ff",
+      gradient: ["#c084fc", "#9333ea"], // purple
+      bg: "#faf5ff",
+      badgeBg: "#e9d5ff",
       badgeText: "#6b21a8",
-      icon: "check-circle-outline",
+      iconColor: "#9333ea",
       status: "completed",
     },
   ];
 
   return (
-    <View style={styles.section}>
-      {/* Header */}
+    <ScrollView style={styles.container}>
+      {/* HEADER */}
       <Text style={styles.title}>
-        Your Booking <Text style={{ color: "#a855f7" }}>Status</Text>
+        Your Booking <Text style={styles.gradientText}>Status</Text>
       </Text>
 
       <Text style={styles.subtitle}>
         Track all your pet's boarding reservations
       </Text>
 
-      {/* Cards */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scroll}
-      >
-        {bookingStatuses.map((booking) => (
-          <View key={booking.id} style={styles.card}>
-            {/* Header Row */}
-            <View style={styles.row}>
-              <View style={styles.petRow}>
-                <Text style={styles.petEmoji}>{booking.petEmoji}</Text>
-                <View>
-                  <Text style={styles.petName}>{booking.petName}</Text>
-                  <Text style={styles.type}>{booking.type}</Text>
-                </View>
+      {/* CARDS */}
+      {bookingStatuses.map((booking) => (
+        <View
+          key={booking.id}
+          style={[styles.card, { backgroundColor: booking.bg }]}
+        >
+          {/* HEADER */}
+          <View style={styles.row}>
+            <View style={styles.petRow}>
+              {/* ICON BOX */}
+              <LinearGradient colors={booking.gradient} style={styles.iconBox}>
+                <Text style={{ fontSize: 22 }}>{booking.petEmoji}</Text>
+              </LinearGradient>
+
+              <View>
+                <Text style={styles.petName}>{booking.petName}</Text>
+                <Text style={styles.type}>{booking.type}</Text>
               </View>
-
-              <MaterialCommunityIcons
-                name={booking.icon}
-                size={22}
-                color={booking.color}
-              />
             </View>
 
-            {/* Badge */}
-            <View style={[styles.badge, { backgroundColor: booking.badgeBg }]}>
-              <Text style={[styles.badgeText, { color: booking.badgeText }]}>
-                {booking.badge}
-                {booking.daysRemaining && (
-                  <Text style={{ fontWeight: "bold" }}>
-                    {" "}
-                    ({booking.daysRemaining} days left)
-                  </Text>
-                )}
-              </Text>
-            </View>
-
-            {/* Dates */}
-            <View style={styles.box}>
-              <Text style={styles.label}>Check-in to Check-out</Text>
-              <Text style={styles.value}>
-                {booking.checkInDate} - {booking.checkOutDate}
-              </Text>
-            </View>
-
-            {/* Cost */}
-            <View style={styles.box}>
-              <Text style={styles.label}>Total Cost</Text>
-              <Text style={[styles.cost, { color: booking.color }]}>
-                ₹{booking.totalCost}
-              </Text>
-            </View>
-
-            {/* Buttons */}
-            {booking.status === "upcoming" && (
-              <>
-                <TouchableOpacity
-                  style={[styles.btn, { backgroundColor: booking.color }]}
-                >
-                  <Text style={styles.btnText}>Modify Booking</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.outlineBtn}>
-                  <Text style={styles.outlineText}>Cancel</Text>
-                </TouchableOpacity>
-              </>
-            )}
-
-            {booking.status === "active" && (
-              <>
-                <TouchableOpacity
-                  style={[styles.btn, { backgroundColor: booking.color }]}
-                >
-                  <Text style={styles.btnText}>View Details</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.outlineGreen}>
-                  <Text style={styles.greenText}>Extend Stay</Text>
-                </TouchableOpacity>
-              </>
-            )}
-
-            {booking.status === "completed" && (
-              <>
-                <TouchableOpacity
-                  style={[styles.btn, { backgroundColor: booking.color }]}
-                >
-                  <Text style={styles.btnText}>View Receipt</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.outlinePurple}>
-                  <Text style={styles.purpleText}>Book Again</Text>
-                </TouchableOpacity>
-              </>
-            )}
+            <MaterialCommunityIcons
+              name="clock-outline"
+              size={22}
+              color={booking.iconColor}
+            />
           </View>
-        ))}
-      </ScrollView>
 
-      {/* Support Box */}
-      <View style={styles.supportBox}>
+          {/* BADGE */}
+          <View style={[styles.badge, { backgroundColor: booking.badgeBg }]}>
+            <Text style={{ color: booking.badgeText, fontWeight: "600" }}>
+              {booking.status === "active"
+                ? `In Progress (${booking.daysRemaining} days)`
+                : booking.status === "completed"
+                  ? "Completed"
+                  : "Confirmed"}
+            </Text>
+          </View>
+
+          {/* DATE BOX */}
+          <View style={styles.infoBox}>
+            <Text style={styles.label}>Check-in to Check-out</Text>
+            <Text style={styles.value}>
+              {booking.checkInDate} - {booking.checkOutDate}
+            </Text>
+          </View>
+
+          {/* COST */}
+          <View style={styles.infoBox}>
+            <Text style={styles.label}>Total Cost</Text>
+
+            <Text style={[styles.costText, { color: booking.gradient[1] }]}>
+              ₹{booking.totalCost}
+            </Text>
+          </View>
+
+          {/* BUTTONS */}
+          {booking.status === "upcoming" && (
+            <>
+              <TouchableOpacity>
+                <LinearGradient colors={booking.gradient} style={styles.button}>
+                  <Text style={styles.btnText}>Modify Booking</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.outlineBtn}>
+                <Text>Cancel</Text>
+              </TouchableOpacity>
+            </>
+          )}
+
+          {booking.status === "active" && (
+            <>
+              <TouchableOpacity>
+                <LinearGradient colors={booking.gradient} style={styles.button}>
+                  <Text style={styles.btnText}>View Details</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.greenOutline}>
+                <Text style={{ color: "#16a34a" }}>Extend Stay</Text>
+              </TouchableOpacity>
+            </>
+          )}
+
+          {booking.status === "completed" && (
+            <>
+              <TouchableOpacity>
+                <LinearGradient colors={booking.gradient} style={styles.button}>
+                  <Text style={styles.btnText}>View Receipt</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.purpleOutline}>
+                <Text style={{ color: "#9333ea" }}>Book Again</Text>
+              </TouchableOpacity>
+            </>
+          )}
+        </View>
+      ))}
+
+      {/* SUPPORT */}
+      <LinearGradient colors={["#ffedd5", "#fce7f3"]} style={styles.supportBox}>
         <Text style={styles.supportTitle}>Need Help?</Text>
         <Text style={styles.supportText}>
-          Our support team is available 24/7 for booking assistance.
+          Our support team is available 24/7
         </Text>
 
-        <TouchableOpacity style={styles.supportBtn}>
-          <Text style={styles.supportBtnText}>Contact Support</Text>
+        <TouchableOpacity>
+          <LinearGradient colors={["#f97316", "#ec4899"]} style={styles.button}>
+            <Text style={styles.btnText}>Contact Support</Text>
+          </LinearGradient>
         </TouchableOpacity>
-      </View>
-    </View>
+      </LinearGradient>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  section: {
-    paddingVertical: 20,
+  container: {
     backgroundColor: "#fff",
+    padding: 16,
   },
 
   title: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: "bold",
-    textAlign: "center",
+    color: "#1f2937",
+  },
+
+  gradientText: {
+    color: "#9333ea",
   },
 
   subtitle: {
-    textAlign: "center",
-    color: "#666",
-    marginBottom: 15,
-    marginTop: 5,
-  },
-
-  scroll: {
-    paddingHorizontal: 15,
-    gap: 15,
+    color: "#6b7280",
+    marginBottom: 20,
   },
 
   card: {
-    width: 300,
-    backgroundColor: "#fff",
-    borderRadius: 25,
-    padding: 15,
-    marginRight: 15,
-    marginBottom: 10,
-    marginTop: 10,
+    padding: 20,
+    borderRadius: 24,
+    marginBottom: 16,
     borderWidth: 1,
-    borderColor: "#eee",
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
+    borderColor: "#e5e7eb",
   },
 
   row: {
@@ -236,59 +228,60 @@ const styles = StyleSheet.create({
     gap: 10,
   },
 
-  petEmoji: {
-    fontSize: 24,
+  iconBox: {
+    width: 50,
+    height: 50,
+    borderRadius: 16,
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   petName: {
-    fontSize: 16,
     fontWeight: "bold",
+    fontSize: 16,
   },
 
   type: {
+    color: "#6b7280",
     fontSize: 12,
-    color: "#666",
   },
 
   badge: {
-    padding: 6,
+    padding: 8,
     borderRadius: 20,
     alignSelf: "flex-start",
-    marginBottom: 10,
+    marginVertical: 10,
   },
 
-  badgeText: {
-    fontSize: 12,
-    fontWeight: "600",
-  },
-
-  box: {
-    backgroundColor: "#f9fafb",
-    padding: 10,
+  infoBox: {
+    backgroundColor: "#fff",
+    padding: 12,
     borderRadius: 12,
     marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#f3f4f6",
   },
 
   label: {
     fontSize: 11,
-    color: "#666",
+    color: "#6b7280",
   },
 
   value: {
-    fontSize: 13,
-    fontWeight: "600",
-  },
-
-  cost: {
-    fontSize: 20,
     fontWeight: "bold",
   },
 
-  btn: {
-    padding: 12,
-    borderRadius: 12,
+  costText: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "white",
+  },
+
+  button: {
+    padding: 14,
+    borderRadius: 16,
     alignItems: "center",
-    marginBottom: 8,
+    marginTop: 8,
   },
 
   btnText: {
@@ -297,52 +290,36 @@ const styles = StyleSheet.create({
   },
 
   outlineBtn: {
-    padding: 12,
-    borderRadius: 12,
+    padding: 14,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#d1d5db",
     alignItems: "center",
+    marginTop: 8,
   },
 
-  outlineText: {
-    color: "#333",
-    fontWeight: "600",
-  },
-
-  outlineGreen: {
-    padding: 12,
-    borderRadius: 12,
+  greenOutline: {
+    padding: 14,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#22c55e",
+    borderColor: "#16a34a",
     alignItems: "center",
+    marginTop: 8,
   },
 
-  greenText: {
-    color: "#22c55e",
-    fontWeight: "600",
-  },
-
-  outlinePurple: {
-    padding: 12,
-    borderRadius: 12,
+  purpleOutline: {
+    padding: 14,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#a855f7",
+    borderColor: "#9333ea",
     alignItems: "center",
-  },
-
-  purpleText: {
-    color: "#a855f7",
-    fontWeight: "600",
+    marginTop: 8,
   },
 
   supportBox: {
     marginTop: 20,
-    marginHorizontal: 15,
-    backgroundColor: "#fff7ed",
-    padding: 15,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#fdba74",
+    padding: 20,
+    borderRadius: 24,
   },
 
   supportTitle: {
@@ -351,20 +328,6 @@ const styles = StyleSheet.create({
   },
 
   supportText: {
-    fontSize: 13,
-    color: "#444",
-    marginVertical: 8,
-  },
-
-  supportBtn: {
-    backgroundColor: "#f97316",
-    padding: 12,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-
-  supportBtnText: {
-    color: "#fff",
-    fontWeight: "bold",
+    marginVertical: 10,
   },
 });

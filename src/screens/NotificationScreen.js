@@ -1,151 +1,238 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
+  Pressable,
+  StyleSheet,
   TouchableOpacity,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
 export default function NotificationScreen() {
+  const [expandedNotification, setExpandedNotification] = useState(null);
+  const [dismissedAlerts, setDismissedAlerts] = useState(new Set());
+
+  const toggleNotification = (id) => {
+    setExpandedNotification((prev) => (prev === id ? null : id));
+  };
+
+  const dismissAlert = (id) => {
+    setDismissedAlerts((prev) => new Set(prev).add(id));
+  };
+
+  const notifications = [
+    {
+      id: 1,
+      title: "Booking Confirmed!",
+      message:
+        "Your booking for Max is confirmed. Pickup scheduled for today at 10:00 AM.",
+      timestamp: "2 hours ago",
+      color: "#22c55e",
+      bg: ["#ecfdf5", "#d1fae5"],
+    },
+    {
+      id: 2,
+      title: "Pickup Reminder",
+      message: "Reminder: Pick up Max tomorrow at 4:00 PM.",
+      timestamp: "1 hour ago",
+      color: "#3b82f6",
+      bg: ["#eff6ff", "#dbeafe"],
+    },
+    {
+      id: 3,
+      title: "Max is Having Fun!",
+      message:
+        "Max is playing and enjoying playtime with other dogs. Check updates!",
+      timestamp: "30 minutes ago",
+      color: "#a855f7",
+      bg: ["#faf5ff", "#ede9fe"],
+    },
+  ];
+
+  const visibleNotifications = notifications.filter(
+    (n) => !dismissedAlerts.has(n.id),
+  );
+
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: "#f9fafb" }}>
-      <LinearGradient
-        colors={["#fff1e6", "#ffe4f0", "#f3e8ff"]}
-        style={styles.container}
-      >
-        {/* Header */}
-        <Text style={styles.title}>🔔 Notifications</Text>
-        <Text style={styles.subTitle}>
-          Updates about your pets, bookings & services
+    <LinearGradient
+      colors={["#f8fafc", "#eef2ff", "#fdf2f8"]}
+      style={styles.container}
+    >
+      <ScrollView contentContainerStyle={styles.scroll}>
+        {/* HEADER */}
+        <Text style={styles.heading}>Notifications</Text>
+        <Text style={styles.subHeading}>
+          Stay updated with your pet activities
         </Text>
 
-        {/* Notification Card 1 */}
+        {/* LIST */}
         <View style={styles.card}>
-          <Ionicons name="paw-outline" size={22} color="#f97316" />
-          <View style={styles.cardText}>
-            <Text style={styles.cardTitle}>Booking Confirmed</Text>
-            <Text style={styles.cardDesc}>
-              Your pet boarding request has been confirmed for 25 April.
-            </Text>
-            <Text style={styles.time}>2 hours ago</Text>
-          </View>
-        </View>
+          {visibleNotifications.length > 0 ? (
+            visibleNotifications.map((n) => {
+              const isExpanded = expandedNotification === n.id;
 
-        {/* Notification Card 2 */}
-        <View style={styles.card}>
-          <Ionicons name="cut-outline" size={22} color="#6b21a8" />
-          <View style={styles.cardText}>
-            <Text style={styles.cardTitle}>Grooming Reminder</Text>
-            <Text style={styles.cardDesc}>
-              Don’t forget your pet grooming appointment tomorrow at 11 AM.
-            </Text>
-            <Text style={styles.time}>1 day ago</Text>
-          </View>
-        </View>
+              return (
+                <LinearGradient
+                  key={n.id}
+                  colors={n.bg}
+                  style={styles.notificationCard}
+                >
+                  <Pressable onPress={() => toggleNotification(n.id)}>
+                    <View style={styles.row}>
+                      <MaterialIcons
+                        name="notifications"
+                        size={22}
+                        color={n.color}
+                        style={{ marginRight: 10 }}
+                      />
 
-        {/* Notification Card 3 */}
-        <View style={styles.card}>
-          <Ionicons name="star-outline" size={22} color="#facc15" />
-          <View style={styles.cardText}>
-            <Text style={styles.cardTitle}>Rate Your Experience</Text>
-            <Text style={styles.cardDesc}>
-              How was your last boarding experience? Share feedback.
-            </Text>
-            <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>Rate Now</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.title}>{n.title}</Text>
 
-        {/* Clear Button */}
-        <TouchableOpacity style={styles.clearBtn}>
-          <Text style={styles.clearText}>Clear All Notifications</Text>
-        </TouchableOpacity>
-      </LinearGradient>
-    </ScrollView>
+                        <Text style={styles.desc}>
+                          {isExpanded
+                            ? n.message
+                            : `${n.message.slice(0, 60)}...`}
+                        </Text>
+
+                        <Text style={styles.date}>{n.timestamp}</Text>
+                      </View>
+
+                      <TouchableOpacity onPress={() => dismissAlert(n.id)}>
+                        <Ionicons name="close" size={20} color="#555" />
+                      </TouchableOpacity>
+                    </View>
+                  </Pressable>
+
+                  {isExpanded && (
+                    <View style={styles.expandedBox}>
+                      <Text style={styles.fullText}>{n.message}</Text>
+
+                      <View style={styles.actionRow}>
+                        <TouchableOpacity style={styles.secondaryBtn}>
+                          <Text>Contact</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.primaryBtn}>
+                          <Text style={{ color: "#fff" }}>Message</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  )}
+                </LinearGradient>
+              );
+            })
+          ) : (
+            <View style={styles.emptyBox}>
+              <Ionicons name="notifications-off" size={40} color="#ccc" />
+              <Text style={styles.emptyText}>All notifications cleared!</Text>
+            </View>
+          )}
+        </View>
+      </ScrollView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    borderRadius: 20,
-    margin: 15,
+  container: { flex: 1 },
+
+  scroll: {
+    padding: 16,
   },
 
-  title: {
-    fontSize: 26,
+  heading: {
+    fontSize: 28,
     fontWeight: "bold",
-    color: "#333",
+    color: "#1f2937",
+    marginBottom: 6,
   },
 
-  subTitle: {
-    fontSize: 13,
-    color: "#666",
-    marginBottom: 20,
+  subHeading: {
+    color: "#6b7280",
+    marginBottom: 16,
   },
 
   card: {
-    flexDirection: "row",
     backgroundColor: "#fff",
-    padding: 15,
-    borderRadius: 15,
+    padding: 16,
+    borderRadius: 24,
+    borderWidth: 2,
+    borderColor: "#e5e7eb",
+  },
+
+  notificationCard: {
+    borderRadius: 20,
+    padding: 14,
     marginBottom: 12,
-    alignItems: "flex-start",
-    gap: 10,
   },
 
-  cardText: {
-    flex: 1,
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 
-  cardTitle: {
-    fontSize: 15,
+  title: {
     fontWeight: "bold",
-    marginBottom: 3,
+    fontSize: 15,
+    marginBottom: 2,
   },
 
-  cardDesc: {
+  desc: {
     fontSize: 13,
     color: "#555",
   },
 
-  time: {
-    fontSize: 11,
-    color: "#999",
+  date: {
+    fontSize: 12,
+    color: "#888",
+    marginTop: 2,
+  },
+
+  expandedBox: {
+    marginTop: 10,
+    borderTopWidth: 1,
+    borderColor: "#ddd",
+    paddingTop: 10,
+  },
+
+  fullText: {
+    color: "#374151",
+    marginBottom: 10,
+  },
+
+  actionRow: {
+    flexDirection: "row",
     marginTop: 5,
   },
 
-  button: {
-    marginTop: 8,
-    backgroundColor: "#f97316",
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 8,
-    alignSelf: "flex-start",
-  },
-
-  buttonText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "bold",
-  },
-
-  clearBtn: {
-    marginTop: 20,
-    padding: 12,
-    backgroundColor: "#fff",
+  primaryBtn: {
+    flex: 1,
+    backgroundColor: "#3b82f6",
+    padding: 10,
     borderRadius: 12,
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#eee",
+    marginLeft: 5,
   },
 
-  clearText: {
-    color: "red",
-    fontWeight: "600",
+  secondaryBtn: {
+    flex: 1,
+    backgroundColor: "#e5e7eb",
+    padding: 10,
+    borderRadius: 12,
+    alignItems: "center",
+    marginRight: 5,
+  },
+
+  emptyBox: {
+    alignItems: "center",
+    paddingVertical: 40,
+  },
+
+  emptyText: {
+    color: "#999",
+    marginTop: 10,
   },
 });

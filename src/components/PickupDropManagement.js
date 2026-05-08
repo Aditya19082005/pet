@@ -5,13 +5,10 @@ import {
   ScrollView,
   Pressable,
   StyleSheet,
+  TouchableOpacity,
 } from "react-native";
-import {
-  MaterialCommunityIcons,
-  MaterialIcons,
-  Feather,
-  Ionicons,
-} from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
 export default function PickupDropManagement() {
   const [expandedNotification, setExpandedNotification] = useState(null);
@@ -53,147 +50,148 @@ export default function PickupDropManagement() {
     {
       id: 1,
       title: "Booking Confirmed!",
-      message: "Your booking for Max is confirmed.",
+      message:
+        "Your booking for Max is confirmed. Pickup scheduled for today at 10:00 AM.",
       timestamp: "2 hours ago",
-      icon: "check-circle",
       color: "#22c55e",
+      bg: ["#ecfdf5", "#d1fae5"],
     },
     {
       id: 2,
       title: "Pickup Reminder",
       message: "Reminder: Pick up Max tomorrow at 4:00 PM.",
       timestamp: "1 hour ago",
-      icon: "clock",
       color: "#3b82f6",
+      bg: ["#eff6ff", "#dbeafe"],
     },
     {
       id: 3,
       title: "Max is Having Fun!",
-      message: "Max is playing and enjoying playtime.",
+      message:
+        "Max is playing and enjoying playtime with other dogs. Check updates!",
       timestamp: "30 minutes ago",
-      icon: "alert-circle",
       color: "#a855f7",
+      bg: ["#faf5ff", "#ede9fe"],
     },
   ];
 
   return (
-    <ScrollView style={styles.container}>
-      {/* HEADER */}
-      <Text style={styles.heading}>Pickup & Drop Management</Text>
+    <LinearGradient
+      colors={["#f8fafc", "#eef2ff", "#fdf2f8"]}
+      style={styles.container}
+    >
+      <ScrollView contentContainerStyle={{ padding: 16 }}>
+        {/* HEADER */}
+        <Text style={styles.heading}>Pickup & Drop Management</Text>
+        <Text style={styles.subHeading}>
+          Track your pet's journey with real-time updates
+        </Text>
 
-      {/* TIMELINE */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Booking Timeline</Text>
+        {/* TIMELINE CARD */}
+        <View style={[styles.card, { borderColor: "#e5e7eb" }]}>
+          <Text style={styles.cardTitle}>Booking Timeline</Text>
 
-        {timelineSteps.map((step, index) => (
-          <View key={step.id} style={styles.timelineItem}>
-            <View
-              style={[
-                styles.dot,
-                step.status === "completed"
-                  ? { backgroundColor: "#22c55e" }
-                  : step.status === "active"
-                  ? { backgroundColor: "#3b82f6" }
-                  : { backgroundColor: "#d1d5db" },
-              ]}
-            />
-            <View>
-              <Text style={styles.title}>{step.title}</Text>
-              <Text style={styles.desc}>{step.description}</Text>
-              <Text style={styles.date}>{step.date}</Text>
-            </View>
-          </View>
-        ))}
-      </View>
-
-      {/* NOTIFICATIONS */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Notifications</Text>
-
-        {notifications.map((n) => {
-          if (dismissedAlerts.has(n.id)) return null;
-
-          return (
-            <View key={n.id} style={styles.notification}>
-              <View style={styles.row}>
-                <MaterialIcons
-                  name={n.icon}
-                  size={22}
-                  color={n.color}
-                  style={{ marginRight: 10 }}
+          {timelineSteps.map((step, index) => (
+            <View key={step.id} style={styles.timelineRow}>
+              {/* Dot */}
+              <View style={styles.timelineLeft}>
+                <View
+                  style={[
+                    styles.dot,
+                    step.status === "completed"
+                      ? { backgroundColor: "#22c55e" }
+                      : step.status === "active"
+                        ? { backgroundColor: "#3b82f6" }
+                        : { backgroundColor: "#d1d5db" },
+                  ]}
                 />
+                {index !== timelineSteps.length - 1 && (
+                  <View style={styles.line} />
+                )}
+              </View>
 
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.title}>{n.title}</Text>
-                  <Text style={styles.desc}>{n.message}</Text>
-                  <Text style={styles.date}>{n.timestamp}</Text>
-                </View>
-
-                <Pressable onPress={() => dismissAlert(n.id)}>
-                  <Ionicons name="close" size={20} color="#999" />
-                </Pressable>
+              {/* Content */}
+              <View style={styles.timelineContent}>
+                <Text style={styles.title}>{step.title}</Text>
+                <Text style={styles.desc}>{step.description}</Text>
+                <Text style={styles.date}>{step.date}</Text>
               </View>
             </View>
-          );
-        })}
-      </View>
-    </ScrollView>
+          ))}
+        </View>
+      </ScrollView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#f8fafc",
-    flex: 1,
-    padding: 16,
-  },
+  container: { flex: 1 },
+
   heading: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "bold",
+    color: "#1f2937",
+    marginBottom: 6,
+  },
+
+  subHeading: {
+    color: "#6b7280",
     marginBottom: 16,
   },
+
   card: {
-    backgroundColor: "white",
-    padding: 16,
-    borderRadius: 16,
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 24,
     marginBottom: 16,
-    elevation: 3,
+    borderWidth: 2,
   },
+
   cardTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 12,
-  },
-  timelineItem: {
-    flexDirection: "row",
     marginBottom: 16,
+  },
+
+  timelineRow: {
+    flexDirection: "row",
+    marginBottom: 20,
+  },
+
+  timelineLeft: {
     alignItems: "center",
+    marginRight: 12,
   },
+
   dot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    marginRight: 10,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
   },
+
+  line: {
+    width: 2,
+    height: 40,
+    backgroundColor: "#d1d5db",
+    marginTop: 4,
+  },
+
+  timelineContent: {
+    flex: 1,
+  },
+
   title: {
     fontWeight: "bold",
-    fontSize: 14,
+    fontSize: 15,
   },
+
   desc: {
-    fontSize: 12,
+    fontSize: 13,
     color: "#555",
   },
+
   date: {
-    fontSize: 11,
+    fontSize: 12,
     color: "#888",
-  },
-  notification: {
-    padding: 12,
-    borderBottomWidth: 1,
-    borderColor: "#eee",
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
   },
 });

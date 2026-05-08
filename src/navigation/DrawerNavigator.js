@@ -1,69 +1,97 @@
+import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import BottomTabs from "./BottomTabs";
 import { View, Image, Pressable, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+
 import NotificationScreen from "../screens/NotificationScreen";
 import PrivacyPolicyScreen from "../screens/PrivacyPolicyScreen";
 import RefundPolicyScreen from "../screens/RefundPolicyScreen";
 import TermsOfUseScreen from "../screens/TermsOfUseScreen";
 
+import { useTheme } from "../context/ThemeContext";
+
 const Drawer = createDrawerNavigator();
 
 function CustomDrawerContent({ navigation }) {
+  const { isDark, toggleTheme, theme } = useTheme();
+
   return (
-    <View style={{ flex: 1, paddingTop: 40 }}>
+    <View
+      style={{
+        flex: 1,
+        paddingTop: 40,
+        backgroundColor: theme.background,
+      }}
+    >
+      {/* Home */}
+      <Pressable
+        style={styles.item}
+        onPress={() => navigation.navigate("Main", { screen: "Home" })}
+      >
+        <Ionicons name="home-outline" size={22} color={theme.text} />
+        <Text style={[styles.text, { color: theme.text }]}>Home</Text>
+      </Pressable>
+
       {/* Profile */}
       <Pressable
         style={styles.item}
         onPress={() => navigation.navigate("Main", { screen: "Profile" })}
       >
-        <Ionicons name="person-outline" size={22} />
-        <Text style={styles.text}>Profile</Text>
+        <Ionicons name="person-outline" size={22} color={theme.text} />
+        <Text style={[styles.text, { color: theme.text }]}>Profile</Text>
       </Pressable>
-
       {/* Notifications */}
       <Pressable
         style={styles.item}
         onPress={() => navigation.navigate("Notification")}
       >
-        <Ionicons name="notifications-outline" size={22} />
-        <Text style={styles.text}>Notifications</Text>
+        <Ionicons name="notifications-outline" size={22} color={theme.text} />
+        <Text style={[styles.text, { color: theme.text }]}>Notifications</Text>
       </Pressable>
-
+      {/* 🌙 Theme Toggle */}
+      <Pressable style={styles.item} onPress={toggleTheme}>
+        <Ionicons
+          name={isDark ? "moon" : "sunny"}
+          size={22}
+          color={theme.text}
+        />
+        <Text style={[styles.text, { color: theme.text }]}>
+          {isDark ? "Dark Mode" : "Light Mode"}
+        </Text>
+      </Pressable>
       {/* Privacy Policy */}
       <Pressable
         style={styles.item}
         onPress={() => navigation.navigate("PrivacyPolicy")}
       >
-        <Ionicons name="shield-checkmark-outline" size={22} />
-        <Text style={styles.text}>Privacy Policy</Text>
+        <Ionicons
+          name="shield-checkmark-outline"
+          size={22}
+          color={theme.text}
+        />
+        <Text style={[styles.text, { color: theme.text }]}>Privacy Policy</Text>
       </Pressable>
-
       {/* Terms */}
       <Pressable
         style={styles.item}
         onPress={() => navigation.navigate("Terms")}
       >
-        <Ionicons name="document-text-outline" size={22} />
-        <Text style={styles.text}>Terms of Use</Text>
+        <Ionicons name="document-text-outline" size={22} color={theme.text} />
+        <Text style={[styles.text, { color: theme.text }]}>Terms of Use</Text>
       </Pressable>
-
       {/* Refund Policy */}
       <Pressable
         style={styles.item}
         onPress={() => navigation.navigate("RefundPolicy")}
       >
-        <Ionicons name="cash-outline" size={22} />
-        <Text style={styles.text}>Refund Policy</Text>
+        <Ionicons name="cash-outline" size={22} color={theme.text} />
+        <Text style={[styles.text, { color: theme.text }]}>Refund Policy</Text>
       </Pressable>
-
       {/* Logout */}
       <Pressable
         style={[styles.item, { marginTop: 20 }]}
-        onPress={() => {
-          console.log("Logout pressed");
-          navigation.closeDrawer();
-        }}
+        onPress={() => navigation.closeDrawer()}
       >
         <Ionicons name="log-out-outline" size={22} color="red" />
         <Text style={[styles.text, { color: "red" }]}>Logout</Text>
@@ -73,14 +101,20 @@ function CustomDrawerContent({ navigation }) {
 }
 
 export default function DrawerNavigator() {
+  const { theme, isDark } = useTheme();
+
   return (
     <Drawer.Navigator
       drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={({ navigation }) => ({
+        headerStyle: {
+          backgroundColor: theme.background,
+        },
+
         headerTitle: () => (
           <View style={{ flex: 1, alignItems: "center" }}>
             <Image
-              source={require(".././../assets/logo.png")}
+              source={require("../../assets/logo.png")}
               style={{ width: 100, height: 60, resizeMode: "contain" }}
             />
           </View>
@@ -93,12 +127,12 @@ export default function DrawerNavigator() {
             onPress={() => navigation.toggleDrawer()}
             style={{
               marginLeft: 15,
-              backgroundColor: "#f2f2f2",
+              backgroundColor: isDark ? "#1f2937" : "#f2f2f2",
               padding: 8,
               borderRadius: 10,
             }}
           >
-            <Ionicons name="menu" size={28} color="black" />
+            <Ionicons name="menu" size={28} color={theme.text} />
           </Pressable>
         ),
 
@@ -107,19 +141,21 @@ export default function DrawerNavigator() {
             style={{ marginRight: 15 }}
             onPress={() => navigation.navigate("Notification")}
           >
-            <Ionicons name="notifications-outline" size={26} color="black" />
+            <Ionicons
+              name="notifications-outline"
+              size={26}
+              color={theme.text}
+            />
           </Pressable>
         ),
       })}
     >
-      {/* Main Tabs */}
       <Drawer.Screen
         name="Main"
         component={BottomTabs}
         options={{ drawerItemStyle: { display: "none" } }}
       />
-
-      {/* Extra Screens */}
+    
       <Drawer.Screen name="Notification" component={NotificationScreen} />
       <Drawer.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
       <Drawer.Screen name="RefundPolicy" component={RefundPolicyScreen} />

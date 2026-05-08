@@ -1,13 +1,25 @@
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  DarkTheme,
+  DefaultTheme,
+} from "@react-navigation/native";
 import DrawerNavigator from "./src/navigation/DrawerNavigator";
-import { RefreshProvider } from "./src/context/RefreshContext";
+import { ThemeProvider, useTheme } from "./src/context/ThemeContext";
+
+function MainApp() {
+  const { isDark } = useTheme();
+
+  return (
+    <NavigationContainer theme={isDark ? DarkTheme : DefaultTheme}>
+      <DrawerNavigator />
+    </NavigationContainer>
+  );
+}
 
 export default function App() {
   return (
-    <RefreshProvider>
-      <NavigationContainer>
-        <DrawerNavigator />
-      </NavigationContainer>
-    </RefreshProvider>
+    <ThemeProvider>
+      <MainApp />
+    </ThemeProvider>
   );
 }

@@ -8,6 +8,7 @@ import {
   Dimensions,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -17,7 +18,7 @@ export default function Categories() {
       icon: "home-outline",
       name: "Boarding",
       description: "Safe & cozy stays",
-      color: "#fb923c",
+      gradient: ["#fb923c", "#ea580c"],
       bgColor: "#fff7ed",
       emoji: "🏠",
     },
@@ -25,7 +26,7 @@ export default function Categories() {
       icon: "heart-outline",
       name: "Adoption",
       description: "Find your best friend",
-      color: "#ec4899",
+      gradient: ["#f472b6", "#db2777"],
       bgColor: "#fdf2f8",
       emoji: "🐕",
     },
@@ -33,7 +34,7 @@ export default function Categories() {
       icon: "shopping-outline",
       name: "Buy & Sell",
       description: "Quality pet supplies",
-      color: "#a855f7",
+      gradient: ["#c084fc", "#9333ea"],
       bgColor: "#faf5ff",
       emoji: "🛍️",
     },
@@ -41,7 +42,7 @@ export default function Categories() {
       icon: "account-group-outline",
       name: "Mating",
       description: "Find the perfect match",
-      color: "#3b82f6",
+      gradient: ["#60a5fa", "#2563eb"],
       bgColor: "#eff6ff",
       emoji: "💝",
     },
@@ -49,7 +50,7 @@ export default function Categories() {
       icon: "content-cut",
       name: "Grooming",
       description: "Spa & styling",
-      color: "#14b8a6",
+      gradient: ["#2dd4bf", "#0d9488"],
       bgColor: "#f0fdfa",
       emoji: "✂️",
     },
@@ -57,7 +58,7 @@ export default function Categories() {
       icon: "stethoscope",
       name: "Vet Doctors",
       description: "Expert healthcare",
-      color: "#6366f1",
+      gradient: ["#818cf8", "#4f46e5"],
       bgColor: "#eef2ff",
       emoji: "👨‍⚕️",
     },
@@ -65,44 +66,48 @@ export default function Categories() {
 
   return (
     <View style={styles.section}>
-      {/* Title */}
+      {/* TITLE */}
       <Text style={styles.title}>
-        Explore Our <Text style={{ color: "#f97316" }}>Services</Text>
+        Explore Our <Text style={styles.gradientText}>Services</Text>
       </Text>
 
       <Text style={styles.subtitle}>
         Everything your pet needs, all in one place
       </Text>
 
-      {/* Horizontal Scroll (like your web version) */}
+      {/* SCROLL */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContainer}
       >
         {categories.map((item, index) => (
-          <TouchableOpacity key={index} style={styles.card}>
-            {/* Icon Box */}
-            <View style={[styles.iconBox, { backgroundColor: item.color }]}>
-              <MaterialCommunityIcons
-                name={item.icon}
-                size={32}
-                color="white"
-              />
+          <TouchableOpacity
+            key={index}
+            style={[styles.card, { backgroundColor: item.bgColor }]}
+            activeOpacity={0.9}
+          >
+            {/* ICON + GRADIENT */}
+            <View style={styles.iconWrapper}>
+              <LinearGradient colors={item.gradient} style={styles.iconBox}>
+                <MaterialCommunityIcons
+                  name={item.icon}
+                  size={36}
+                  color="#fff"
+                />
+              </LinearGradient>
 
               <Text style={styles.emoji}>{item.emoji}</Text>
             </View>
 
-            {/* Name */}
+            {/* TEXT */}
             <Text style={styles.name}>{item.name}</Text>
-
-            {/* Description */}
             <Text style={styles.desc}>{item.description}</Text>
 
-            {/* Button (hover effect replaced with always visible on mobile) */}
-            <View style={[styles.button, { backgroundColor: item.color }]}>
+            {/* BUTTON */}
+            <LinearGradient colors={item.gradient} style={styles.button}>
               <Text style={styles.buttonText}>Explore</Text>
-            </View>
+            </LinearGradient>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -112,83 +117,92 @@ export default function Categories() {
 
 const styles = StyleSheet.create({
   section: {
-    paddingVertical: 20,
+    paddingVertical: 30,
     paddingHorizontal: 15,
     backgroundColor: "#fff",
   },
 
   title: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: "bold",
     textAlign: "center",
-    marginBottom: 5,
+    marginBottom: 6,
+    color: "#1f2937",
+  },
+
+  gradientText: {
+    color: "#f97316",
   },
 
   subtitle: {
     textAlign: "center",
-    color: "#666",
-    marginBottom: 20,
+    color: "#6b7280",
+    marginBottom: 25,
+    fontSize: 14,
   },
 
   scrollContainer: {
-    paddingHorizontal: 15,
-    gap: 15,
+    paddingHorizontal: 10,
   },
 
   card: {
-    width: screenWidth * 0.7,
-    backgroundColor: "#fff",
-    borderRadius: 25,
-    padding: 20,
-    marginRight: 15,
-    marginBottom: 10,
+    width: screenWidth * 0.72,
+    borderRadius: 28,
+    padding: 22,
+    marginRight: 18,
     marginTop: 10,
+    marginBottom: 10,
     shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
+    shadowOpacity: 0.08,
+    shadowRadius: 15,
+    elevation: 6,
     alignItems: "center",
   },
 
+  iconWrapper: {
+    position: "relative",
+    marginBottom: 14,
+  },
+
   iconBox: {
-    width: 80,
-    height: 80,
-    borderRadius: 20,
+    width: 85,
+    height: 85,
+    borderRadius: 22,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 10,
-    position: "relative",
   },
 
   emoji: {
     position: "absolute",
-    top: -8,
-    right: -8,
-    fontSize: 18,
+    top: -6,
+    right: -6,
+    fontSize: 22,
   },
 
   name: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 5,
+    color: "#1f2937",
+    marginBottom: 4,
   },
 
   desc: {
     fontSize: 13,
-    color: "#666",
+    color: "#6b7280",
     textAlign: "center",
-    marginBottom: 15,
+    marginBottom: 16,
   },
 
   button: {
     width: "100%",
-    paddingVertical: 10,
-    borderRadius: 12,
+    paddingVertical: 12,
+    borderRadius: 14,
   },
 
   buttonText: {
     color: "#fff",
     textAlign: "center",
     fontWeight: "600",
+    fontSize: 14,
   },
 });
