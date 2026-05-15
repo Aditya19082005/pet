@@ -8,6 +8,7 @@ import NotificationScreen from "../screens/NotificationScreen";
 import PrivacyPolicyScreen from "../screens/PrivacyPolicyScreen";
 import RefundPolicyScreen from "../screens/RefundPolicyScreen";
 import TermsOfUseScreen from "../screens/TermsOfUseScreen";
+import RegisterScreen from "../components/Register";
 
 import { useTheme } from "../context/ThemeContext";
 
@@ -96,6 +97,17 @@ function CustomDrawerContent({ navigation }) {
         <Ionicons name="log-out-outline" size={22} color="red" />
         <Text style={[styles.text, { color: "red" }]}>Logout</Text>
       </Pressable>
+
+      {/* Register */}
+<Pressable
+  style={styles.item}
+  onPress={() => navigation.navigate("Register")}
+>
+  <Ionicons name="person-add-outline" size={22} color={theme.text} />
+  <Text style={[styles.text, { color: theme.text }]}>
+    Register / Login
+  </Text>
+</Pressable>
     </View>
   );
 }
@@ -160,6 +172,7 @@ export default function DrawerNavigator() {
       <Drawer.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
       <Drawer.Screen name="RefundPolicy" component={RefundPolicyScreen} />
       <Drawer.Screen name="Terms" component={TermsOfUseScreen} />
+      <Drawer.Screen name="Register" component={RegisterScreen} />
     </Drawer.Navigator>
   );
 }
