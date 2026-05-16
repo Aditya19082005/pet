@@ -1,14 +1,23 @@
 import React from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import BottomTabs from "./BottomTabs";
-import { View, Image, Pressable, Text } from "react-native";
+
+import {
+  View,
+  Image,
+  Pressable,
+  Text,
+  Alert,
+} from "react-native";
+
 import { Ionicons } from "@expo/vector-icons";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import NotificationScreen from "../screens/NotificationScreen";
 import PrivacyPolicyScreen from "../screens/PrivacyPolicyScreen";
 import RefundPolicyScreen from "../screens/RefundPolicyScreen";
 import TermsOfUseScreen from "../screens/TermsOfUseScreen";
-import RegisterScreen from "../components/Register";
 
 import { useTheme } from "../context/ThemeContext";
 
@@ -16,6 +25,38 @@ const Drawer = createDrawerNavigator();
 
 function CustomDrawerContent({ navigation }) {
   const { isDark, toggleTheme, theme } = useTheme();
+
+  // LOGOUT FUNCTION
+  const handleLogout = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+
+      await fetch(
+        "https://www.cgpisoftware.com/cheerytail/api/auth/logout",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // remove saved session
+      await AsyncStorage.removeItem("userToken");
+
+      Alert.alert("Success", "Logged out successfully");
+
+      navigation.navigate("Main", {
+        screen: "Home",
+      });
+
+    } catch (error) {
+      console.log(error);
+
+      Alert.alert("Error", "Logout failed");
+    }
+  };
 
   return (
     <View
@@ -28,86 +69,162 @@ function CustomDrawerContent({ navigation }) {
       {/* Home */}
       <Pressable
         style={styles.item}
-        onPress={() => navigation.navigate("Main", { screen: "Home" })}
+        onPress={() =>
+          navigation.navigate("Main", {
+            screen: "Home",
+          })
+        }
       >
-        <Ionicons name="home-outline" size={22} color={theme.text} />
-        <Text style={[styles.text, { color: theme.text }]}>Home</Text>
+        <Ionicons
+          name="home-outline"
+          size={22}
+          color={theme.text}
+        />
+
+        <Text style={[styles.text, { color: theme.text }]}>
+          Home
+        </Text>
       </Pressable>
 
       {/* Profile */}
       <Pressable
         style={styles.item}
-        onPress={() => navigation.navigate("Main", { screen: "Profile" })}
+        onPress={() =>
+          navigation.navigate("Main", {
+            screen: "Profile",
+          })
+        }
       >
-        <Ionicons name="person-outline" size={22} color={theme.text} />
-        <Text style={[styles.text, { color: theme.text }]}>Profile</Text>
+        <Ionicons
+          name="person-outline"
+          size={22}
+          color={theme.text}
+        />
+
+        <Text style={[styles.text, { color: theme.text }]}>
+          Profile
+        </Text>
       </Pressable>
+
       {/* Notifications */}
       <Pressable
         style={styles.item}
         onPress={() => navigation.navigate("Notification")}
       >
-        <Ionicons name="notifications-outline" size={22} color={theme.text} />
-        <Text style={[styles.text, { color: theme.text }]}>Notifications</Text>
+        <Ionicons
+          name="notifications-outline"
+          size={22}
+          color={theme.text}
+        />
+
+        <Text style={[styles.text, { color: theme.text }]}>
+          Notifications
+        </Text>
       </Pressable>
-      {/* 🌙 Theme Toggle */}
-      <Pressable style={styles.item} onPress={toggleTheme}>
+
+      {/* Theme Toggle */}
+      <Pressable
+        style={styles.item}
+        onPress={toggleTheme}
+      >
         <Ionicons
           name={isDark ? "moon" : "sunny"}
           size={22}
           color={theme.text}
         />
+
         <Text style={[styles.text, { color: theme.text }]}>
           {isDark ? "Dark Mode" : "Light Mode"}
         </Text>
       </Pressable>
+
       {/* Privacy Policy */}
       <Pressable
         style={styles.item}
-        onPress={() => navigation.navigate("PrivacyPolicy")}
+        onPress={() =>
+          navigation.navigate("PrivacyPolicy")
+        }
       >
         <Ionicons
           name="shield-checkmark-outline"
           size={22}
           color={theme.text}
         />
-        <Text style={[styles.text, { color: theme.text }]}>Privacy Policy</Text>
+
+        <Text style={[styles.text, { color: theme.text }]}>
+          Privacy Policy
+        </Text>
       </Pressable>
+
       {/* Terms */}
       <Pressable
         style={styles.item}
         onPress={() => navigation.navigate("Terms")}
       >
-        <Ionicons name="document-text-outline" size={22} color={theme.text} />
-        <Text style={[styles.text, { color: theme.text }]}>Terms of Use</Text>
+        <Ionicons
+          name="document-text-outline"
+          size={22}
+          color={theme.text}
+        />
+
+        <Text style={[styles.text, { color: theme.text }]}>
+          Terms of Use
+        </Text>
       </Pressable>
+
       {/* Refund Policy */}
       <Pressable
         style={styles.item}
-        onPress={() => navigation.navigate("RefundPolicy")}
+        onPress={() =>
+          navigation.navigate("RefundPolicy")
+        }
       >
-        <Ionicons name="cash-outline" size={22} color={theme.text} />
-        <Text style={[styles.text, { color: theme.text }]}>Refund Policy</Text>
+        <Ionicons
+          name="cash-outline"
+          size={22}
+          color={theme.text}
+        />
+
+        <Text style={[styles.text, { color: theme.text }]}>
+          Refund Policy
+        </Text>
       </Pressable>
+
+      {/* Register / Login */}
+      <Pressable
+        style={styles.item}
+        onPress={() =>
+          navigation.navigate("Main", {
+            screen: "Register",
+          })
+        }
+      >
+        <Ionicons
+          name="person-add-outline"
+          size={22}
+          color={theme.text}
+        />
+
+        <Text style={[styles.text, { color: theme.text }]}>
+          Register / Login
+        </Text>
+      </Pressable>
+
       {/* Logout */}
       <Pressable
         style={[styles.item, { marginTop: 20 }]}
-        onPress={() => navigation.closeDrawer()}
+        onPress={handleLogout}
       >
-        <Ionicons name="log-out-outline" size={22} color="red" />
-        <Text style={[styles.text, { color: "red" }]}>Logout</Text>
-      </Pressable>
+        <Ionicons
+          name="log-out-outline"
+          size={22}
+          color="red"
+        />
 
-      {/* Register */}
-<Pressable
-  style={styles.item}
-  onPress={() => navigation.navigate("Register")}
->
-  <Ionicons name="person-add-outline" size={22} color={theme.text} />
-  <Text style={[styles.text, { color: theme.text }]}>
-    Register / Login
-  </Text>
-</Pressable>
+        <Text style={[styles.text, { color: "red" }]}>
+          Logout
+        </Text>
+      </Pressable>
     </View>
   );
 }
@@ -117,17 +234,28 @@ export default function DrawerNavigator() {
 
   return (
     <Drawer.Navigator
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      drawerContent={(props) => (
+        <CustomDrawerContent {...props} />
+      )}
       screenOptions={({ navigation }) => ({
         headerStyle: {
           backgroundColor: theme.background,
         },
 
         headerTitle: () => (
-          <View style={{ flex: 1, alignItems: "center" }}>
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+            }}
+          >
             <Image
               source={require("../../assets/logo.png")}
-              style={{ width: 100, height: 60, resizeMode: "contain" }}
+              style={{
+                width: 100,
+                height: 60,
+                resizeMode: "contain",
+              }}
             />
           </View>
         ),
@@ -139,19 +267,27 @@ export default function DrawerNavigator() {
             onPress={() => navigation.toggleDrawer()}
             style={{
               marginLeft: 15,
-              backgroundColor: isDark ? "#1f2937" : "#f2f2f2",
+              backgroundColor: isDark
+                ? "#1f2937"
+                : "#f2f2f2",
               padding: 8,
               borderRadius: 10,
             }}
           >
-            <Ionicons name="menu" size={28} color={theme.text} />
+            <Ionicons
+              name="menu"
+              size={28}
+              color={theme.text}
+            />
           </Pressable>
         ),
 
         headerRight: () => (
           <Pressable
             style={{ marginRight: 15 }}
-            onPress={() => navigation.navigate("Notification")}
+            onPress={() =>
+              navigation.navigate("Notification")
+            }
           >
             <Ionicons
               name="notifications-outline"
@@ -162,17 +298,37 @@ export default function DrawerNavigator() {
         ),
       })}
     >
+      {/* MAIN BOTTOM TABS */}
       <Drawer.Screen
         name="Main"
         component={BottomTabs}
-        options={{ drawerItemStyle: { display: "none" } }}
+        options={{
+          drawerItemStyle: {
+            display: "none",
+          },
+        }}
       />
-    
-      <Drawer.Screen name="Notification" component={NotificationScreen} />
-      <Drawer.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
-      <Drawer.Screen name="RefundPolicy" component={RefundPolicyScreen} />
-      <Drawer.Screen name="Terms" component={TermsOfUseScreen} />
-      <Drawer.Screen name="Register" component={RegisterScreen} />
+
+      {/* OTHER SCREENS */}
+      <Drawer.Screen
+        name="Notification"
+        component={NotificationScreen}
+      />
+
+      <Drawer.Screen
+        name="PrivacyPolicy"
+        component={PrivacyPolicyScreen}
+      />
+
+      <Drawer.Screen
+        name="RefundPolicy"
+        component={RefundPolicyScreen}
+      />
+
+      <Drawer.Screen
+        name="Terms"
+        component={TermsOfUseScreen}
+      />
     </Drawer.Navigator>
   );
 }
@@ -184,6 +340,7 @@ const styles = {
     padding: 15,
     gap: 10,
   },
+
   text: {
     fontSize: 15,
     fontWeight: "500",
