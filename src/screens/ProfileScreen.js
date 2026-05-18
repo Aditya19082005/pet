@@ -1,75 +1,199 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import React, { useEffect, useState } from "react";
+
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ActivityIndicator,
+} from "react-native";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { LinearGradient } from "expo-linear-gradient";
 
 export default function ProfileScreen() {
+
+  const [user, setUser] = useState(null);
+
+  const [loading, setLoading] = useState(true);
+
+  // =========================
+  // LOAD USER
+  // =========================
+  useEffect(() => {
+
+    loadUser();
+
+  }, []);
+
+  const loadUser = async () => {
+
+    try {
+
+      const userData =
+        await AsyncStorage.getItem("user");
+
+      console.log(
+        "STORED USER =>",
+        userData
+      );
+
+      if (userData) {
+
+        setUser(JSON.parse(userData));
+      }
+
+    } catch (error) {
+
+      console.log(error);
+
+    } finally {
+
+      setLoading(false);
+    }
+  };
+
+  // =========================
+  // LOADING
+  // =========================
+  if (loading) {
+
+    return (
+
+      <View style={styles.loaderContainer}>
+
+        <ActivityIndicator
+          size="large"
+          color="#6b21a8"
+        />
+
+      </View>
+    );
+  }
+
   return (
+
     <View style={styles.wrapper}>
+
       <LinearGradient
-        colors={["#fff1e6", "#ffe4f0", "#f3e8ff"]}
+        colors={[
+          "#fff1e6",
+          "#ffe4f0",
+          "#f3e8ff",
+        ]}
         style={styles.container}
       >
-        {/* Profile Image */}
+
+        {/* PROFILE IMAGE */}
         <View style={styles.avatarWrapper}>
+
           <Image
             source={{
-              uri: "https://i.pravatar.cc/150?img=12",
+              uri:
+                "https://i.pravatar.cc/150?img=12",
             }}
             style={styles.avatar}
           />
+
         </View>
 
-        {/* Badge */}
+        {/* BADGE */}
         <View style={styles.badge}>
-          <Text style={styles.badgeText}>⭐ Verified Pet Parent</Text>
+
+          <Text style={styles.badgeText}>
+            ⭐ Verified User
+          </Text>
+
         </View>
 
-        {/* Name */}
-        <Text style={styles.name}>Shreyas Bobade</Text>
-        <Text style={styles.subText}>Pet Parent • Pune</Text>
+        {/* NAME */}
+        <Text style={styles.name}>
 
-        {/* Description */}
-        <Text style={styles.desc}>
-          Manage your pets, bookings, and preferences in one place. Your pets
-          are always in safe hands 🐾
+          {user?.name || "User"}
+
         </Text>
 
-        {/* Buttons */}
+        {/* EMAIL */}
+        <Text style={styles.subText}>
+
+          {user?.email}
+
+        </Text>
+
+        {/* PHONE */}
+        <Text style={styles.subText}>
+
+          {user?.phone}
+
+        </Text>
+
+        {/* ROLE */}
+        <Text style={styles.roleText}>
+
+          {user?.role === "pet_owner"
+            ? "Pet Owner 🐾"
+            : "Boarding Owner 🏠"}
+
+        </Text>
+
+        {/* DESCRIPTION */}
+        <Text style={styles.desc}>
+
+          Manage your pets, bookings,
+          and preferences in one place.
+
+        </Text>
+
+        {/* BUTTONS */}
         <View style={styles.btnRow}>
-          <TouchableOpacity style={styles.primaryBtn}>
-            <Text style={styles.primaryBtnText}>Edit Profile</Text>
+
+          <TouchableOpacity
+            style={styles.primaryBtn}
+          >
+
+            <Text
+              style={styles.primaryBtnText}
+            >
+              Edit Profile
+            </Text>
+
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.secondaryBtn}>
-            <Text style={styles.secondaryBtnText}>My Pets</Text>
+          <TouchableOpacity
+            style={styles.secondaryBtn}
+          >
+
+            <Text
+              style={
+                styles.secondaryBtnText
+              }
+            >
+              My Pets
+            </Text>
+
           </TouchableOpacity>
+
         </View>
 
-        {/* Stats */}
-        <View style={styles.statsRow}>
-          <View style={styles.statBox}>
-            <Text style={styles.statNum}>12</Text>
-            <Text style={styles.statLabel}>Bookings</Text>
-          </View>
-
-          <View style={styles.statBox}>
-            <Text style={styles.statNum}>3</Text>
-            <Text style={styles.statLabel}>Pets</Text>
-          </View>
-
-          <View style={styles.statBox}>
-            <Text style={styles.statNum}>4.8★</Text>
-            <Text style={styles.statLabel}>Rating</Text>
-          </View>
-        </View>
       </LinearGradient>
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+
   wrapper: {
     flex: 1,
+    backgroundColor: "#fff",
+  },
+
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   container: {
@@ -112,22 +236,29 @@ const styles = StyleSheet.create({
   },
 
   subText: {
-    fontSize: 13,
-    color: "#777",
-    marginBottom: 10,
+    fontSize: 14,
+    color: "#666",
+    marginTop: 4,
+  },
+
+  roleText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#f97316",
+    marginTop: 10,
   },
 
   desc: {
     fontSize: 14,
     color: "#555",
     textAlign: "center",
+    marginTop: 15,
     marginBottom: 20,
   },
 
   btnRow: {
     width: "100%",
     gap: 10,
-    marginBottom: 20,
   },
 
   primaryBtn: {
@@ -154,27 +285,5 @@ const styles = StyleSheet.create({
   secondaryBtnText: {
     color: "#6b21a8",
     fontWeight: "bold",
-  },
-
-  statsRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    marginTop: 10,
-  },
-
-  statBox: {
-    alignItems: "center",
-    flex: 1,
-  },
-
-  statNum: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-
-  statLabel: {
-    fontSize: 12,
-    color: "#666",
   },
 });
