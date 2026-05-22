@@ -13,8 +13,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { LinearGradient } from "expo-linear-gradient";
 
-export default function ProfileScreen() {
-
+export default function ProfileScreen({ navigation }) {
   const [user, setUser] = useState(null);
 
   const [loading, setLoading] = useState(true);
@@ -23,34 +22,21 @@ export default function ProfileScreen() {
   // LOAD USER
   // =========================
   useEffect(() => {
-
     loadUser();
-
   }, []);
 
   const loadUser = async () => {
-
     try {
+      const userData = await AsyncStorage.getItem("user");
 
-      const userData =
-        await AsyncStorage.getItem("user");
-
-      console.log(
-        "STORED USER =>",
-        userData
-      );
+      console.log("STORED USER =>", userData);
 
       if (userData) {
-
         setUser(JSON.parse(userData));
       }
-
     } catch (error) {
-
       console.log(error);
-
     } finally {
-
       setLoading(false);
     }
   };
@@ -59,24 +45,18 @@ export default function ProfileScreen() {
   // LOADING
   // =========================
   if (loading) {
-
     return (
-
       <View style={styles.loaderContainer}>
-
         <ActivityIndicator
           size="large"
           color="#6b21a8"
         />
-
       </View>
     );
   }
 
   return (
-
     <View style={styles.wrapper}>
-
       <LinearGradient
         colors={[
           "#fff1e6",
@@ -85,10 +65,8 @@ export default function ProfileScreen() {
         ]}
         style={styles.container}
       >
-
         {/* PROFILE IMAGE */}
         <View style={styles.avatarWrapper}>
-
           <Image
             source={{
               uri:
@@ -96,75 +74,62 @@ export default function ProfileScreen() {
             }}
             style={styles.avatar}
           />
-
         </View>
 
         {/* BADGE */}
         <View style={styles.badge}>
-
           <Text style={styles.badgeText}>
             ⭐ Verified User
           </Text>
-
         </View>
 
         {/* NAME */}
         <Text style={styles.name}>
-
           {user?.name || "User"}
-
         </Text>
 
         {/* EMAIL */}
         <Text style={styles.subText}>
-
           {user?.email}
-
         </Text>
 
         {/* PHONE */}
         <Text style={styles.subText}>
-
           {user?.phone}
-
         </Text>
 
         {/* ROLE */}
         <Text style={styles.roleText}>
-
           {user?.role === "pet_owner"
             ? "Pet Owner 🐾"
             : "Boarding Owner 🏠"}
-
         </Text>
 
         {/* DESCRIPTION */}
         <Text style={styles.desc}>
-
           Manage your pets, bookings,
           and preferences in one place.
-
         </Text>
 
         {/* BUTTONS */}
         <View style={styles.btnRow}>
-
           <TouchableOpacity
             style={styles.primaryBtn}
           >
-
             <Text
               style={styles.primaryBtnText}
             >
               Edit Profile
             </Text>
-
           </TouchableOpacity>
 
+          {/* MY PETS BUTTON */}
           <TouchableOpacity
             style={styles.secondaryBtn}
+            onPress={() =>
+              navigation.navigate("Pets")
+            }
           >
-
             <Text
               style={
                 styles.secondaryBtnText
@@ -172,19 +137,14 @@ export default function ProfileScreen() {
             >
               My Pets
             </Text>
-
           </TouchableOpacity>
-
         </View>
-
       </LinearGradient>
-
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-
   wrapper: {
     flex: 1,
     backgroundColor: "#fff",
