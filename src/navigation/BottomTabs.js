@@ -4,6 +4,7 @@ import BookingScreen from "../screens/BookingScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import StatusScreen from "../screens/StatusScreen";
 import RegisterScreen from "../components/Register";
+import PetScreen from "../screens/PetScreen";
 
 import { Ionicons } from "@expo/vector-icons";
 
@@ -26,51 +27,37 @@ export default function BottomTabs() {
             iconName = "time-outline";
           } else if (route.name === "Profile") {
             iconName = "person-outline";
+          } else if (route.name === "Pets") {
+            iconName = "paw-outline";
           }
 
-          return (
-            <Ionicons
-              name={iconName}
-              size={size}
-              color={color}
-            />
-          );
+          return <Ionicons name={iconName} size={size} color={color} />;
         },
 
         tabBarActiveTintColor: "#f97316",
         tabBarInactiveTintColor: "gray",
       })}
     >
-      <Tab.Screen
-        name="Home"
-        component={HomeScreen}
-      />
+      <Tab.Screen name="Home" component={HomeScreen} />
+
+      <Tab.Screen name="Booking" component={BookingScreen} />
+
+      <Tab.Screen name="Status" component={StatusScreen} />
+
+      <Tab.Screen name="Pets" component={PetScreen} />
+
+      <Tab.Screen name="Profile" component={ProfileScreen} />
 
       <Tab.Screen
-        name="Booking"
-        component={BookingScreen}
+        name="Register"
+        component={RegisterScreen}
+        options={{
+          tabBarButton: () => null,
+          tabBarItemStyle: {
+            display: "none",
+          },
+        }}
       />
-
-      <Tab.Screen
-        name="Status"
-        component={StatusScreen}
-      />
-
-      <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
-      />
-
-    <Tab.Screen
-  name="Register"
-  component={RegisterScreen}
-  options={{
-    tabBarButton: () => null,
-    tabBarItemStyle: {
-      display: "none",
-    },
-  }}
-/>
     </Tab.Navigator>
   );
 }
