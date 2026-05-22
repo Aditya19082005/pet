@@ -325,9 +325,8 @@ const handleVerifyOtp = async () => {
       setOtpType("");
 
       // NAVIGATE
-      navigation.navigate("Main", {
-  screen: "Profile",
-});
+  // TOKEN SAVED
+// APP.JS WILL AUTO REDIRECT
 
     } else {
 

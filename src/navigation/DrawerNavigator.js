@@ -28,35 +28,50 @@ function CustomDrawerContent({ navigation }) {
 
   // LOGOUT FUNCTION
   const handleLogout = async () => {
-    try {
-      const token = await AsyncStorage.getItem("userToken");
+  try {
 
-      await fetch(
-        "https://www.cgpisoftware.com/cheerytail/api/auth/logout",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    // GET TOKEN
+    const token = await AsyncStorage.getItem("token");
 
-      // remove saved session
-      await AsyncStorage.removeItem("userToken");
+    // API LOGOUT
+    await fetch(
+      "https://www.cgpisoftware.com/cheerytail/api/auth/logout",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-      Alert.alert("Success", "Logged out successfully");
+    // REMOVE TOKEN
+    await AsyncStorage.removeItem("token");
 
-      navigation.navigate("Main", {
-        screen: "Home",
-      });
+    // REMOVE USER
+    await AsyncStorage.removeItem("user");
 
-    } catch (error) {
-      console.log(error);
+    Alert.alert(
+      "Success",
+      "Logged out successfully"
+    );
 
-      Alert.alert("Error", "Logout failed");
-    }
-  };
+    // RESET NAVIGATION
+    // navigation.reset({
+    //   index: 0,
+    //   routes: [{ name: "Auth" }],
+    // });
+
+  } catch (error) {
+
+    console.log(error);
+
+    Alert.alert(
+      "Error",
+      "Logout failed"
+    );
+  }
+};
 
   return (
     <View
@@ -191,7 +206,7 @@ function CustomDrawerContent({ navigation }) {
       </Pressable>
 
       {/* Register / Login */}
-      <Pressable
+      {/* <Pressable
         style={styles.item}
         onPress={() =>
           navigation.navigate("Main", {
@@ -208,7 +223,7 @@ function CustomDrawerContent({ navigation }) {
         <Text style={[styles.text, { color: theme.text }]}>
           Register / Login
         </Text>
-      </Pressable>
+      </Pressable> */}
 
       {/* Logout */}
       <Pressable
