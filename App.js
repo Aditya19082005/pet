@@ -106,10 +106,10 @@ function MainApp() {
 
         {isLoggedIn ? (
 
-          <Stack.Screen
-            name="Main"
-            component={DrawerNavigator}
-          />
+        <Stack.Screen
+  name="RootDrawer"
+  component={DrawerNavigator}
+/>
 
         ) : (
 
