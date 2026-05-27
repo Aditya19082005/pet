@@ -210,6 +210,7 @@ const handleRegister = async () => {
     // ✅ IMPORTANT FIX FOR FILE (NO PLATFORM CHECK NEEDED)
     formData.append("aadhar_file", {
       uri: aadharFile.uri,
+      
       name: aadharFile.name || "aadhar.jpg",
       type: aadharFile.mimeType || "image/jpeg",
     });
