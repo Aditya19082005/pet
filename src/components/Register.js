@@ -86,29 +86,65 @@ const [aadharFile, setAadharFile] = useState(null);
         result
       );
 
-      if (
-        result.status === true ||
-        result.status === "success"
-      ) {
+     if (
+  result.status === true ||
+  result.status === "success"
+) {
 
-        Alert.alert(
-          "Success",
-          "OTP Sent Successfully"
-        );
+  // NORMAL LOGIN OTP FLOW
+  Alert.alert(
+    "Success",
+    "OTP Sent Successfully"
+  );
 
-        // LOGIN OTP FLOW
-        setOtpType("login");
+  setOtpType("login");
+  setStep("otp");
 
-        // SHOW OTP SCREEN
-        setStep("otp");
+} else if (
+  result.message?.toLowerCase().includes("verify email")
+) {
 
-      } else {
+  // UNVERIFIED EMAIL FLOW
 
-        Alert.alert(
-          "Error",
-          result.message || "Invalid credentials"
-        );
-      }
+  // SEND EMAIL OTP
+  const otpResponse = await fetch(
+    "https://www.cgpisoftware.com/cheerytail/api/auth/send-email-otp",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+      }),
+    }
+  );
+
+  const otpResult = await otpResponse.json();
+
+  console.log(
+    "UNVERIFIED EMAIL OTP RESPONSE =>",
+    otpResult
+  );
+
+  Alert.alert(
+    "Email Not Verified",
+    "Verification OTP sent to your email"
+  );
+
+  // IMPORTANT
+  setOtpType("register");
+
+  // OPEN SAME OTP SCREEN
+  setStep("otp");
+
+} else {
+
+  Alert.alert(
+    "Error",
+    result.message || "Invalid credentials"
+  );
+}
 
     } catch (error) {
 
