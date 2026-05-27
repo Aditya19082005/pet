@@ -85,7 +85,7 @@ export default function ProfileScreen({ navigation }) {
 
         {/* NAME */}
         <Text style={styles.name}>
-          {user?.name || "User"}
+          {user?.full_name || "User"}
         </Text>
 
         {/* EMAIL */}
