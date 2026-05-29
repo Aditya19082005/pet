@@ -18,6 +18,7 @@ import NotificationScreen from "../screens/NotificationScreen";
 import PrivacyPolicyScreen from "../screens/PrivacyPolicyScreen";
 import RefundPolicyScreen from "../screens/RefundPolicyScreen";
 import TermsOfUseScreen from "../screens/TermsOfUseScreen";
+import BoardingStack from "./BoardingStack";
 
 import { useTheme } from "../context/ThemeContext";
 
@@ -323,6 +324,15 @@ export default function DrawerNavigator() {
           },
         }}
       />
+      <Drawer.Screen
+  name="Boarding"
+  component={BoardingStack}
+  options={{
+    drawerItemStyle: {
+      display: "none",
+    },
+  }}
+/>
 
       {/* OTHER SCREENS */}
       <Drawer.Screen
