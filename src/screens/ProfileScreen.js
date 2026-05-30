@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import {
   View,
   Text,
@@ -7,43 +6,93 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
+  ScrollView,
 } from "react-native";
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import { LinearGradient } from "expo-linear-gradient";
+
+const API_URL = "https://www.cgpisoftware.com/cheerytail";
 
 export default function ProfileScreen({ navigation }) {
   const [user, setUser] = useState(null);
-
   const [loading, setLoading] = useState(true);
 
-  // =========================
-  // LOAD USER
-  // =========================
   useEffect(() => {
-    loadUser();
+    fetchProfile();
   }, []);
 
-  const loadUser = async () => {
+  const fetchProfile = async () => {
     try {
-      const userData = await AsyncStorage.getItem("user");
+      const token = await AsyncStorage.getItem("token");
 
-      console.log("STORED USER =>", userData);
+      console.log("TOKEN =>", token);
 
-      if (userData) {
-        setUser(JSON.parse(userData));
+      if (!token) {
+        setLoading(false);
+        return;
       }
+
+      const response = await fetch(
+        `${API_URL}/api/user/profile`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        }
+      );
+
+      const result = await response.json();
+
+      console.log(
+        "PROFILE RESPONSE =>",
+        JSON.stringify(result, null, 2)
+      );
+
+     if (response.ok && result.status === "success") {
+  const details = result.data.owner_details || {};
+
+  setUser({
+    id: result.data.id,
+    role: result.data.role,
+    email_verified: result.data.email_verified,
+
+    full_name: details.full_name || "",
+    email: details.email || "",
+    phone: details.mobile_number || "",
+    alternate_phone:
+      details.alternate_contact_number || "",
+
+    address:
+      details.residential_address || "",
+
+    emergency_name:
+      details.emergency_contact_name || "",
+
+    emergency_number:
+      details.emergency_contact_number || "",
+
+    aadhar_file:
+      details.aadhar_file || "",
+
+    created_at:
+      result.data.created_at || "",
+
+    updated_at:
+      result.data.updated_at || "",
+  });
+}
     } catch (error) {
-      console.log(error);
+      console.log(
+        "PROFILE ERROR =>",
+        error
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  // =========================
-  // LOADING
-  // =========================
   if (loading) {
     return (
       <View style={styles.loaderContainer}>
@@ -56,7 +105,12 @@ export default function ProfileScreen({ navigation }) {
   }
 
   return (
-    <View style={styles.wrapper}>
+    <ScrollView
+      style={styles.wrapper}
+      contentContainerStyle={{
+        paddingBottom: 30,
+      }}
+    >
       <LinearGradient
         colors={[
           "#fff1e6",
@@ -65,7 +119,7 @@ export default function ProfileScreen({ navigation }) {
         ]}
         style={styles.container}
       >
-        {/* PROFILE IMAGE */}
+        {/* Profile Image */}
         <View style={styles.avatarWrapper}>
           <Image
             source={{
@@ -76,42 +130,112 @@ export default function ProfileScreen({ navigation }) {
           />
         </View>
 
-        {/* BADGE */}
+        {/* Verification Badge */}
         <View style={styles.badge}>
           <Text style={styles.badgeText}>
-            ⭐ Verified User
+            {user?.email_verified
+              ? "⭐ Verified User"
+              : "⚠️ Email Not Verified"}
           </Text>
         </View>
 
-        {/* NAME */}
-        <Text style={styles.name}>
-          {user?.full_name || "User"}
-        </Text>
+        {/* Name */}
+       <Text style={styles.name}>
+  {user?.full_name || "User"}
+</Text>
 
-        {/* EMAIL */}
-        <Text style={styles.subText}>
-          {user?.email}
-        </Text>
+<View style={styles.infoCard}>
+  <Text style={styles.label}>Email</Text>
+  <Text style={styles.value}>
+    {user?.email}
+  </Text>
 
-        {/* PHONE */}
-        <Text style={styles.subText}>
-          {user?.phone}
-        </Text>
+  <Text style={styles.label}>
+    Mobile Number
+  </Text>
+  <Text style={styles.value}>
+    {user?.phone}
+  </Text>
 
-        {/* ROLE */}
-        <Text style={styles.roleText}>
-          {user?.role === "pet_owner"
-            ? "Pet Owner 🐾"
-            : "Boarding Owner 🏠"}
-        </Text>
+  <Text style={styles.label}>
+    Alternate Contact Number
+  </Text>
+  <Text style={styles.value}>
+    {user?.alternate_phone}
+  </Text>
 
-        {/* DESCRIPTION */}
+  <Text style={styles.label}>
+    Residential Address
+  </Text>
+  <Text style={styles.value}>
+    {user?.address}
+  </Text>
+
+  <Text style={styles.label}>
+    Emergency Contact Name
+  </Text>
+  <Text style={styles.value}>
+    {user?.emergency_name}
+  </Text>
+
+  <Text style={styles.label}>
+    Emergency Contact Number
+  </Text>
+  <Text style={styles.value}>
+    {user?.emergency_number}
+  </Text>
+
+  <Text style={styles.label}>Role</Text>
+  <Text style={styles.value}>
+    {user?.role}
+  </Text>
+
+  <Text style={styles.label}>
+    Email Verification
+  </Text>
+  <Text style={styles.value}>
+    {user?.email_verified
+      ? "Verified ✅"
+      : "Not Verified ❌"}
+  </Text>
+
+  <Text style={styles.label}>
+    Account Created
+  </Text>
+  <Text style={styles.value}>
+    {user?.created_at}
+  </Text>
+
+  <Text style={styles.label}>
+    Last Updated
+  </Text>
+  <Text style={styles.value}>
+    {user?.updated_at}
+  </Text>
+</View>
+
+{user?.aadhar_file ? (
+  <>
+    <Text style={styles.docTitle}>
+      Aadhaar Document
+    </Text>
+
+    <Image
+      source={{
+        uri: user.aadhar_file,
+      }}
+      style={styles.aadharImage}
+      resizeMode="cover"
+    />
+  </>
+) : null}
+        {/* Description */}
         <Text style={styles.desc}>
           Manage your pets, bookings,
           and preferences in one place.
         </Text>
 
-        {/* BUTTONS */}
+        {/* Buttons */}
         <View style={styles.btnRow}>
           <TouchableOpacity
             style={styles.primaryBtn}
@@ -123,7 +247,6 @@ export default function ProfileScreen({ navigation }) {
             </Text>
           </TouchableOpacity>
 
-          {/* MY PETS BUTTON */}
           <TouchableOpacity
             style={styles.secondaryBtn}
             onPress={() =>
@@ -140,7 +263,7 @@ export default function ProfileScreen({ navigation }) {
           </TouchableOpacity>
         </View>
       </LinearGradient>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -157,9 +280,9 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    padding: 20,
-    borderRadius: 20,
     margin: 15,
+    borderRadius: 20,
+    padding: 20,
     alignItems: "center",
   },
 
@@ -193,32 +316,41 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: "bold",
     color: "#333",
+    marginTop: 5,
   },
 
   subText: {
     fontSize: 14,
     color: "#666",
-    marginTop: 4,
+    marginTop: 6,
   },
 
   roleText: {
     fontSize: 15,
     fontWeight: "600",
     color: "#f97316",
-    marginTop: 10,
+    marginTop: 12,
+  },
+
+  address: {
+    marginTop: 12,
+    textAlign: "center",
+    color: "#555",
+    fontSize: 14,
+    lineHeight: 22,
   },
 
   desc: {
     fontSize: 14,
     color: "#555",
     textAlign: "center",
-    marginTop: 15,
+    marginTop: 20,
     marginBottom: 20,
   },
 
   btnRow: {
     width: "100%",
-    gap: 10,
+    gap: 12,
   },
 
   primaryBtn: {
@@ -231,6 +363,7 @@ const styles = StyleSheet.create({
   primaryBtnText: {
     color: "#fff",
     fontWeight: "bold",
+    fontSize: 15,
   },
 
   secondaryBtn: {
@@ -245,5 +378,41 @@ const styles = StyleSheet.create({
   secondaryBtnText: {
     color: "#6b21a8",
     fontWeight: "bold",
+    fontSize: 15,
   },
+  infoCard: {
+  width: "100%",
+  backgroundColor: "#fff",
+  borderRadius: 15,
+  padding: 16,
+  marginTop: 20,
+  marginBottom: 20,
+},
+
+label: {
+  fontSize: 12,
+  color: "#888",
+  fontWeight: "600",
+  marginTop: 10,
+},
+
+value: {
+  fontSize: 15,
+  color: "#222",
+  marginTop: 4,
+},
+
+docTitle: {
+  fontSize: 16,
+  fontWeight: "bold",
+  marginBottom: 10,
+  alignSelf: "flex-start",
+},
+
+aadharImage: {
+  width: "100%",
+  height: 220,
+  borderRadius: 15,
+  marginBottom: 20,
+},
 });
