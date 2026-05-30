@@ -3,33 +3,40 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   FlatList,
   Alert,
-  StyleSheet,
   ActivityIndicator,
   RefreshControl,
-  Modal,
-  ScrollView,
-  Image,
-  Platform,
 } from "react-native";
-
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { Ionicons } from "@expo/vector-icons";
 
 import * as ImagePicker from "expo-image-picker";
 
-const BASE_URL = "https://www.cgpisoftware.com/cheerytail";
+import PetCard from "./pets/components/PetCard";
 
-const API_URL = `${BASE_URL}/api/pets`;
+import PetFormModal from "./pets/components/PetFormModal";
 
-const IMAGE_API_URL = `${BASE_URL}/api/pet-images`;
+import styles from "./pets/styles/petStyles";
+
+import {
+  fetchPetByIdApi,
+  fetchPetsApi,
+  addPetApi,
+  updatePetApi,
+  deletePetApi,
+} from "./pets/services/petService";
+
+import {
+  fetchPetImagesApi,
+  uploadPetImagesApi,
+} from "./pets/services/imageService";
 
 export default function PetScreen() {
   const [pets, setPets] = useState([]);
+
+  const [petImages, setPetImages] = useState({});
 
   const [loading, setLoading] = useState(false);
 
@@ -41,24 +48,107 @@ export default function PetScreen() {
 
   const [selectedImages, setSelectedImages] = useState([]);
 
-  const [petImages, setPetImages] = useState({});
+  const [step, setStep] = useState(1);
 
-  const [petData, setPetData] = useState({
+  const initialPetData = {
     pet_name: "",
     pet_type: "",
-    species: "",
     breed: "",
+    gender: "",
     age: "",
+    date_of_birth: "",
     weight: "",
-  });
+
+    color_marks: "",
+    microchip_id: "",
+    registration_number: "",
+    additional_details: "",
+
+    mother_name: "",
+    father_name: "",
+    breeding_line: "",
+
+    vaccination_status: "",
+    vaccination_details: "",
+    vaccination_notes: "",
+
+    deworming_date: "",
+    flea_tick_treatment_date: "",
+
+    medical_history: "",
+    allergies: "",
+    medical_conditions: "",
+    current_medication: "",
+    surgery_history: "",
+
+    neutered_spayed: false,
+
+    vet_name: "",
+    vet_clinic_name: "",
+    vet_contact: "",
+
+    special_care_required: "",
+
+    eating_habit: "",
+    water_intake_habit: "",
+
+    friendly_with_humans: false,
+    friendly_with_dogs: false,
+    aggressive_behavior: false,
+
+    anxiety_issues: "",
+    biting_history: "",
+
+    food_type: "",
+    food_brand: "",
+    feeding_schedule: "",
+    quantity_per_meal: "",
+
+    treats_allowed: false,
+
+    food_allergies: false,
+
+    food_allergy_details: "",
+  };
+
+  const [petData, setPetData] = useState(initialPetData);
 
   useEffect(() => {
-    fetchPets();
+    loadPets();
   }, []);
 
-  // =========================
-  // PICK IMAGES
-  // =========================
+  // LOAD PETS
+  const loadPets = async () => {
+    try {
+      setLoading(true);
+
+      const petList = await fetchPetsApi();
+
+      setPets(petList);
+
+      const imagesObj = {};
+
+      for (const pet of petList) {
+        const petId = pet.pet_id || pet.id;
+
+        const images = await fetchPetImagesApi(petId);
+
+        imagesObj[petId] = images;
+      }
+
+      setPetImages(imagesObj);
+    } catch (error) {
+      console.log(error);
+
+      Alert.alert("Error", "Failed to fetch pets");
+    } finally {
+      setLoading(false);
+
+      setRefreshing(false);
+    }
+  };
+
+  // IMAGE PICKER
   const pickImages = async () => {
     try {
       const permission =
@@ -66,6 +156,7 @@ export default function PetScreen() {
 
       if (!permission.granted) {
         Alert.alert("Permission Required", "Please allow gallery access");
+
         return;
       }
 
@@ -79,385 +170,115 @@ export default function PetScreen() {
         setSelectedImages(result.assets);
       }
     } catch (error) {
-      console.log("IMAGE PICK ERROR =>", error);
+      console.log(error);
+
+      Alert.alert("Error", "Image picker failed");
     }
   };
 
-  // =========================
-  // FETCH PET IMAGES
-  // GET /api/pet-images/13
-  // =========================
-  const fetchPetImages = async (petId) => {
-    try {
-      const token = await AsyncStorage.getItem("token");
+  // CLOSE MODAL
+  const closeModal = () => {
+    setShowForm(false);
 
-      const response = await fetch(`${IMAGE_API_URL}/${petId}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-        },
-      });
+    setEditingId(null);
 
-      const text = await response.text();
+    setSelectedImages([]);
 
-      console.log("PET IMAGES RESPONSE =>", text);
+    setStep(1);
 
-      if (!text || text.trim() === "") {
-        return;
-      }
-
-      let json = {};
-
-      try {
-        json = JSON.parse(text);
-      } catch (e) {
-        console.log("JSON PARSE ERROR =>", e);
-        return;
-      }
-
-      let images = [];
-
-      if (Array.isArray(json)) {
-        images = json;
-      } else if (Array.isArray(json.data)) {
-        images = json.data;
-      } else if (Array.isArray(json.images)) {
-        images = json.images;
-      }
-
-      const updatedImages = images.map((img) => {
-        let imageUrl = "";
-
-        // FULL URL FROM API
-        if (img.image_url) {
-          imageUrl = img.image_url;
-        }
-
-        // ONLY IMAGE NAME
-        else if (img.image) {
-          imageUrl = `${BASE_URL}/uploads/pets/${img.image}`;
-        }
-
-        // IMAGE PATH
-        else if (img.image_path) {
-          imageUrl = `${BASE_URL}/${img.image_path}`;
-        }
-
-        console.log("FINAL IMAGE URL =>", imageUrl);
-
-        return {
-          ...img,
-          image_url: imageUrl,
-        };
-      });
-
-      setPetImages((prev) => ({
-        ...prev,
-        [petId]: updatedImages,
-      }));
-    } catch (error) {
-      console.log("FETCH IMAGE ERROR =>", error);
-    }
+    setPetData(initialPetData);
   };
 
-  // =========================
-  // UPLOAD PET IMAGES
-  // POST /api/pet-images/add
-  // =========================
-  const uploadPetImages = async (petId) => {
+  // ADD / UPDATE PET
+  const handleAddOrUpdate = async () => {
     try {
-      if (selectedImages.length === 0) return;
+      setLoading(true);
 
-      const token = await AsyncStorage.getItem("token");
+      const payload = {
+        ...petData,
 
-      const formData = new FormData();
+        age: petData.age ? Number(petData.age) : 0,
 
-      formData.append("pet_id", String(petId));
+        weight: petData.weight ? Number(petData.weight) : 0,
 
-      selectedImages.forEach((img, index) => {
-        const fileExtension = img.uri.split(".").pop();
+        neutered_spayed: Boolean(petData.neutered_spayed),
 
-        formData.append("images[]", {
-          uri: Platform.OS === "ios" ? img.uri.replace("file://", "") : img.uri,
+        friendly_with_humans: Boolean(petData.friendly_with_humans),
 
-          name: `pet_image_${index}.${fileExtension || "jpg"}`,
+        friendly_with_dogs: Boolean(petData.friendly_with_dogs),
 
-          type: img.mimeType || "image/jpeg",
+        aggressive_behavior: Boolean(petData.aggressive_behavior),
+
+        treats_allowed: Boolean(petData.treats_allowed),
+
+        food_allergies: Boolean(petData.food_allergies),
+      };
+
+      // UPDATE
+      if (editingId) {
+        const response = await updatePetApi({
+          pet_id: Number(editingId),
+          ...payload,
         });
-      });
 
-      const response = await fetch(`${IMAGE_API_URL}/add`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-        },
-        body: formData,
-      });
+        if (response.ok) {
+          // UPLOAD ONLY NEW IMAGES
+          const newImages = selectedImages.filter(
+            (img) => img.fileName || img.mimeType || img.type,
+          );
 
-      const text = await response.text();
+          if (newImages.length > 0) {
+            await uploadPetImagesApi(editingId, newImages);
+          }
 
-      console.log("UPLOAD RESPONSE =>", text);
+          Alert.alert("Success", "Pet updated successfully");
 
-      if (response.ok) {
-        Alert.alert("Success", "Images uploaded successfully");
+          closeModal();
 
-        setSelectedImages([]);
-
-        await fetchPetImages(petId);
-      } else {
-        Alert.alert("Upload Error", text);
-      }
-    } catch (error) {
-      console.log("UPLOAD ERROR =>", error);
-
-      Alert.alert("Error", "Image upload failed");
-    }
-  };
-
-  // =========================
-  // UPDATE PET IMAGE
-  // =========================
-  const updatePetImage = async (imageId) => {
-    try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 1,
-      });
-
-      if (result.canceled) return;
-
-      const image = result.assets[0];
-
-      const token = await AsyncStorage.getItem("token");
-
-      const formData = new FormData();
-
-      formData.append("image_id", String(imageId));
-
-      formData.append("image", {
-        uri:
-          Platform.OS === "ios" ? image.uri.replace("file://", "") : image.uri,
-
-        name: "updated.jpg",
-
-        type: "image/jpeg",
-      });
-
-      const response = await fetch(`${IMAGE_API_URL}/update`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-        },
-        body: formData,
-      });
-
-      const text = await response.text();
-
-      console.log("UPDATE IMAGE RESPONSE =>", text);
-
-      if (response.ok) {
-        Alert.alert("Success", "Image updated successfully");
-
-        fetchPets();
-      } else {
-        Alert.alert("Error", text);
-      }
-    } catch (error) {
-      console.log("UPDATE IMAGE ERROR =>", error);
-    }
-  };
-
-  // =========================
-  // FETCH PETS
-  // =========================
-  const fetchPets = async () => {
-    try {
-      setLoading(true);
-
-      const token = await AsyncStorage.getItem("token");
-
-      const response = await fetch(API_URL, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-        },
-      });
-
-      const text = await response.text();
-
-      console.log("FETCH RESPONSE =>", text);
-
-      if (!text || text.trim() === "") {
-        setPets([]);
-        return;
-      }
-
-      let data = {};
-
-      try {
-        data = JSON.parse(text);
-      } catch (e) {
-        console.log("PET JSON ERROR =>", e);
-        return;
-      }
-
-      const petList = Array.isArray(data)
-        ? data
-        : Array.isArray(data.data)
-          ? data.data
-          : [];
-
-      setPets(petList);
-
-      for (const pet of petList) {
-        await fetchPetImages(pet.pet_id || pet.id);
-      }
-    } catch (error) {
-      console.log("FETCH ERROR =>", error);
-
-      Alert.alert("Error", "Failed to fetch pets");
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  };
-
-  // =========================
-  // ADD PET
-  // =========================
-  const addPet = async () => {
-    if (!petData.pet_name) {
-      Alert.alert("Validation", "Pet name is required");
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      const token = await AsyncStorage.getItem("token");
-
-      const payload = {
-        pet_name: petData.pet_name,
-        pet_type: petData.pet_type,
-        species: petData.species,
-        breed: petData.breed,
-        age: Number(petData.age),
-        weight: Number(petData.weight),
-      };
-
-      const response = await fetch(`${API_URL}/add`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const text = await response.text();
-
-      console.log("ADD RESPONSE =>", text);
-
-      if (response.ok) {
-        let petId = null;
-
-        try {
-          const json = JSON.parse(text);
-
-          petId = json?.data?.pet_id || json?.data?.id || json?.pet_id;
-        } catch (e) {
-          console.log("PARSE ERROR =>", e);
+          loadPets();
+        } else {
+          Alert.alert("Error", response.data || "Update failed");
         }
-
-        if (petId) {
-          await uploadPetImages(petId);
-        }
-
-        Alert.alert("Success", "Pet added successfully");
-
-        clearForm();
-
-        setShowForm(false);
-
-        fetchPets();
       } else {
-        Alert.alert("Error", text || "Failed to add pet");
+        // ADD PET
+        const response = await addPetApi(payload);
+
+        if (response.ok) {
+          let petId = null;
+
+          try {
+            const json = JSON.parse(response.data);
+
+            petId = json?.data?.pet_id || json?.data?.id || json?.pet_id;
+          } catch (e) {
+            console.log(e);
+          }
+
+          // UPLOAD IMAGES
+          if (petId && selectedImages.length > 0) {
+            await uploadPetImagesApi(petId, selectedImages);
+          }
+
+          Alert.alert("Success", "Pet added successfully");
+
+          closeModal();
+
+          loadPets();
+        } else {
+          Alert.alert("Error", response.data || "Add failed");
+        }
       }
     } catch (error) {
-      console.log("ADD ERROR =>", error);
+      console.log(error);
 
-      Alert.alert("Error", "Failed to add pet");
+      Alert.alert("Error", "Something went wrong");
     } finally {
       setLoading(false);
     }
   };
 
-  // =========================
-  // UPDATE PET
-  // =========================
-  const updatePet = async () => {
-    try {
-      setLoading(true);
-
-      const token = await AsyncStorage.getItem("token");
-
-      const payload = {
-        pet_id: Number(editingId),
-        pet_name: String(petData.pet_name),
-        pet_type: String(petData.pet_type),
-        species: String(petData.species),
-        breed: String(petData.breed),
-        age: Number(petData.age),
-        weight: Number(petData.weight),
-      };
-
-      const response = await fetch(`${API_URL}/update`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const text = await response.text();
-
-      console.log("UPDATE RESPONSE =>", text);
-
-      if (response.ok) {
-        if (selectedImages.length > 0) {
-          await uploadPetImages(editingId);
-        }
-
-        Alert.alert("Success", "Pet updated successfully");
-
-        clearForm();
-
-        setShowForm(false);
-
-        fetchPets();
-      } else {
-        Alert.alert("Error", text);
-      }
-    } catch (error) {
-      console.log("UPDATE ERROR =>", error);
-
-      Alert.alert("Error", "Update failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // =========================
   // DELETE PET
-  // =========================
-  const deletePet = async (id) => {
+  const handleDelete = async (id) => {
     Alert.alert("Delete Pet", "Are you sure?", [
       {
         text: "Cancel",
@@ -466,30 +287,18 @@ export default function PetScreen() {
 
       {
         text: "Delete",
+
         onPress: async () => {
           try {
-            const token = await AsyncStorage.getItem("token");
+            const success = await deletePetApi(id);
 
-            const response = await fetch(`${API_URL}/${id}`, {
-              method: "DELETE",
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-
-            const text = await response.text();
-
-            console.log("DELETE RESPONSE =>", text);
-
-            if (response.ok) {
+            if (success) {
               Alert.alert("Success", "Pet deleted successfully");
 
-              fetchPets();
-            } else {
-              Alert.alert("Error", text || "Delete failed");
+              loadPets();
             }
           } catch (error) {
-            console.log("DELETE ERROR =>", error);
+            console.log(error);
 
             Alert.alert("Error", "Delete failed");
           }
@@ -498,53 +307,145 @@ export default function PetScreen() {
     ]);
   };
 
-  // =========================
   // EDIT PET
-  // =========================
-  const editPet = (pet) => {
-    const id = pet.pet_id || pet.id;
+  // EDIT PET
+  const editPet = async (pet) => {
+    try {
+      const id = pet.pet_id || pet.id;
 
-    setEditingId(id);
+      setLoading(true);
 
-    setPetData({
-      pet_name: pet.pet_name || "",
-      pet_type: pet.pet_type || "",
-      species: pet.species || "",
-      breed: pet.breed || "",
-      age: pet.age ? String(pet.age) : "",
-      weight: pet.weight ? String(pet.weight) : "",
-    });
+      // FETCH FULL PET DETAILS
+      const fullPet = await fetchPetByIdApi(id);
 
-    setShowForm(true);
+      console.log("FULL PET =", fullPet);
+
+      setEditingId(id);
+
+      // FETCH PET IMAGES
+      const existingImages = await fetchPetImagesApi(id);
+
+      setSelectedImages(
+        existingImages.map((img) => ({
+          uri: img.uri || img.image_url || img.url || img.pet_image,
+        })),
+      );
+
+      // SET FULL DATA
+      setPetData({
+        // PET
+        pet_name: fullPet?.pet?.pet_name || "",
+        pet_type: fullPet?.pet?.pet_type || "",
+        breed: fullPet?.pet?.breed || "",
+        gender: fullPet?.pet?.gender || "",
+
+        age: fullPet?.pet?.age ? String(fullPet.pet.age) : "",
+
+        date_of_birth: fullPet?.pet?.date_of_birth || "",
+
+        weight: fullPet?.pet?.weight ? String(fullPet.pet.weight) : "",
+
+        color_marks: fullPet?.pet?.color_identification_marks || "",
+
+        microchip_id: fullPet?.pet?.microchip_id || "",
+
+        registration_number: fullPet?.pet?.registration_number || "",
+
+        additional_details: fullPet?.pet?.additional_details || "",
+
+        mother_name: fullPet?.pet?.mother_name || "",
+
+        father_name: fullPet?.pet?.father_name || "",
+
+        breeding_line: fullPet?.pet?.breeding_line || "",
+
+        // HEALTH
+        vaccination_status: fullPet?.health?.vaccination_status || "",
+
+        vaccination_details: fullPet?.health?.vaccination_details || "",
+
+        vaccination_notes: fullPet?.health?.vaccination_notes || "",
+
+        deworming_date:
+          fullPet?.health?.deworming_date === "0000-00-00"
+            ? ""
+            : fullPet?.health?.deworming_date || "",
+
+        flea_tick_treatment_date:
+          fullPet?.health?.flea_tick_treatment_date === "0000-00-00"
+            ? ""
+            : fullPet?.health?.flea_tick_treatment_date || "",
+
+        medical_history: fullPet?.health?.medical_history || "",
+
+        allergies: fullPet?.health?.allergies || "",
+
+        medical_conditions: fullPet?.health?.medical_conditions || "",
+
+        current_medication: fullPet?.health?.current_medications || "",
+
+        surgery_history: fullPet?.health?.surgery_history || "",
+
+        neutered_spayed: fullPet?.health?.neutered_spayed === "1",
+
+        vet_name: fullPet?.health?.vet_name || "",
+
+        vet_clinic_name: fullPet?.health?.vet_clinic_name || "",
+
+        vet_contact: fullPet?.health?.vet_contact || "",
+
+        special_care_required: fullPet?.health?.special_care_required || "",
+
+        // BEHAVIOR + FOOD
+        eating_habit: fullPet?.behavior_feeding?.eating_habit || "",
+
+        water_intake_habit: fullPet?.behavior_feeding?.water_intake_habit || "",
+
+        friendly_with_humans:
+          fullPet?.behavior_feeding?.friendly_with_humans === "1",
+
+        friendly_with_dogs:
+          fullPet?.behavior_feeding?.friendly_with_dogs === "1",
+
+        aggressive_behavior:
+          fullPet?.behavior_feeding?.aggressive_behavior === "1",
+
+        anxiety_issues: fullPet?.behavior_feeding?.anxiety_issues || "",
+
+        biting_history: fullPet?.behavior_feeding?.biting_history || "",
+
+        food_type: fullPet?.behavior_feeding?.food_type || "",
+
+        food_brand: fullPet?.behavior_feeding?.food_brand || "",
+
+        feeding_schedule: fullPet?.behavior_feeding?.feeding_schedule || "",
+
+        quantity_per_meal: fullPet?.behavior_feeding?.quantity_per_meal || "",
+
+        treats_allowed: fullPet?.behavior_feeding?.treats_allowed === "1",
+
+        food_allergies: fullPet?.behavior_feeding?.food_allergies === "1",
+
+        food_allergy_details:
+          fullPet?.behavior_feeding?.food_allergy_details || "",
+      });
+
+      setStep(1);
+
+      setShowForm(true);
+    } catch (error) {
+      console.log(error);
+
+      Alert.alert("Error", "Failed to load pet details");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // =========================
-  // CLEAR FORM
-  // =========================
-  const clearForm = () => {
-    setPetData({
-      pet_name: "",
-      pet_type: "",
-      species: "",
-      breed: "",
-      age: "",
-      weight: "",
-    });
-
-    setSelectedImages([]);
-
-    setEditingId(null);
-  };
-
+  // LOADER
   if (loading && pets.length === 0) {
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
+      <View style={styles.loaderContainer}>
         <ActivityIndicator size="large" color="#f97316" />
       </View>
     );
@@ -552,19 +453,30 @@ export default function PetScreen() {
 
   return (
     <View style={{ flex: 1 }}>
+      {/* HEADER */}
+
       <View style={styles.header}>
         <Text style={styles.heading}>My Pets 🐾</Text>
 
         <TouchableOpacity
           style={styles.addBtn}
           onPress={() => {
-            clearForm();
+            setEditingId(null);
+
+            setSelectedImages([]);
+
+            setPetData(initialPetData);
+
+            setStep(1);
+
             setShowForm(true);
           }}
         >
           <Ionicons name="add" size={28} color="#fff" />
         </TouchableOpacity>
       </View>
+
+      {/* PET LIST */}
 
       <FlatList
         data={pets}
@@ -574,374 +486,39 @@ export default function PetScreen() {
             refreshing={refreshing}
             onRefresh={() => {
               setRefreshing(true);
-              fetchPets();
+
+              loadPets();
             }}
           />
         }
         contentContainerStyle={styles.container}
-        ListEmptyComponent={
-          !loading && <Text style={styles.emptyText}>No Pets Found</Text>
-        }
-        renderItem={({ item }) => {
-          const petId = item.pet_id || item.id;
-
-          return (
-            <View style={styles.card}>
-              <Text style={styles.petName}>{item.pet_name}</Text>
-
-              <Text>Type: {item.pet_type}</Text>
-
-              <Text>Species: {item.species}</Text>
-
-              <Text>Breed: {item.breed}</Text>
-
-              <Text>Age: {item.age}</Text>
-
-              <Text>Weight: {item.weight}</Text>
-
-              {petImages[petId]?.length > 0 ? (
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  style={{ marginTop: 10 }}
-                >
-                  {petImages[petId]?.map((img, index) => (
-                    <TouchableOpacity
-                      key={img.id || index}
-                      onPress={() => updatePetImage(img.id)}
-                    >
-                      <Image
-                        source={{
-                          uri: img.image_url,
-                        }}
-                        style={styles.petImage}
-                        resizeMode="cover"
-                        onError={(e) =>
-                          console.log(
-                            "IMAGE LOAD ERROR =>",
-                            JSON.stringify(e.nativeEvent),
-                          )
-                        }
-                      />
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
-              ) : (
-                <Text style={{ marginTop: 10, color: "#666" }}>No Images</Text>
-              )}
-
-              <View style={styles.actionRow}>
-                <TouchableOpacity
-                  style={styles.editBtn}
-                  onPress={() => editPet(item)}
-                >
-                  <Text style={styles.actionText}>Edit</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.deleteBtn}
-                  onPress={() => deletePet(petId)}
-                >
-                  <Text style={styles.actionText}>Delete</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          );
-        }}
+        renderItem={({ item }) => (
+          <PetCard
+            item={item}
+            petImages={petImages}
+            styles={styles}
+            onEdit={editPet}
+            onDelete={handleDelete}
+          />
+        )}
       />
 
-      <Modal visible={showForm} animationType="slide" transparent>
-        <View style={styles.modalContainer}>
-          <ScrollView
-            style={styles.modalContent}
-            showsVerticalScrollIndicator={false}
-          >
-            <Text style={styles.modalTitle}>
-              {editingId ? "Update Pet" : "Add Pet"}
-            </Text>
+      {/* MODAL */}
 
-            <TextInput
-              placeholder="Pet Name"
-              style={styles.input}
-              value={petData.pet_name}
-              onChangeText={(text) =>
-                setPetData({
-                  ...petData,
-                  pet_name: text,
-                })
-              }
-            />
-
-            <TextInput
-              placeholder="Pet Type"
-              style={styles.input}
-              value={petData.pet_type}
-              onChangeText={(text) =>
-                setPetData({
-                  ...petData,
-                  pet_type: text,
-                })
-              }
-            />
-
-            <TextInput
-              placeholder="Species"
-              style={styles.input}
-              value={petData.species}
-              onChangeText={(text) =>
-                setPetData({
-                  ...petData,
-                  species: text,
-                })
-              }
-            />
-
-            <TextInput
-              placeholder="Breed"
-              style={styles.input}
-              value={petData.breed}
-              onChangeText={(text) =>
-                setPetData({
-                  ...petData,
-                  breed: text,
-                })
-              }
-            />
-
-            <TextInput
-              placeholder="Age"
-              keyboardType="numeric"
-              style={styles.input}
-              value={petData.age}
-              onChangeText={(text) =>
-                setPetData({
-                  ...petData,
-                  age: text,
-                })
-              }
-            />
-
-            <TextInput
-              placeholder="Weight"
-              keyboardType="numeric"
-              style={styles.input}
-              value={petData.weight}
-              onChangeText={(text) =>
-                setPetData({
-                  ...petData,
-                  weight: text,
-                })
-              }
-            />
-
-            <TouchableOpacity style={styles.imageBtn} onPress={pickImages}>
-              <Text style={styles.imageBtnText}>Pick Images</Text>
-            </TouchableOpacity>
-
-            <ScrollView horizontal>
-              {selectedImages.map((img, index) => (
-                <Image
-                  key={index}
-                  source={{
-                    uri: img.uri,
-                  }}
-                  style={styles.previewImage}
-                />
-              ))}
-            </ScrollView>
-
-            <TouchableOpacity
-              style={styles.button}
-              onPress={editingId ? updatePet : addPet}
-            >
-              {loading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.buttonText}>
-                  {editingId ? "Update Pet" : "Add Pet"}
-                </Text>
-              )}
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.closeBtn}
-              onPress={() => {
-                clearForm();
-                setShowForm(false);
-              }}
-            >
-              <Text style={styles.closeText}>Close</Text>
-            </TouchableOpacity>
-          </ScrollView>
-        </View>
-      </Modal>
+      <PetFormModal
+        visible={showForm}
+        editingId={editingId}
+        step={step}
+        setStep={setStep}
+        petData={petData}
+        setPetData={setPetData}
+        selectedImages={selectedImages}
+        pickImages={pickImages}
+        loading={loading}
+        styles={styles}
+        onClose={closeModal}
+        onSubmit={handleAddOrUpdate}
+      />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 15,
-    backgroundColor: "#fff",
-  },
-
-  heading: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#f97316",
-  },
-
-  addBtn: {
-    backgroundColor: "#f97316",
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  container: {
-    padding: 15,
-    paddingBottom: 100,
-    backgroundColor: "#fff",
-    flexGrow: 1,
-  },
-
-  card: {
-    backgroundColor: "#fafafa",
-    padding: 15,
-    borderRadius: 12,
-    marginBottom: 15,
-    elevation: 2,
-  },
-
-  petName: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 8,
-    color: "#222",
-  },
-
-  petImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
-    marginRight: 10,
-    marginTop: 10,
-  },
-
-  previewImage: {
-    width: 90,
-    height: 90,
-    borderRadius: 10,
-    marginRight: 10,
-    marginBottom: 10,
-  },
-
-  actionRow: {
-    flexDirection: "row",
-    marginTop: 15,
-  },
-
-  editBtn: {
-    backgroundColor: "#3b82f6",
-    padding: 10,
-    borderRadius: 8,
-    marginRight: 10,
-    flex: 1,
-    alignItems: "center",
-  },
-
-  deleteBtn: {
-    backgroundColor: "#ef4444",
-    padding: 10,
-    borderRadius: 8,
-    flex: 1,
-    alignItems: "center",
-  },
-
-  actionText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-
-  emptyText: {
-    textAlign: "center",
-    marginTop: 40,
-    fontSize: 16,
-    color: "#666",
-  },
-
-  modalContainer: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "flex-end",
-  },
-
-  modalContent: {
-    backgroundColor: "#fff",
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    padding: 20,
-    maxHeight: "90%",
-  },
-
-  modalTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-    color: "#f97316",
-    textAlign: "center",
-  },
-
-  input: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 12,
-    backgroundColor: "#fff",
-  },
-
-  imageBtn: {
-    backgroundColor: "#10b981",
-    padding: 14,
-    borderRadius: 10,
-    alignItems: "center",
-    marginBottom: 15,
-  },
-
-  imageBtnText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-
-  button: {
-    backgroundColor: "#f97316",
-    padding: 15,
-    borderRadius: 10,
-    alignItems: "center",
-    marginTop: 10,
-  },
-
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-
-  closeBtn: {
-    marginTop: 15,
-    alignItems: "center",
-  },
-
-  closeText: {
-    color: "#ef4444",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-});
