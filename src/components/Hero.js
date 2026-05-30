@@ -1,61 +1,118 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+
 import { LinearGradient } from "expo-linear-gradient";
 
+import { useNavigation } from "@react-navigation/native";
+
 export default function Hero() {
+
+  const navigation = useNavigation();
+
   return (
+
     <View style={styles.wrapper}>
-      {/* Background Gradient */}
+
       <LinearGradient
-        colors={["#fff1e6", "#ffe4f0", "#f3e8ff"]}
+        colors={[
+          "#fff1e6",
+          "#ffe4f0",
+          "#f3e8ff",
+        ]}
         style={styles.container}
       >
-        {/* Badge */}
+
         <View style={styles.badge}>
-          <Text style={styles.badgeText}>✨ Trusted by 10,000+ Pet Parents</Text>
+          <Text style={styles.badgeText}>
+            ✨ Trusted by 10,000+ Pet Parents
+          </Text>
         </View>
 
-        {/* Title */}
         <Text style={styles.title}>
-          <Text style={styles.gradientText}>Your Pet's{"\n"}</Text>
-          <Text>Second Home 🐾</Text>
+          <Text style={styles.gradientText}>
+            Your Pet's{"\n"}
+          </Text>
+
+          <Text>
+            Second Home 🐾
+          </Text>
         </Text>
 
-        {/* Description */}
         <Text style={styles.desc}>
-          Premium pet care services at your fingertips. Boarding, grooming, and
-          more for your furry friends.
+          Premium pet care services at your fingertips.
+          Boarding, grooming, and more for your furry friends.
         </Text>
 
-        {/* Buttons */}
         <View style={styles.btnRow}>
-          <TouchableOpacity style={styles.primaryBtn}>
-            <Text style={styles.primaryBtnText}>🐾 Book Boarding →</Text>
+
+          {/* BOOK BOARDING BUTTON */}
+          <TouchableOpacity
+            style={styles.primaryBtn}
+            onPress={() =>
+             navigation.navigate("Boarding")
+            }
+          >
+
+            <Text style={styles.primaryBtnText}>
+              🐾 Book Boarding →
+            </Text>
+
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.secondaryBtn}>
-            <Text style={styles.secondaryBtnText}>Explore Services</Text>
+          <TouchableOpacity
+            style={styles.secondaryBtn}
+          >
+
+            <Text style={styles.secondaryBtnText}>
+              Explore Services
+            </Text>
+
           </TouchableOpacity>
+
         </View>
 
-        {/* Stats */}
         <View style={styles.statsRow}>
+
           <View style={styles.statBox}>
-            <Text style={styles.statNum}>5000+</Text>
-            <Text style={styles.statLabel}>Happy Pets</Text>
+            <Text style={styles.statNum}>
+              5000+
+            </Text>
+
+            <Text style={styles.statLabel}>
+              Happy Pets
+            </Text>
           </View>
 
           <View style={styles.statBox}>
-            <Text style={styles.statNum}>500+</Text>
-            <Text style={styles.statLabel}>Caregivers</Text>
+            <Text style={styles.statNum}>
+              500+
+            </Text>
+
+            <Text style={styles.statLabel}>
+              Caregivers
+            </Text>
           </View>
 
           <View style={styles.statBox}>
-            <Text style={styles.statNum}>4.9★</Text>
-            <Text style={styles.statLabel}>Rating</Text>
+            <Text style={styles.statNum}>
+              4.9★
+            </Text>
+
+            <Text style={styles.statLabel}>
+              Rating
+            </Text>
           </View>
+
         </View>
+
       </LinearGradient>
+
     </View>
   );
 }

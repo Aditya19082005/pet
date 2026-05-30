@@ -5,6 +5,7 @@ import ProfileScreen from "../screens/ProfileScreen";
 import StatusScreen from "../screens/StatusScreen";
 import RegisterScreen from "../components/Register";
 import PetScreen from "../screens/PetScreen";
+import BoardingStack from "./BoardingStack";
 
 import { Ionicons } from "@expo/vector-icons";
 
@@ -58,6 +59,19 @@ export default function BottomTabs() {
           },
         }}
       />
+      <Tab.Screen
+  name="Boarding"
+  component={BoardingStack}
+  options={{
+    headerShown: false,
+
+    tabBarButton: () => null,
+
+    tabBarItemStyle: {
+      display: "none",
+    },
+  }}
+/>
     </Tab.Navigator>
   );
 }
