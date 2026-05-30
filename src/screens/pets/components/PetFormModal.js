@@ -39,9 +39,15 @@ export default function PetFormModal({
           style={styles.modalContent}
           showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.modalTitle}>
-            {editingId ? "Update Pet" : "Add Pet"}
-          </Text>
+          <View style={styles.header}>
+            <Text style={styles.modalTitle}>
+              {editingId ? "Update Pet" : "Add Pet"}
+            </Text>
+
+            <TouchableOpacity onPress={onClose}>
+              <Text style={styles.closeIcon}>✕</Text>
+            </TouchableOpacity>
+          </View>
 
           <StepIndicator step={step} />
 

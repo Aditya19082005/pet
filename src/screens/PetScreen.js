@@ -33,7 +33,7 @@ import {
   uploadPetImagesApi,
 } from "./pets/services/imageService";
 
-export default function PetScreen() {
+export default function PetScreen({ navigation }) {
   const [pets, setPets] = useState([]);
 
   const [petImages, setPetImages] = useState({});
@@ -497,6 +497,7 @@ export default function PetScreen() {
             item={item}
             petImages={petImages}
             styles={styles}
+            navigation={navigation}
             onEdit={editPet}
             onDelete={handleDelete}
           />

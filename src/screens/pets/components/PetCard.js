@@ -1,48 +1,45 @@
 import React from "react";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 
-import { View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
-export default function PetCard({ item, petImages, styles, onEdit, onDelete }) {
+export default function PetCard({
+  item,
+  petImages,
+  styles,
+  onEdit,
+  onDelete,
+  navigation,
+}) {
   const petId = item.pet_id || item.id;
 
+  const image =
+    petImages[petId]?.[0]?.image_url || "https://via.placeholder.com/100";
+
   return (
-    <View style={styles.card}>
-      <Text style={styles.petName}>{item.pet_name}</Text>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() =>
+        navigation.navigate("PetDetails", {
+          petId,
+        })
+      }
+    >
+      <Image source={{ uri: image }} style={styles.petImage} />
 
-      <Text>Type: {item.pet_type}</Text>
+      <View style={styles.rightSection}>
+        <Text style={styles.petName}>{item.pet_name}</Text>
 
-      <Text>Breed: {item.breed}</Text>
+        <View style={styles.iconRow}>
+          <TouchableOpacity onPress={() => onEdit(item)}>
+            <Ionicons name="create-outline" size={24} color="#3b82f6" />
+          </TouchableOpacity>
 
-      <Text>Gender: {item.gender}</Text>
-
-      <Text>Age: {item.age}</Text>
-
-      <Text>Weight: {item.weight}</Text>
-
-      {petImages[petId]?.length > 0 && (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {petImages[petId].map((img, index) => (
-            <Image
-              key={index}
-              source={{ uri: img.image_url }}
-              style={styles.petImage}
-            />
-          ))}
-        </ScrollView>
-      )}
-
-      <View style={styles.actionRow}>
-        <TouchableOpacity style={styles.editBtn} onPress={() => onEdit(item)}>
-          <Text style={styles.actionText}>Edit</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.deleteBtn}
-          onPress={() => onDelete(petId)}
-        >
-          <Text style={styles.actionText}>Delete</Text>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={() => onDelete(petId)}>
+            <Ionicons name="trash-outline" size={24} color="#ef4444" />
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
