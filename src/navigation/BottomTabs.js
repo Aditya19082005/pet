@@ -6,6 +6,7 @@ import StatusScreen from "../screens/StatusScreen";
 import RegisterScreen from "../components/Register";
 import PetScreen from "../screens/PetScreen";
 import BoardingStack from "./BoardingStack";
+import PetStack from "./PetStack";
 
 import { Ionicons } from "@expo/vector-icons";
 
@@ -40,15 +41,11 @@ export default function BottomTabs() {
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
-
       <Tab.Screen name="Booking" component={BookingScreen} />
-
       <Tab.Screen name="Status" component={StatusScreen} />
 
-      <Tab.Screen name="Pets" component={PetScreen} />
-
+      <Tab.Screen name="Pets" component={PetStack} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
-
       <Tab.Screen
         name="Register"
         component={RegisterScreen}
@@ -60,18 +57,18 @@ export default function BottomTabs() {
         }}
       />
       <Tab.Screen
-  name="Boarding"
-  component={BoardingStack}
-  options={{
-    headerShown: false,
+        name="Boarding"
+        component={BoardingStack}
+        options={{
+          headerShown: false,
 
-    tabBarButton: () => null,
+          tabBarButton: () => null,
 
-    tabBarItemStyle: {
-      display: "none",
-    },
-  }}
-/>
+          tabBarItemStyle: {
+            display: "none",
+          },
+        }}
+      />
     </Tab.Navigator>
   );
 }

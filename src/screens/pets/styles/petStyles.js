@@ -11,8 +11,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 15,
-    backgroundColor: "#fff",
+    marginBottom: 15,
+  },
+
+  closeIcon: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#666",
+    paddingHorizontal: 5,
   },
 
   heading: {
@@ -38,26 +44,37 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    backgroundColor: "#fafafa",
-    padding: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    padding: 12,
     borderRadius: 12,
-    marginBottom: 15,
-    elevation: 2,
-  },
-
-  petName: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 8,
-    color: "#222",
+    marginBottom: 12,
+    elevation: 3,
   },
 
   petImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
-    marginRight: 10,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+  },
+
+  rightSection: {
+    flex: 1,
+    marginLeft: 15,
+    justifyContent: "space-between",
+  },
+
+  petName: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#222",
+  },
+
+  iconRow: {
+    flexDirection: "row",
     marginTop: 10,
+    gap: 20,
   },
 
   previewImage: {

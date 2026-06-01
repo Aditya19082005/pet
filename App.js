@@ -1,7 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-} from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   NavigationContainer,
@@ -16,28 +13,20 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import DrawerNavigator from "./src/navigation/DrawerNavigator";
 import AuthNavigator from "./src/navigation/AuthNavigator";
 
-import {
-  ThemeProvider,
-  useTheme,
-} from "./src/context/ThemeContext";
+import { ThemeProvider, useTheme } from "./src/context/ThemeContext";
 
-import {
-  View,
-  ActivityIndicator,
-} from "react-native";
+import { View, ActivityIndicator } from "react-native";
 
 const Stack = createNativeStackNavigator();
 
 function MainApp() {
-
   const { isDark } = useTheme();
 
   const [loading, setLoading] =
     useState(true);
     const [userRole, setUserRole] = useState(null);
 
-  const [isLoggedIn, setIsLoggedIn] =
-    useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // CHECK LOGIN
  const checkLogin = async () => {
@@ -55,7 +44,6 @@ function MainApp() {
 };
 
   useEffect(() => {
-
     checkLogin();
 
     // AUTO CHECK EVERY SECOND
@@ -64,11 +52,9 @@ function MainApp() {
     }, 1000);
 
     return () => clearInterval(interval);
-
   }, []);
 
   if (loading) {
-
     return (
       <View
         style={{
@@ -83,15 +69,7 @@ function MainApp() {
   }
 
   return (
-
-    <NavigationContainer
-      theme={
-        isDark
-          ? DarkTheme
-          : DefaultTheme
-      }
-    >
-
+    <NavigationContainer theme={isDark ? DarkTheme : DefaultTheme}>
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
@@ -118,13 +96,11 @@ function MainApp() {
 )}
 
       </Stack.Navigator>
-
     </NavigationContainer>
   );
 }
 
 export default function App() {
-
   return (
     <ThemeProvider>
       <MainApp />

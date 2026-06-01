@@ -1,8 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 
-import { View, TextInput, Switch, Text } from "react-native";
+import { View, TextInput, Switch, Text, TouchableOpacity } from "react-native";
+
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 export default function PhaseTwoForm({ petData, setPetData, styles }) {
+  const [showDewormingPicker, setShowDewormingPicker] = useState(false);
+
+  const [showFleaTickPicker, setShowFleaTickPicker] = useState(false);
+
+  const formatDate = (date) => {
+    return date.toISOString().split("T")[0];
+  };
+
   return (
     <View>
       <TextInput
@@ -55,6 +65,7 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
 
       <TextInput
         placeholder="Vaccination Details"
+        multiline
         style={styles.input}
         value={petData.vaccination_details}
         onChangeText={(text) =>
@@ -67,6 +78,7 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
 
       <TextInput
         placeholder="Vaccination Notes"
+        multiline
         style={styles.input}
         value={petData.vaccination_notes}
         onChangeText={(text) =>
@@ -77,32 +89,88 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
         }
       />
 
-      <TextInput
-        placeholder="Deworming Date"
+      {/* DEWORMING DATE */}
+
+      <Text
+        style={{
+          marginBottom: 5,
+          fontWeight: "600",
+        }}
+      >
+        Deworming Date
+      </Text>
+
+      <TouchableOpacity
         style={styles.input}
-        value={petData.deworming_date}
-        onChangeText={(text) =>
+        onPress={() => setShowDewormingPicker(true)}
+      >
+        <Text
+          style={{
+            color: petData.deworming_date ? "#000" : "#999",
+          }}
+        >
+          {petData.deworming_date || "Select Deworming Date"}
+        </Text>
+      </TouchableOpacity>
+
+      <DateTimePickerModal
+        isVisible={showDewormingPicker}
+        mode="date"
+        maximumDate={new Date()}
+        onConfirm={(date) => {
           setPetData({
             ...petData,
-            deworming_date: text,
-          })
-        }
+            deworming_date: formatDate(date),
+          });
+
+          setShowDewormingPicker(false);
+        }}
+        onCancel={() => setShowDewormingPicker(false)}
       />
 
-      <TextInput
-        placeholder="Flea Tick Treatment Date"
+      {/* FLEA TICK DATE */}
+
+      <Text
+        style={{
+          marginBottom: 5,
+          fontWeight: "600",
+        }}
+      >
+        Flea Tick Treatment Date
+      </Text>
+
+      <TouchableOpacity
         style={styles.input}
-        value={petData.flea_tick_treatment_date}
-        onChangeText={(text) =>
+        onPress={() => setShowFleaTickPicker(true)}
+      >
+        <Text
+          style={{
+            color: petData.flea_tick_treatment_date ? "#000" : "#999",
+          }}
+        >
+          {petData.flea_tick_treatment_date ||
+            "Select Flea Tick Treatment Date"}
+        </Text>
+      </TouchableOpacity>
+
+      <DateTimePickerModal
+        isVisible={showFleaTickPicker}
+        mode="date"
+        maximumDate={new Date()}
+        onConfirm={(date) => {
           setPetData({
             ...petData,
-            flea_tick_treatment_date: text,
-          })
-        }
+            flea_tick_treatment_date: formatDate(date),
+          });
+
+          setShowFleaTickPicker(false);
+        }}
+        onCancel={() => setShowFleaTickPicker(false)}
       />
 
       <TextInput
         placeholder="Medical History"
+        multiline
         style={styles.input}
         value={petData.medical_history}
         onChangeText={(text) =>
@@ -127,6 +195,7 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
 
       <TextInput
         placeholder="Medical Conditions"
+        multiline
         style={styles.input}
         value={petData.medical_conditions}
         onChangeText={(text) =>
@@ -151,6 +220,7 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
 
       <TextInput
         placeholder="Surgery History"
+        multiline
         style={styles.input}
         value={petData.surgery_history}
         onChangeText={(text) =>
@@ -162,7 +232,14 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
       />
 
       <View style={{ marginBottom: 15 }}>
-        <Text>Neutered / Spayed</Text>
+        <Text
+          style={{
+            fontWeight: "600",
+            marginBottom: 8,
+          }}
+        >
+          Neutered / Spayed
+        </Text>
 
         <Switch
           value={petData.neutered_spayed}
