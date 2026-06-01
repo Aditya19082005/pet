@@ -52,9 +52,9 @@ export default function PetScreen({ navigation }) {
 
   const initialPetData = {
     pet_name: "",
-    pet_type: "",
+    pet_type: "dog",
     breed: "",
-    gender: "",
+    gender: "male",
     age: "",
     date_of_birth: "",
     weight: "",
@@ -99,7 +99,7 @@ export default function PetScreen({ navigation }) {
     anxiety_issues: "",
     biting_history: "",
 
-    food_type: "",
+    food_type: "non_veg",
     food_brand: "",
     feeding_schedule: "",
     quantity_per_meal: "",
@@ -189,13 +189,64 @@ export default function PetScreen({ navigation }) {
     setPetData(initialPetData);
   };
 
+  const validateForm = () => {
+    if (!petData.pet_name?.trim()) {
+      Alert.alert("Validation", "Pet Name is required");
+      return false;
+    }
+
+    if (!petData.pet_type) {
+      Alert.alert("Validation", "Pet Type is required");
+      return false;
+    }
+
+    if (!petData.breed?.trim()) {
+      Alert.alert("Validation", "Breed is required");
+      return false;
+    }
+
+    if (!petData.gender) {
+      Alert.alert("Validation", "Gender is required");
+      return false;
+    }
+
+    if (!petData.age) {
+      Alert.alert("Validation", "Age is required");
+      return false;
+    }
+
+    if (!petData.date_of_birth) {
+      Alert.alert("Validation", "Date Of Birth is required");
+      return false;
+    }
+
+    if (!petData.weight) {
+      Alert.alert("Validation", "Weight is required");
+      return false;
+    }
+
+    if (!petData.food_type) {
+      Alert.alert("Validation", "Food Type is required");
+      return false;
+    }
+
+    return true;
+  };
+
   // ADD / UPDATE PET
   const handleAddOrUpdate = async () => {
+    if (!validateForm()) {
+      return;
+    }
     try {
       setLoading(true);
 
       const payload = {
         ...petData,
+
+        pet_type: petData.pet_type,
+        gender: petData.gender,
+        food_type: petData.food_type,
 
         age: petData.age ? Number(petData.age) : 0,
 
@@ -345,7 +396,10 @@ export default function PetScreen({ navigation }) {
 
         weight: fullPet?.pet?.weight ? String(fullPet.pet.weight) : "",
 
-        color_marks: fullPet?.pet?.color_identification_marks || "",
+        color_marks:
+          fullPet?.pet?.color_marks ||
+          fullPet?.pet?.color_identification_marks ||
+          "",
 
         microchip_id: fullPet?.pet?.microchip_id || "",
 
@@ -386,7 +440,10 @@ export default function PetScreen({ navigation }) {
 
         surgery_history: fullPet?.health?.surgery_history || "",
 
-        neutered_spayed: fullPet?.health?.neutered_spayed === "1",
+        neutered_spayed:
+          fullPet?.health?.neutered_spayed === true ||
+          fullPet?.health?.neutered_spayed === 1 ||
+          fullPet?.health?.neutered_spayed === "1",
 
         vet_name: fullPet?.health?.vet_name || "",
 
@@ -402,12 +459,18 @@ export default function PetScreen({ navigation }) {
         water_intake_habit: fullPet?.behavior_feeding?.water_intake_habit || "",
 
         friendly_with_humans:
+          fullPet?.behavior_feeding?.friendly_with_humans === true ||
+          fullPet?.behavior_feeding?.friendly_with_humans === 1 ||
           fullPet?.behavior_feeding?.friendly_with_humans === "1",
 
         friendly_with_dogs:
+          fullPet?.behavior_feeding?.friendly_with_dogs === true ||
+          fullPet?.behavior_feeding?.friendly_with_dogs === 1 ||
           fullPet?.behavior_feeding?.friendly_with_dogs === "1",
 
         aggressive_behavior:
+          fullPet?.behavior_feeding?.aggressive_behavior === true ||
+          fullPet?.behavior_feeding?.aggressive_behavior === 1 ||
           fullPet?.behavior_feeding?.aggressive_behavior === "1",
 
         anxiety_issues: fullPet?.behavior_feeding?.anxiety_issues || "",
@@ -422,9 +485,15 @@ export default function PetScreen({ navigation }) {
 
         quantity_per_meal: fullPet?.behavior_feeding?.quantity_per_meal || "",
 
-        treats_allowed: fullPet?.behavior_feeding?.treats_allowed === "1",
+        treats_allowed:
+          fullPet?.behavior_feeding?.treats_allowed === true ||
+          fullPet?.behavior_feeding?.treats_allowed === 1 ||
+          fullPet?.behavior_feeding?.treats_allowed === "1",
 
-        food_allergies: fullPet?.behavior_feeding?.food_allergies === "1",
+        food_allergies:
+          fullPet?.behavior_feeding?.food_allergies === true ||
+          fullPet?.behavior_feeding?.food_allergies === 1 ||
+          fullPet?.behavior_feeding?.food_allergies === "1",
 
         food_allergy_details:
           fullPet?.behavior_feeding?.food_allergy_details || "",

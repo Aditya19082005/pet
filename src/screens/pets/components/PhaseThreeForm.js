@@ -2,6 +2,8 @@ import React from "react";
 
 import { View, TextInput, Switch, Text } from "react-native";
 
+import { Picker } from "@react-native-picker/picker";
+
 export default function PhaseThreeForm({ petData, setPetData, styles }) {
   return (
     <View>
@@ -31,6 +33,7 @@ export default function PhaseThreeForm({ petData, setPetData, styles }) {
 
       <TextInput
         placeholder="Vet Contact"
+        keyboardType="phone-pad"
         style={styles.input}
         value={petData.vet_contact}
         onChangeText={(text) =>
@@ -101,17 +104,43 @@ export default function PhaseThreeForm({ petData, setPetData, styles }) {
         }
       />
 
-      <TextInput
-        placeholder="Food Type"
-        style={styles.input}
-        value={petData.food_type}
-        onChangeText={(text) =>
-          setPetData({
-            ...petData,
-            food_type: text,
-          })
-        }
-      />
+      {/* FOOD TYPE */}
+
+      <Text
+        style={{
+          marginBottom: 5,
+          fontWeight: "600",
+        }}
+      >
+        Food Type <Text style={{ color: "red" }}>*</Text>
+      </Text>
+
+      <View
+        style={{
+          borderWidth: 1,
+          borderColor: "#ddd",
+          borderRadius: 10,
+          marginBottom: 12,
+          overflow: "hidden",
+          backgroundColor: "#fff",
+        }}
+      >
+        <Picker
+          selectedValue={petData.food_type}
+          onValueChange={(value) =>
+            setPetData({
+              ...petData,
+              food_type: value,
+            })
+          }
+        >
+          <Picker.Item label="Select Food Type" value="" />
+
+          <Picker.Item label="Veg" value="veg" />
+
+          <Picker.Item label="Non Veg" value="non_veg" />
+        </Picker>
+      </View>
 
       <TextInput
         placeholder="Food Brand"
@@ -150,7 +179,14 @@ export default function PhaseThreeForm({ petData, setPetData, styles }) {
       />
 
       <View style={{ marginBottom: 15 }}>
-        <Text>Friendly With Humans</Text>
+        <Text
+          style={{
+            fontWeight: "600",
+            marginBottom: 8,
+          }}
+        >
+          Friendly With Humans
+        </Text>
 
         <Switch
           value={petData.friendly_with_humans}
@@ -164,7 +200,14 @@ export default function PhaseThreeForm({ petData, setPetData, styles }) {
       </View>
 
       <View style={{ marginBottom: 15 }}>
-        <Text>Friendly With Dogs</Text>
+        <Text
+          style={{
+            fontWeight: "600",
+            marginBottom: 8,
+          }}
+        >
+          Friendly With Dogs
+        </Text>
 
         <Switch
           value={petData.friendly_with_dogs}
@@ -178,7 +221,14 @@ export default function PhaseThreeForm({ petData, setPetData, styles }) {
       </View>
 
       <View style={{ marginBottom: 15 }}>
-        <Text>Aggressive Behavior</Text>
+        <Text
+          style={{
+            fontWeight: "600",
+            marginBottom: 8,
+          }}
+        >
+          Aggressive Behavior
+        </Text>
 
         <Switch
           value={petData.aggressive_behavior}
@@ -192,7 +242,14 @@ export default function PhaseThreeForm({ petData, setPetData, styles }) {
       </View>
 
       <View style={{ marginBottom: 15 }}>
-        <Text>Treats Allowed</Text>
+        <Text
+          style={{
+            fontWeight: "600",
+            marginBottom: 8,
+          }}
+        >
+          Treats Allowed
+        </Text>
 
         <Switch
           value={petData.treats_allowed}
@@ -206,7 +263,14 @@ export default function PhaseThreeForm({ petData, setPetData, styles }) {
       </View>
 
       <View style={{ marginBottom: 15 }}>
-        <Text>Food Allergies</Text>
+        <Text
+          style={{
+            fontWeight: "600",
+            marginBottom: 8,
+          }}
+        >
+          Food Allergies
+        </Text>
 
         <Switch
           value={petData.food_allergies}
@@ -219,17 +283,19 @@ export default function PhaseThreeForm({ petData, setPetData, styles }) {
         />
       </View>
 
-      <TextInput
-        placeholder="Food Allergy Details"
-        style={styles.input}
-        value={petData.food_allergy_details}
-        onChangeText={(text) =>
-          setPetData({
-            ...petData,
-            food_allergy_details: text,
-          })
-        }
-      />
+      {petData.food_allergies && (
+        <TextInput
+          placeholder="Food Allergy Details"
+          style={styles.input}
+          value={petData.food_allergy_details}
+          onChangeText={(text) =>
+            setPetData({
+              ...petData,
+              food_allergy_details: text,
+            })
+          }
+        />
+      )}
     </View>
   );
 }
