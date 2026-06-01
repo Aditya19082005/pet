@@ -34,31 +34,25 @@ function MainApp() {
 
   const [loading, setLoading] =
     useState(true);
+    const [userRole, setUserRole] = useState(null);
 
   const [isLoggedIn, setIsLoggedIn] =
     useState(false);
 
   // CHECK LOGIN
-  const checkLogin = async () => {
+ const checkLogin = async () => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const role = await AsyncStorage.getItem("role"); // ✅ ADD THIS
 
-    try {
-
-      const token =
-        await AsyncStorage.getItem(
-          "token"
-        );
-
-      setIsLoggedIn(!!token);
-
-    } catch (error) {
-
-      console.log(error);
-
-    } finally {
-
-      setLoading(false);
-    }
-  };
+    setIsLoggedIn(!!token);
+    setUserRole(role); // ✅ ADD THIS
+  } catch (error) {
+    console.log(error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
 
@@ -104,21 +98,24 @@ function MainApp() {
         }}
       >
 
-        {isLoggedIn ? (
-
-        <Stack.Screen
-  name="RootDrawer"
-  component={DrawerNavigator}
-/>
-
-        ) : (
-
-          <Stack.Screen
-            name="Auth"
-            component={AuthNavigator}
-          />
-
-        )}
+      {isLoggedIn ? (
+  userRole === "boarding_owner" ? (
+    <Stack.Screen
+      name="BoardingOwner"
+      component={BoardingOwnerNavigator}
+    />
+  ) : (
+    <Stack.Screen
+      name="PetOwner"
+      component={DrawerNavigator}
+    />
+  )
+) : (
+  <Stack.Screen
+    name="Auth"
+    component={AuthNavigator}
+  />
+)}
 
       </Stack.Navigator>
 
