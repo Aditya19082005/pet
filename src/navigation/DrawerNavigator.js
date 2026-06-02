@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import BottomTabs from "./BottomTabs";
 
@@ -8,6 +8,7 @@ import {
   Pressable,
   Text,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
@@ -26,7 +27,41 @@ const Drawer = createDrawerNavigator();
 
 function CustomDrawerContent({ navigation }) {
   const { isDark, toggleTheme, theme } = useTheme();
+const [guestRole, setGuestRole] =
+  useState(null);
+  const [role, setRole] = useState(null);
+const [loading, setLoading] = useState(true);
+useEffect(() => {
+  const unsubscribe = navigation.addListener(
+    "focus",
+    async () => {
+      setLoading(true);
 
+      const guestRole =
+        await AsyncStorage.getItem(
+          "guestRole"
+        );
+
+      const role =
+        await AsyncStorage.getItem(
+          "role"
+        );
+
+      setGuestRole(guestRole);
+      setRole(role);
+
+      setLoading(false);
+    }
+  );
+
+  return unsubscribe;
+}, [navigation]);
+
+const handleSignIn = async () => {
+  await AsyncStorage.removeItem("guestRole");
+
+  setGuestRole(null);
+};
   // LOGOUT FUNCTION
   const handleLogout = async () => {
   try {
@@ -47,10 +82,12 @@ function CustomDrawerContent({ navigation }) {
     );
 
     // REMOVE TOKEN
-    await AsyncStorage.removeItem("token");
+  await AsyncStorage.removeItem("token");
+await AsyncStorage.removeItem("user");
+await AsyncStorage.removeItem("role");
+await AsyncStorage.removeItem("guestRole");
 
-    // REMOVE USER
-    await AsyncStorage.removeItem("user");
+setGuestRole(null);
 
     Alert.alert(
       "Success",
@@ -209,20 +246,59 @@ function CustomDrawerContent({ navigation }) {
      
 
       {/* Logout */}
-      <Pressable
-        style={[styles.item, { marginTop: 20 }]}
-        onPress={handleLogout}
-      >
-        <Ionicons
-          name="log-out-outline"
-          size={22}
-          color="red"
-        />
+  {loading ? (
+  <View
+    style={{
+      marginTop: 20,
+      alignItems: "center",
+    }}
+  >
+    <ActivityIndicator
+      size="small"
+      color="#6b21a8"
+    />
+  </View>
+) : guestRole ? (
+  <Pressable
+    style={[styles.item, { marginTop: 20 }]}
+    onPress={handleSignIn}
+  >
+    <Ionicons
+      name="log-in-outline"
+      size={22}
+      color="#6b21a8"
+    />
 
-        <Text style={[styles.text, { color: "red" }]}>
-          Logout
-        </Text>
-      </Pressable>
+    <Text
+      style={[
+        styles.text,
+        { color: "#6b21a8" },
+      ]}
+    >
+      Sign In / Sign Up
+    </Text>
+  </Pressable>
+) : role ? (
+  <Pressable
+    style={[styles.item, { marginTop: 20 }]}
+    onPress={handleLogout}
+  >
+    <Ionicons
+      name="log-out-outline"
+      size={22}
+      color="red"
+    />
+
+    <Text
+      style={[
+        styles.text,
+        { color: "red" },
+      ]}
+    >
+      Logout
+    </Text>
+  </Pressable>
+) : null}
     </View>
   );
 }

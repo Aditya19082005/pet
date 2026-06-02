@@ -792,6 +792,34 @@ formData.append(
       }}
       showsVerticalScrollIndicator={false}
     >
+      <View
+  style={{
+    height: 8,
+    backgroundColor: "#e5e7eb",
+    borderRadius: 10,
+    marginBottom: 20,
+  }}
+>
+  <View
+    style={{
+      height: 8,
+      width: `${(currentStep / 5) * 100}%`,
+      backgroundColor: "#6b21a8",
+      borderRadius: 10,
+    }}
+  />
+</View>
+
+<Text
+  style={{
+    textAlign: "center",
+    marginBottom: 20,
+    color: "#666",
+    fontWeight: "600",
+  }}
+>
+  Step {currentStep} of 5
+</Text>
   {/* =====================================
 STEP 1 - OWNER DETAILS
 ===================================== */}

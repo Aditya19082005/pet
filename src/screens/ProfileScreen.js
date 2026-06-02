@@ -16,21 +16,42 @@ const API_URL = "https://www.cgpisoftware.com/cheerytail";
 export default function ProfileScreen({ navigation }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
+const [isGuest, setIsGuest] =
+  useState(false);
   useEffect(() => {
     fetchProfile();
   }, []);
 
   const fetchProfile = async () => {
-    try {
-      const token = await AsyncStorage.getItem("token");
+  try {
+    const token =
+      await AsyncStorage.getItem(
+        "token"
+      );
 
-      console.log("TOKEN =>", token);
+    const guestRole =
+      await AsyncStorage.getItem(
+        "guestRole"
+      );
 
-      if (!token) {
-        setLoading(false);
-        return;
+    console.log(
+      "TOKEN =>",
+      token
+    );
+
+    console.log(
+      "GUEST ROLE =>",
+      guestRole
+    );
+
+    // GUEST USER
+    if (!token) {
+      if (guestRole) {
+        setIsGuest(true);
       }
+
+      return;
+    }
 
       const response = await fetch(
         `${API_URL}/api/user/profile`,
@@ -103,7 +124,76 @@ export default function ProfileScreen({ navigation }) {
       </View>
     );
   }
+if (isGuest) {
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 20,
+      }}
+    >
+      <Image
+        source={{
+          uri: "https://i.pravatar.cc/150?img=12",
+        }}
+        style={{
+          width: 100,
+          height: 100,
+          borderRadius: 50,
+          marginBottom: 20,
+        }}
+      />
 
+      <Text
+        style={{
+          fontSize: 24,
+          fontWeight: "bold",
+        }}
+      >
+        Guest User
+      </Text>
+
+      <Text
+        style={{
+          textAlign: "center",
+          marginTop: 10,
+          color: "#666",
+        }}
+      >
+        Sign in or create an account
+        to view your profile,
+        pets, bookings and other
+        personal information.
+      </Text>
+
+      <TouchableOpacity
+        style={{
+          backgroundColor: "#6b21a8",
+          paddingHorizontal: 30,
+          paddingVertical: 14,
+          borderRadius: 12,
+          marginTop: 25,
+        }}
+        onPress={async () => {
+          await AsyncStorage.removeItem(
+            "guestRole"
+          );
+        }}
+      >
+        <Text
+          style={{
+            color: "#fff",
+            fontWeight: "bold",
+          }}
+        >
+          Sign In / Sign Up
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
   return (
     <ScrollView
       style={styles.wrapper}

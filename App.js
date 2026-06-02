@@ -12,6 +12,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import DrawerNavigator from "./src/navigation/DrawerNavigator";
 import AuthNavigator from "./src/navigation/AuthNavigator";
+import BoardingOwnerNavigator from "./src/navigation/BoardingOwnerNavigator";
 
 import { ThemeProvider, useTheme } from "./src/context/ThemeContext";
 
@@ -24,18 +25,38 @@ function MainApp() {
 
   const [loading, setLoading] =
     useState(true);
-    const [userRole, setUserRole] = useState(null);
+    const [userRole, setUserRole] =
+  useState(null);
+
+const [guestRole, setGuestRole] =
+  useState(null);
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // CHECK LOGIN
  const checkLogin = async () => {
   try {
-    const token = await AsyncStorage.getItem("token");
-    const role = await AsyncStorage.getItem("role"); // ✅ ADD THIS
+    const token =
+      await AsyncStorage.getItem(
+        "token"
+      );
+
+    const role =
+      await AsyncStorage.getItem(
+        "role"
+      );
+
+    const guestRole =
+      await AsyncStorage.getItem(
+        "guestRole"
+      );
 
     setIsLoggedIn(!!token);
-    setUserRole(role); // ✅ ADD THIS
+
+    setUserRole(role);
+
+    setGuestRole(guestRole);
+
   } catch (error) {
     console.log(error);
   } finally {
@@ -76,7 +97,8 @@ function MainApp() {
         }}
       >
 
-      {isLoggedIn ? (
+   {isLoggedIn ? (
+
   userRole === "boarding_owner" ? (
     <Stack.Screen
       name="BoardingOwner"
@@ -88,11 +110,28 @@ function MainApp() {
       component={DrawerNavigator}
     />
   )
+
+) : guestRole === "boarding_owner" ? (
+
+  <Stack.Screen
+    name="GuestBoarding"
+    component={BoardingOwnerNavigator}
+  />
+
+) : guestRole === "pet_owner" ? (
+
+  <Stack.Screen
+    name="GuestPetOwner"
+    component={DrawerNavigator}
+  />
+
 ) : (
+
   <Stack.Screen
     name="Auth"
     component={AuthNavigator}
   />
+
 )}
 
       </Stack.Navigator>

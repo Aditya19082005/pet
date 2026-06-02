@@ -1058,6 +1058,7 @@ import OTPVerification from "./auth/OTPVerification";
 import RoleSelector from "./auth/RoleSelector";
 import PetOwnerRegister from "./auth/PetOwnerRegister";
 import BoardingOwnerRegister from "./auth/BoardingOwnerRegister";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function RegisterScreen({ navigation }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -1068,7 +1069,17 @@ export default function RegisterScreen({ navigation }) {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+const continueAsGuest = async (guestRole) => {
+  await AsyncStorage.setItem(
+    "guestRole",
+    guestRole
+  );
 
+  // navigation.reset({
+  //   index: 0,
+  //   routes: [{ name: "Root" }],
+  // });
+};
   const [otpType, setOtpType] = useState("");
 
   return (
@@ -1086,53 +1097,70 @@ export default function RegisterScreen({ navigation }) {
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
         >
+          <View style={{ marginBottom: 18 }}>
+  <Text
+    style={{
+      fontSize: 28,
+      fontWeight: "700",
+      color: "#111827",
+    }}
+  >
+    Welcome
+  </Text>
+
+  <Text
+    style={{
+      marginTop: 4,
+      color: "#6B7280",
+      fontSize: 15,
+    }}
+  >
+    Sign in to continue or create an account
+  </Text>
+</View>
           {step === "auth" && (
             <>
               {/* TABS */}
 
-              <View style={styles.tabs}>
-                <TouchableOpacity
-                  style={[
-                    styles.tabButton,
-                    isLogin &&
-                      styles.activeTab,
-                  ]}
-                  onPress={() =>
-                    setIsLogin(true)
-                  }
-                >
-                  <Text
-                    style={[
-                      styles.tabText,
-                      isLogin &&
-                        styles.activeTabText,
-                    ]}
-                  >
-                    Login
-                  </Text>
-                </TouchableOpacity>
+              {/* LOGIN / REGISTER TOGGLE */}
 
-                <TouchableOpacity
-                  style={[
-                    styles.tabButton,
-                    !isLogin &&
-                      styles.activeTab,
-                  ]}
-                  onPress={() =>
-                    setIsLogin(false)
-                  }
-                >
-                  <Text
-                    style={[
-                      styles.tabText,
-                      !isLogin &&
-                        styles.activeTabText,
-                    ]}
-                  >
-                    Register
-                  </Text>
-                </TouchableOpacity>
-              </View>
+<View style={styles.segmentContainer}>
+  <TouchableOpacity
+    activeOpacity={0.9}
+    style={[
+      styles.segmentButton,
+      isLogin && styles.segmentActive,
+    ]}
+    onPress={() => setIsLogin(true)}
+  >
+    <Text
+      style={[
+        styles.segmentText,
+        isLogin && styles.segmentActiveText,
+      ]}
+    >
+      Login
+    </Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity
+    activeOpacity={0.9}
+    style={[
+      styles.segmentButton,
+      !isLogin && styles.segmentActive,
+    ]}
+    onPress={() => setIsLogin(false)}
+  >
+    <Text
+      style={[
+        styles.segmentText,
+        !isLogin && styles.segmentActiveText,
+      ]}
+    >
+      Register
+    </Text>
+  </TouchableOpacity>
+</View>
 
               {/* LOGIN */}
 
@@ -1143,7 +1171,33 @@ export default function RegisterScreen({ navigation }) {
   setOtpType={setOtpType}
   setEmail={setEmail}
   setPassword={setPassword}
-/>
+/><View style={styles.guestContainer}>
+  <Text style={styles.guestTitle}>
+    Explore without account
+  </Text>
+
+  <TouchableOpacity
+    style={styles.guestButton}
+    onPress={() =>
+      continueAsGuest("pet_owner")
+    }
+  >
+    <Text style={styles.guestButtonText}>
+      Continue as Pet Owner Guest
+    </Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity
+    style={styles.guestButton}
+    onPress={() =>
+      continueAsGuest("boarding_owner")
+    }
+  >
+    <Text style={styles.guestButtonText}>
+      Continue as Boarding Owner Guest
+    </Text>
+  </TouchableOpacity>
+</View>
   </View>
 ) : (
   <View style={styles.authCard}>
@@ -1165,6 +1219,8 @@ export default function RegisterScreen({ navigation }) {
         setEmail={setEmail}
       />
     )}
+
+    
   </View>
 )}
             </>
@@ -1257,4 +1313,71 @@ const styles = StyleSheet.create({
 
     elevation: 3,
   },
+  guestContainer: {
+  marginTop: 25,
+  borderTopWidth: 1,
+  borderTopColor: "#eee",
+  paddingTop: 20,
+},
+
+guestTitle: {
+  textAlign: "center",
+  fontSize: 14,
+  color: "#666",
+  marginBottom: 15,
+},
+
+guestButton: {
+  backgroundColor: "#f3f4f6",
+  paddingVertical: 14,
+  borderRadius: 12,
+  marginBottom: 10,
+  alignItems: "center",
+},
+
+guestButtonText: {
+  fontSize: 15,
+  fontWeight: "600",
+  color: "#374151",
+},
+segmentContainer: {
+  flexDirection: "row",
+  backgroundColor: "#ECE7F5",
+  borderRadius: 16,
+  padding: 4,
+  marginBottom: 24,
+},
+
+segmentButton: {
+  flex: 1,
+  height: 48,
+  borderRadius: 12,
+  justifyContent: "center",
+  alignItems: "center",
+},
+
+segmentActive: {
+  backgroundColor: "#FFFFFF",
+
+  shadowColor: "#000",
+  shadowOffset: {
+    width: 0,
+    height: 2,
+  },
+  shadowOpacity: 0.08,
+  shadowRadius: 4,
+
+  elevation: 2,
+},
+
+segmentText: {
+  fontSize: 15,
+  fontWeight: "600",
+  color: "#6B7280",
+},
+
+segmentActiveText: {
+  color: "#6b21a8",
+  fontWeight: "700",
+},
 });
