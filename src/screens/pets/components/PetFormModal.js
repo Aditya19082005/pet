@@ -27,6 +27,7 @@ export default function PetFormModal({
   setPetData,
   selectedImages,
   pickImages,
+  removeImage, // NEW
   loading,
   styles,
   onClose,
@@ -57,6 +58,8 @@ export default function PetFormModal({
               setPetData={setPetData}
               styles={styles}
               pickImages={pickImages}
+              selectedImages={selectedImages}
+              removeImage={removeImage}
             />
           )}
 
@@ -74,26 +77,6 @@ export default function PetFormModal({
               setPetData={setPetData}
               styles={styles}
             />
-          )}
-
-          {/* IMAGE PREVIEW */}
-
-          {selectedImages.length > 0 && (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={{ marginVertical: 15 }}
-            >
-              {selectedImages.map((img, index) => (
-                <Image
-                  key={index}
-                  source={{
-                    uri: img.uri || img.image_url || img.url || img.pet_image,
-                  }}
-                  style={styles.previewImage}
-                />
-              ))}
-            </ScrollView>
           )}
 
           {/* BUTTONS */}
