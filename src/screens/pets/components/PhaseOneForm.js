@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+} from "react-native";
 
 import { Picker } from "@react-native-picker/picker";
 
@@ -11,6 +18,8 @@ export default function PhaseOneForm({
   setPetData,
   styles,
   pickImages,
+  selectedImages,
+  removeImage,
 }) {
   const [showDobPicker, setShowDobPicker] = useState(false);
 
@@ -285,9 +294,89 @@ export default function PhaseOneForm({
 
       {/* IMAGES */}
 
-      <TouchableOpacity style={styles.imageBtn} onPress={pickImages}>
-        <Text style={styles.imageBtnText}>Pick Images</Text>
+      <Text
+        style={{
+          marginBottom: 5,
+          fontWeight: "600",
+        }}
+      >
+        Pet Images
+      </Text>
+
+      <TouchableOpacity
+        onPress={pickImages}
+        style={{
+          borderWidth: 1,
+          borderColor: "#ddd",
+          borderRadius: 10,
+          paddingVertical: 14,
+          paddingHorizontal: 15,
+          marginBottom: 12,
+          backgroundColor: "#fafafa",
+        }}
+      >
+        <Text
+          style={{
+            color: "#666",
+            fontSize: 15,
+          }}
+        >
+        Select Images
+        </Text>
       </TouchableOpacity>
+
+      {selectedImages?.length > 0 && (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={{ marginTop: 15 }}
+        >
+          {selectedImages.map((img, index) => (
+            <View
+              key={index}
+              style={{
+                marginRight: 10,
+                position: "relative",
+              }}
+            >
+              <Image
+                source={{
+                  uri: img.uri || img.image_url || img.url || img.pet_image,
+                }}
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: 10,
+                }}
+              />
+
+              <TouchableOpacity
+                onPress={() => removeImage(index)}
+                style={{
+                  position: "absolute",
+                  top: -6,
+                  right: -6,
+                  width: 26,
+                  height: 26,
+                  borderRadius: 13,
+                  backgroundColor: "red",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    color: "#fff",
+                    fontWeight: "bold",
+                  }}
+                >
+                  ✕
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </ScrollView>
+      )}
     </View>
   );
 }

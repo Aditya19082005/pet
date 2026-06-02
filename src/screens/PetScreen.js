@@ -31,6 +31,7 @@ import {
 import {
   fetchPetImagesApi,
   uploadPetImagesApi,
+  deletePetImageApi,
 } from "./pets/services/imageService";
 
 export default function PetScreen({ navigation }) {
@@ -148,6 +149,37 @@ export default function PetScreen({ navigation }) {
     }
   };
 
+  // REMOVE IMAGE
+  const removeImage = async (indexToRemove) => {
+    try {
+      const image = selectedImages[indexToRemove];
+
+      console.log("DELETE IMAGE =", image);
+
+      if (image?.isExisting) {
+        const imageId = image.image_id || image.id;
+
+        console.log("IMAGE ID =", imageId);
+
+        const success = await deletePetImageApi(imageId);
+
+        console.log("DELETE RESPONSE =", success);
+
+        if (!success) {
+          Alert.alert("Error", "Failed to delete image");
+          return;
+        }
+      }
+
+      setSelectedImages((prev) =>
+        prev.filter((_, index) => index !== indexToRemove),
+      );
+    } catch (error) {
+      console.log("REMOVE ERROR =", error);
+      Alert.alert("Error", "Failed to remove image");
+    }
+  };
+
   // IMAGE PICKER
   const pickImages = async () => {
     try {
@@ -167,7 +199,7 @@ export default function PetScreen({ navigation }) {
       });
 
       if (!result.canceled) {
-        setSelectedImages(result.assets);
+        setSelectedImages((prev) => [...prev, ...result.assets]);
       }
     } catch (error) {
       console.log(error);
@@ -378,7 +410,9 @@ export default function PetScreen({ navigation }) {
 
       setSelectedImages(
         existingImages.map((img) => ({
+          ...img,
           uri: img.uri || img.image_url || img.url || img.pet_image,
+          isExisting: true,
         })),
       );
 
@@ -584,6 +618,7 @@ export default function PetScreen({ navigation }) {
         setPetData={setPetData}
         selectedImages={selectedImages}
         pickImages={pickImages}
+        removeImage={removeImage}
         loading={loading}
         styles={styles}
         onClose={closeModal}

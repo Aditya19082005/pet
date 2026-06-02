@@ -85,3 +85,24 @@ export const uploadPetImagesApi = async (petId, selectedImages) => {
 
   return response.ok;
 };
+
+export const deletePetImageApi = async (imageId) => {
+  const token = await AsyncStorage.getItem("token");
+
+  console.log("DELETE URL =", `${IMAGE_API_URL}/delete/${imageId}`);
+
+  const response = await fetch(`${IMAGE_API_URL}/delete/${imageId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/json",
+    },
+  });
+
+  const text = await response.text();
+
+  console.log("DELETE STATUS =", response.status);
+  console.log("DELETE RESPONSE =", text);
+
+  return response.ok;
+};
