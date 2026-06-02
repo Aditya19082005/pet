@@ -32,7 +32,7 @@ export default function BoardingDetailsScreen({
   const [loading, setLoading] =
     useState(true);
 
-    
+         
   useEffect(() => {
     fetchDetails();
   }, [centerId]);

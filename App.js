@@ -22,22 +22,26 @@ const Stack = createNativeStackNavigator();
 function MainApp() {
   const { isDark } = useTheme();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] =
+    useState(true);
+    const [userRole, setUserRole] = useState(null);
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // CHECK LOGIN
-  const checkLogin = async () => {
-    try {
-      const token = await AsyncStorage.getItem("token");
+ const checkLogin = async () => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const role = await AsyncStorage.getItem("role"); // ✅ ADD THIS
 
-      setIsLoggedIn(!!token);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setIsLoggedIn(!!token);
+    setUserRole(role); // ✅ ADD THIS
+  } catch (error) {
+    console.log(error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     checkLogin();
@@ -71,12 +75,26 @@ function MainApp() {
           headerShown: false,
         }}
       >
-        {isLoggedIn ? (
-          <Stack.Screen name="RootDrawer" component={DrawerNavigator} />
-        ) : (
-          <Stack.Screen name="Auth" component={AuthNavigator} />
-        )}
-        
+
+      {isLoggedIn ? (
+  userRole === "boarding_owner" ? (
+    <Stack.Screen
+      name="BoardingOwner"
+      component={BoardingOwnerNavigator}
+    />
+  ) : (
+    <Stack.Screen
+      name="PetOwner"
+      component={DrawerNavigator}
+    />
+  )
+) : (
+  <Stack.Screen
+    name="Auth"
+    component={AuthNavigator}
+  />
+)}
+
       </Stack.Navigator>
     </NavigationContainer>
   );

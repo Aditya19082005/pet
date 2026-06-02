@@ -206,25 +206,7 @@ function CustomDrawerContent({ navigation }) {
         </Text>
       </Pressable>
 
-      {/* Register / Login */}
-      {/* <Pressable
-        style={styles.item}
-        onPress={() =>
-          navigation.navigate("Main", {
-            screen: "Register",
-          })
-        }
-      >
-        <Ionicons
-          name="person-add-outline"
-          size={22}
-          color={theme.text}
-        />
-
-        <Text style={[styles.text, { color: theme.text }]}>
-          Register / Login
-        </Text>
-      </Pressable> */}
+     
 
       {/* Logout */}
       <Pressable
