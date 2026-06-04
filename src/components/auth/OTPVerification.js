@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 
 import {
@@ -12,6 +13,8 @@ import {
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { PasswordInput } from "../inputs/PasswordInput";
+
 export default function OTPVerification({
   email,
   otpType,
@@ -19,123 +22,281 @@ export default function OTPVerification({
   onSuccess,
   onBack,
 }) {
-  const [otp, setOtp] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  const handleVerifyOtp = async () => {
-    if (!otp) {
-      Alert.alert("Validation", "Please enter OTP");
-      return;
-    }
+  const [otp, setOtp] =
+    useState("");
 
-    try {
-      setLoading(true);
+  const [newPassword, setNewPassword] =
+    useState("");
 
-      const endpoint =
-        otpType === "login"
-          ? "https://www.cgpisoftware.com/cheerytail/api/auth/verify-login-otp"
-          : "https://www.cgpisoftware.com/cheerytail/api/auth/verify-email-otp";
+  const [loading, setLoading] =
+    useState(false);
 
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          otp,
-        }),
-      });
+  const handleVerifyOtp =
+    async () => {
 
-      const result = await response.json();
+      if (!otp) {
 
-      console.log("VERIFY OTP =>", result);
+        Alert.alert(
+          "Validation",
+          "Please enter OTP"
+        );
 
-      if (result.status === true || result.status === "success") {
-        const token =
-          result?.data?.token || result?.token;
+        return;
+      }
 
-        const user =
-          result?.data?.user || result?.user;
+      try {
 
-           if (user?.role) {
-  await AsyncStorage.setItem("role", user.role);
-}
-        // ✅ STORE TOKEN (this is what triggers Home screen)
-        if (token) {
-          await AsyncStorage.setItem("token", token);
+        setLoading(true);
+
+        // ====================================
+        // RESET PASSWORD FLOW
+        // ====================================
+
+        if (
+          otpType ===
+          "reset_password"
+        ) {
+
+          if (!newPassword) {
+
+            Alert.alert(
+              "Validation",
+              "Please enter new password"
+            );
+
+            return;
+          }
+
+          const response =
+            await fetch(
+              "https://www.cgpisoftware.com/cheerytail/api/auth/reset-password",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type":
+                    "application/json",
+                },
+                body: JSON.stringify({
+                  email,
+                  otp,
+                  new_password:
+                    newPassword,
+                }),
+              }
+            );
+
+          const result =
+            await response.json();
+
+          console.log(
+            "RESET PASSWORD =>",
+            result
+          );
+
+          if (
+            result.status === true ||
+            result.status === "success"
+          ) {
+
+            Alert.alert(
+              "Success",
+              "Password reset successfully"
+            );
+
+            onBack?.();
+
+          } else {
+
+            Alert.alert(
+              "Error",
+              result.message ||
+                "Failed to reset password"
+            );
+          }
+
+          return;
         }
 
-        if (user) {
-          await AsyncStorage.setItem(
-            "user",
-            JSON.stringify(user)
+        // ====================================
+        // LOGIN / REGISTER FLOW
+        // ====================================
+
+        const endpoint =
+          otpType === "login"
+            ? "https://www.cgpisoftware.com/cheerytail/api/auth/verify-login-otp"
+            : "https://www.cgpisoftware.com/cheerytail/api/auth/verify-email-otp";
+
+        const response =
+          await fetch(
+            endpoint,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type":
+                  "application/json",
+              },
+              body: JSON.stringify({
+                email,
+                otp,
+              }),
+            }
+          );
+
+        const result =
+          await response.json();
+
+        console.log(
+          "VERIFY OTP =>",
+          result
+        );
+
+        if (
+          result.status === true ||
+          result.status === "success"
+        ) {
+
+          const token =
+            result?.data?.token ||
+            result?.token;
+
+          const user =
+            result?.data?.user ||
+            result?.user;
+
+          if (user?.role) {
+
+            await AsyncStorage.setItem(
+              "role",
+              user.role
+            );
+          }
+
+          if (token) {
+
+            await AsyncStorage.setItem(
+              "token",
+              token
+            );
+          }
+
+          if (user) {
+
+            await AsyncStorage.setItem(
+              "user",
+              JSON.stringify(user)
+            );
+          }
+
+          Alert.alert(
+            "Success",
+            "OTP Verified"
+          );
+
+          setTimeout(() => {
+
+            onSuccess?.();
+
+          }, 100);
+
+        } else {
+
+          Alert.alert(
+            "Error",
+            result.message ||
+              "Invalid OTP"
           );
         }
 
-        Alert.alert("Success", "OTP Verified");
+      } catch (error) {
 
-        // 🔥 IMPORTANT FIX: trigger navigation AFTER storage is complete
-        setTimeout(() => {
-          onSuccess?.();
-        }, 100);
-      } else {
+        console.log(error);
+
         Alert.alert(
           "Error",
-          result.message || "Invalid OTP"
+          "Something went wrong"
         );
+
+      } finally {
+
+        setLoading(false);
       }
-    } catch (error) {
-      console.log(error);
-      Alert.alert("Error", "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  const handleResendOtp = async () => {
-    try {
-      setLoading(true);
+  const handleResendOtp =
+    async () => {
 
-      const endpoint =
-        otpType === "login"
-          ? "https://www.cgpisoftware.com/cheerytail/api/auth/login"
-          : "https://www.cgpisoftware.com/cheerytail/api/auth/send-email-otp";
+      try {
 
-      const payload =
-        otpType === "login"
-          ? {
-              email,
-              password,
+        setLoading(true);
+
+        const endpoint =
+          otpType === "login"
+            ? "https://www.cgpisoftware.com/cheerytail/api/auth/login"
+            : otpType ===
+              "reset_password"
+            ? "https://www.cgpisoftware.com/cheerytail/api/auth/forgot-password"
+            : "https://www.cgpisoftware.com/cheerytail/api/auth/send-email-otp";
+
+        const payload =
+          otpType === "login"
+            ? {
+                email,
+                password,
+              }
+            : {
+                email,
+              };
+
+        const response =
+          await fetch(
+            endpoint,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type":
+                  "application/json",
+              },
+              body: JSON.stringify(
+                payload
+              ),
             }
-          : {
-              email,
-            };
+          );
 
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+        const result =
+          await response.json();
 
-      const result = await response.json();
+        console.log(
+          "RESEND OTP =>",
+          result
+        );
 
-      console.log("RESEND OTP =>", result);
+        Alert.alert(
+          "Success",
+          "OTP Resent Successfully"
+        );
 
-      Alert.alert("Success", "OTP Resent Successfully");
-    } catch (error) {
-      console.log(error);
-      Alert.alert("Error", "Failed to resend OTP");
-    } finally {
-      setLoading(false);
-    }
-  };
+      } catch (error) {
+
+        console.log(error);
+
+        Alert.alert(
+          "Error",
+          "Failed to resend OTP"
+        );
+
+      } finally {
+
+        setLoading(false);
+      }
+    };
 
   return (
     <View>
-      <Text style={styles.heading}>Verify OTP</Text>
+
+      <Text style={styles.heading}>
+        Verify OTP
+      </Text>
 
       <Text style={styles.subText}>
         OTP sent to{"\n"}
@@ -151,8 +312,25 @@ export default function OTPVerification({
         onChangeText={setOtp}
       />
 
-      <TouchableOpacity onPress={handleResendOtp}>
-        <Text style={styles.resendText}>Resend OTP</Text>
+      {otpType ===
+        "reset_password" && (
+        <PasswordInput
+          label="New Password"
+          value={newPassword}
+          onChangeText={
+            setNewPassword
+          }
+        />
+      )}
+
+      <TouchableOpacity
+        onPress={handleResendOtp}
+      >
+        <Text
+          style={styles.resendText}
+        >
+          Resend OTP
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -163,16 +341,27 @@ export default function OTPVerification({
         {loading ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={styles.buttonText}>Verify OTP</Text>
+          <Text
+            style={
+              styles.buttonText
+            }
+          >
+            Verify OTP
+          </Text>
         )}
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={onBack}>
-        <Text style={styles.backText}>Back</Text>
+      <TouchableOpacity
+        onPress={onBack}
+      >
+        <Text style={styles.backText}>
+          Back
+        </Text>
       </TouchableOpacity>
+
     </View>
   );
-}
+};
 
 const styles =
   StyleSheet.create({
@@ -223,5 +412,5 @@ const styles =
       marginTop: 15,
       color: "#666",
     },
-
 });
+

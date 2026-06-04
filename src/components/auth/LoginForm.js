@@ -1,4 +1,6 @@
+
 import React, { useState } from "react";
+
 import {
   View,
   Text,
@@ -8,24 +10,28 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from "react-native";
+
 import { PasswordInput } from "../inputs/PasswordInput";
+
 export default function LoginForm({
   setStep,
   setOtpType,
   setEmail,
   setPassword,
 }) {
- const [email, setEmailInput] = useState("");
+  const [email, setEmailInput] =
+    useState("");
 
-  const [password, setPasswordInput] = useState("");
+  const [
+    password,
+    setPasswordInput,
+  ] = useState("");
 
   const [loading, setLoading] =
     useState(false);
 
   const handleLogin = async () => {
-
     if (!email || !password) {
-
       Alert.alert(
         "Validation",
         "Please enter email and password"
@@ -35,7 +41,6 @@ export default function LoginForm({
     }
 
     try {
-
       setLoading(true);
 
       const response =
@@ -62,27 +67,29 @@ export default function LoginForm({
         result
       );
 
-    if (
-  result.status === true ||
-  result.status === "success"
-) {
-  Alert.alert("Success", "OTP Sent Successfully");
+      if (
+        result.status === true ||
+        result.status === "success"
+      ) {
+        Alert.alert(
+          "Success",
+          "OTP Sent Successfully"
+        );
 
-  // FIX: ensure parent state is set correctly
-  setEmail?.(email);
-  setPassword?.(password);
-  setOtpType("login");
+        setEmail?.(email);
 
-  // small async safety delay (prevents race issues)
-  setTimeout(() => {
-    setStep("otp");
-  }, 50);
-}else if (
+        setPassword?.(password);
+
+        setOtpType("login");
+
+        setTimeout(() => {
+          setStep("otp");
+        }, 50);
+      } else if (
         result.message
           ?.toLowerCase()
           .includes("verify email")
       ) {
-
         const otpResponse =
           await fetch(
             "https://www.cgpisoftware.com/cheerytail/api/auth/send-email-otp",
@@ -110,40 +117,110 @@ export default function LoginForm({
           "Verification OTP sent to your email"
         );
 
-      setEmail?.(email);
-setPassword?.(password);
-setOtpType("register");
+        setEmail?.(email);
 
-setTimeout(() => {
-  setStep("otp");
-}, 50);
+        setPassword?.(password);
+
+        setOtpType("register");
+
+        setTimeout(() => {
+          setStep("otp");
+        }, 50);
       } else {
-
         Alert.alert(
           "Error",
           result.message ||
             "Invalid Credentials"
         );
       }
-
     } catch (error) {
-
       console.log(error);
 
       Alert.alert(
         "Error",
         "Something went wrong"
       );
-
     } finally {
-
       setLoading(false);
     }
   };
 
+  const handleForgotPassword =
+    async () => {
+      if (!email) {
+        Alert.alert(
+          "Validation",
+          "Please enter your email"
+        );
+
+        return;
+      }
+
+      try {
+        setLoading(true);
+
+        const response =
+          await fetch(
+            "https://www.cgpisoftware.com/cheerytail/api/auth/forgot-password",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type":
+                  "application/json",
+              },
+              body: JSON.stringify({
+                email,
+              }),
+            }
+          );
+
+        const result =
+          await response.json();
+
+        console.log(
+          "FORGOT PASSWORD =>",
+          result
+        );
+
+        if (
+          result.status === true ||
+          result.status === "success"
+        ) {
+          Alert.alert(
+            "Success",
+            "Reset OTP sent to email"
+          );
+
+          setEmail?.(email);
+
+          setOtpType(
+            "reset_password"
+          );
+
+          setTimeout(() => {
+            setStep("otp");
+          }, 50);
+        } else {
+          Alert.alert(
+            "Error",
+            result.message ||
+              "Failed to send OTP"
+          );
+        }
+      } catch (error) {
+        console.log(error);
+
+        Alert.alert(
+          "Error",
+          "Something went wrong"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
   return (
     <View>
-
       <Text style={styles.heading}>
         Login
       </Text>
@@ -157,19 +234,34 @@ setTimeout(() => {
       />
 
       <PasswordInput
-  label="Password"
-  value={password}
-  onChangeText={setPasswordInput}
-/>
+        label="Password"
+        value={password}
+        onChangeText={
+          setPasswordInput
+        }
+      />
+
+      <TouchableOpacity
+        onPress={
+          handleForgotPassword
+        }
+      >
+        <Text
+          style={
+            styles.forgotText
+          }
+        >
+          Forgot Password?
+        </Text>
+      </TouchableOpacity>
+
       <TouchableOpacity
         style={styles.button}
         onPress={handleLogin}
         disabled={loading}
       >
         {loading ? (
-          <ActivityIndicator
-            color="#fff"
-          />
+          <ActivityIndicator color="#fff" />
         ) : (
           <Text
             style={
@@ -180,14 +272,12 @@ setTimeout(() => {
           </Text>
         )}
       </TouchableOpacity>
-
     </View>
   );
 }
 
 const styles =
   StyleSheet.create({
-
     heading: {
       fontSize: 24,
       fontWeight: "700",
@@ -204,6 +294,13 @@ const styles =
         "#fff",
     },
 
+    forgotText: {
+      textAlign: "right",
+      color: "#6b21a8",
+      fontWeight: "600",
+      marginBottom: 10,
+    },
+
     button: {
       backgroundColor:
         "#6b21a8",
@@ -217,5 +314,5 @@ const styles =
       color: "#fff",
       fontWeight: "700",
     },
+  });
 
-});
