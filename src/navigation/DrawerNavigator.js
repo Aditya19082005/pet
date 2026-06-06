@@ -27,89 +27,67 @@ const Drawer = createDrawerNavigator();
 
 function CustomDrawerContent({ navigation }) {
   const { isDark, toggleTheme, theme } = useTheme();
-const [guestRole, setGuestRole] =
-  useState(null);
+  const [guestRole, setGuestRole] = useState(null);
   const [role, setRole] = useState(null);
-const [loading, setLoading] = useState(true);
-useEffect(() => {
-  const unsubscribe = navigation.addListener(
-    "focus",
-    async () => {
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", async () => {
       setLoading(true);
 
-      const guestRole =
-        await AsyncStorage.getItem(
-          "guestRole"
-        );
+      const guestRole = await AsyncStorage.getItem("guestRole");
 
-      const role =
-        await AsyncStorage.getItem(
-          "role"
-        );
+      const role = await AsyncStorage.getItem("role");
 
       setGuestRole(guestRole);
       setRole(role);
 
       setLoading(false);
-    }
-  );
+    });
 
-  return unsubscribe;
-}, [navigation]);
+    return unsubscribe;
+  }, [navigation]);
 
-const handleSignIn = async () => {
-  await AsyncStorage.removeItem("guestRole");
+  const handleSignIn = async () => {
+    await AsyncStorage.removeItem("guestRole");
 
-  setGuestRole(null);
-};
+    setGuestRole(null);
+  };
   // LOGOUT FUNCTION
   const handleLogout = async () => {
-  try {
+    try {
+      // GET TOKEN
+      const token = await AsyncStorage.getItem("token");
 
-    // GET TOKEN
-    const token = await AsyncStorage.getItem("token");
-
-    // API LOGOUT
-    await fetch(
-      "https://www.cgpisoftware.com/cheerytail/api/auth/logout",
-      {
+      // API LOGOUT
+      await fetch("https://www.cgpisoftware.com/cheerytail/api/auth/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      }
-    );
+      });
 
-    // REMOVE TOKEN
-  await AsyncStorage.removeItem("token");
-await AsyncStorage.removeItem("user");
-await AsyncStorage.removeItem("role");
-await AsyncStorage.removeItem("guestRole");
+      // REMOVE TOKEN
+      await AsyncStorage.removeItem("token");
+      await AsyncStorage.removeItem("user");
+      await AsyncStorage.removeItem("role");
+      await AsyncStorage.removeItem("guestRole");
 
-setGuestRole(null);
+      setGuestRole(null);
 
-    Alert.alert(
-      "Success",
-      "Logged out successfully"
-    );
+      Alert.alert("Success", "Logged out successfully");
 
-    // RESET NAVIGATION
-    // navigation.reset({
-    //   index: 0,
-    //   routes: [{ name: "Auth" }],
-    // });
+      // RESET NAVIGATION
+      // navigation.reset({
+      //   index: 0,
+      //   routes: [{ name: "Auth" }],
+      // });
+    } catch (error) {
+      console.log(error);
 
-  } catch (error) {
-
-    console.log(error);
-
-    Alert.alert(
-      "Error",
-      "Logout failed"
-    );
-  }
-};
+      Alert.alert("Error", "Logout failed");
+    }
+  };
 
   return (
     <View
@@ -128,15 +106,9 @@ setGuestRole(null);
           })
         }
       >
-        <Ionicons
-          name="home-outline"
-          size={22}
-          color={theme.text}
-        />
+        <Ionicons name="home-outline" size={22} color={theme.text} />
 
-        <Text style={[styles.text, { color: theme.text }]}>
-          Home
-        </Text>
+        <Text style={[styles.text, { color: theme.text }]}>Home</Text>
       </Pressable>
 
       {/* Profile */}
@@ -148,15 +120,9 @@ setGuestRole(null);
           })
         }
       >
-        <Ionicons
-          name="person-outline"
-          size={22}
-          color={theme.text}
-        />
+        <Ionicons name="person-outline" size={22} color={theme.text} />
 
-        <Text style={[styles.text, { color: theme.text }]}>
-          Profile
-        </Text>
+        <Text style={[styles.text, { color: theme.text }]}>Profile</Text>
       </Pressable>
 
       {/* Notifications */}
@@ -164,22 +130,13 @@ setGuestRole(null);
         style={styles.item}
         onPress={() => navigation.navigate("Notification")}
       >
-        <Ionicons
-          name="notifications-outline"
-          size={22}
-          color={theme.text}
-        />
+        <Ionicons name="notifications-outline" size={22} color={theme.text} />
 
-        <Text style={[styles.text, { color: theme.text }]}>
-          Notifications
-        </Text>
+        <Text style={[styles.text, { color: theme.text }]}>Notifications</Text>
       </Pressable>
 
       {/* Theme Toggle */}
-      <Pressable
-        style={styles.item}
-        onPress={toggleTheme}
-      >
+      <Pressable style={styles.item} onPress={toggleTheme}>
         <Ionicons
           name={isDark ? "moon" : "sunny"}
           size={22}
@@ -194,9 +151,7 @@ setGuestRole(null);
       {/* Privacy Policy */}
       <Pressable
         style={styles.item}
-        onPress={() =>
-          navigation.navigate("PrivacyPolicy")
-        }
+        onPress={() => navigation.navigate("PrivacyPolicy")}
       >
         <Ionicons
           name="shield-checkmark-outline"
@@ -204,9 +159,7 @@ setGuestRole(null);
           color={theme.text}
         />
 
-        <Text style={[styles.text, { color: theme.text }]}>
-          Privacy Policy
-        </Text>
+        <Text style={[styles.text, { color: theme.text }]}>Privacy Policy</Text>
       </Pressable>
 
       {/* Terms */}
@@ -214,91 +167,52 @@ setGuestRole(null);
         style={styles.item}
         onPress={() => navigation.navigate("Terms")}
       >
-        <Ionicons
-          name="document-text-outline"
-          size={22}
-          color={theme.text}
-        />
+        <Ionicons name="document-text-outline" size={22} color={theme.text} />
 
-        <Text style={[styles.text, { color: theme.text }]}>
-          Terms of Use
-        </Text>
+        <Text style={[styles.text, { color: theme.text }]}>Terms of Use</Text>
       </Pressable>
 
       {/* Refund Policy */}
       <Pressable
         style={styles.item}
-        onPress={() =>
-          navigation.navigate("RefundPolicy")
-        }
+        onPress={() => navigation.navigate("RefundPolicy")}
       >
-        <Ionicons
-          name="cash-outline"
-          size={22}
-          color={theme.text}
-        />
+        <Ionicons name="cash-outline" size={22} color={theme.text} />
 
-        <Text style={[styles.text, { color: theme.text }]}>
-          Refund Policy
-        </Text>
+        <Text style={[styles.text, { color: theme.text }]}>Refund Policy</Text>
       </Pressable>
 
-     
-
       {/* Logout */}
-  {loading ? (
-  <View
-    style={{
-      marginTop: 20,
-      alignItems: "center",
-    }}
-  >
-    <ActivityIndicator
-      size="small"
-      color="#6b21a8"
-    />
-  </View>
-) : guestRole ? (
-  <Pressable
-    style={[styles.item, { marginTop: 20 }]}
-    onPress={handleSignIn}
-  >
-    <Ionicons
-      name="log-in-outline"
-      size={22}
-      color="#6b21a8"
-    />
+      {loading ? (
+        <View
+          style={{
+            marginTop: 20,
+            alignItems: "center",
+          }}
+        >
+          <ActivityIndicator size="small" color="#6b21a8" />
+        </View>
+      ) : guestRole ? (
+        <Pressable
+          style={[styles.item, { marginTop: 20 }]}
+          onPress={handleSignIn}
+        >
+          <Ionicons name="log-in-outline" size={22} color="#6b21a8" />
 
-    <Text
-      style={[
-        styles.text,
-        { color: "#6b21a8" },
-      ]}
-    >
-      Sign In / Sign Up
-    </Text>
-  </Pressable>
-) : role ? (
-  <Pressable
-    style={[styles.item, { marginTop: 20 }]}
-    onPress={handleLogout}
-  >
-    <Ionicons
-      name="log-out-outline"
-      size={22}
-      color="red"
-    />
+          <Text style={[styles.text, { color: "#6b21a8" }]}>
+            Sign In / Sign Up
+          </Text>
+        </Pressable>
+      ) : role ? (
+        <Pressable
+          style={[styles.item, { marginTop: 20 }]}
+          onPress={handleLogout}
+        >
+          <Ionicons name="log-out-outline" size={22} color="red" />
 
-    <Text
-      style={[
-        styles.text,
-        { color: "red" },
-      ]}
-    >
-      Logout
-    </Text>
-  </Pressable>
-) : null}
+          <Text style={[styles.text, { color: "red" }]}>Logout</Text>
+        </Pressable>
+      ) : null}
     </View>
   );
 }
@@ -308,9 +222,7 @@ export default function DrawerNavigator() {
 
   return (
     <Drawer.Navigator
-      drawerContent={(props) => (
-        <CustomDrawerContent {...props} />
-      )}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={({ navigation }) => ({
         headerStyle: {
           backgroundColor: theme.background,
@@ -341,27 +253,19 @@ export default function DrawerNavigator() {
             onPress={() => navigation.toggleDrawer()}
             style={{
               marginLeft: 15,
-              backgroundColor: isDark
-                ? "#1f2937"
-                : "#f2f2f2",
+              backgroundColor: isDark ? "#1f2937" : "#f2f2f2",
               padding: 8,
               borderRadius: 10,
             }}
           >
-            <Ionicons
-              name="menu"
-              size={28}
-              color={theme.text}
-            />
+            <Ionicons name="menu" size={28} color={theme.text} />
           </Pressable>
         ),
 
         headerRight: () => (
           <Pressable
             style={{ marginRight: 15 }}
-            onPress={() =>
-              navigation.navigate("Notification")
-            }
+            onPress={() => navigation.navigate("Notification")}
           >
             <Ionicons
               name="notifications-outline"
@@ -383,35 +287,23 @@ export default function DrawerNavigator() {
         }}
       />
       <Drawer.Screen
-  name="Boarding"
-  component={BoardingStack}
-  options={{
-    drawerItemStyle: {
-      display: "none",
-    },
-  }}
-/>
+        name="Boarding"
+        component={BoardingStack}
+        options={{
+          drawerItemStyle: {
+            display: "none",
+          },
+        }}
+      />
 
       {/* OTHER SCREENS */}
-      <Drawer.Screen
-        name="Notification"
-        component={NotificationScreen}
-      />
+      <Drawer.Screen name="Notification" component={NotificationScreen} />
 
-      <Drawer.Screen
-        name="PrivacyPolicy"
-        component={PrivacyPolicyScreen}
-      />
+      <Drawer.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
 
-      <Drawer.Screen
-        name="RefundPolicy"
-        component={RefundPolicyScreen}
-      />
+      <Drawer.Screen name="RefundPolicy" component={RefundPolicyScreen} />
 
-      <Drawer.Screen
-        name="Terms"
-        component={TermsOfUseScreen}
-      />
+      <Drawer.Screen name="Terms" component={TermsOfUseScreen} />
     </Drawer.Navigator>
   );
 }
