@@ -2,6 +2,8 @@ import React, { useState } from "react";
 
 import { View, TextInput, Switch, Text, TouchableOpacity } from "react-native";
 
+import { Ionicons } from "@expo/vector-icons";
+
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 export default function PhaseTwoForm({ petData, setPetData, styles }) {
@@ -66,7 +68,7 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
       <TextInput
         placeholder="Vaccination Details"
         multiline
-        style={styles.input}
+        style={[styles.input, { minHeight: 90, textAlignVertical: "top" }]}
         value={petData.vaccination_details}
         onChangeText={(text) =>
           setPetData({
@@ -79,7 +81,7 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
       <TextInput
         placeholder="Vaccination Notes"
         multiline
-        style={styles.input}
+        style={[styles.input, { minHeight: 80, textAlignVertical: "top" }]}
         value={petData.vaccination_notes}
         onChangeText={(text) =>
           setPetData({
@@ -101,16 +103,13 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
       </Text>
 
       <TouchableOpacity
-        style={styles.input}
+        style={styles.dateInput}
         onPress={() => setShowDewormingPicker(true)}
       >
-        <Text
-          style={{
-            color: petData.deworming_date ? "#000" : "#999",
-          }}
-        >
+        <Text style={styles.dateInputText}>
           {petData.deworming_date || "Select Deworming Date"}
         </Text>
+        <Ionicons name="calendar-outline" size={18} color="#f97316" />
       </TouchableOpacity>
 
       <DateTimePickerModal
@@ -140,17 +139,14 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
       </Text>
 
       <TouchableOpacity
-        style={styles.input}
+        style={styles.dateInput}
         onPress={() => setShowFleaTickPicker(true)}
       >
-        <Text
-          style={{
-            color: petData.flea_tick_treatment_date ? "#000" : "#999",
-          }}
-        >
+        <Text style={styles.dateInputText}>
           {petData.flea_tick_treatment_date ||
             "Select Flea Tick Treatment Date"}
         </Text>
+        <Ionicons name="calendar-outline" size={18} color="#f97316" />
       </TouchableOpacity>
 
       <DateTimePickerModal
@@ -171,7 +167,7 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
       <TextInput
         placeholder="Medical History"
         multiline
-        style={styles.input}
+        style={[styles.input, { minHeight: 90, textAlignVertical: "top" }]}
         value={petData.medical_history}
         onChangeText={(text) =>
           setPetData({
@@ -196,7 +192,7 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
       <TextInput
         placeholder="Medical Conditions"
         multiline
-        style={styles.input}
+        style={[styles.input, { minHeight: 90, textAlignVertical: "top" }]}
         value={petData.medical_conditions}
         onChangeText={(text) =>
           setPetData({
@@ -221,7 +217,7 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
       <TextInput
         placeholder="Surgery History"
         multiline
-        style={styles.input}
+        style={[styles.input, { minHeight: 90, textAlignVertical: "top" }]}
         value={petData.surgery_history}
         onChangeText={(text) =>
           setPetData({

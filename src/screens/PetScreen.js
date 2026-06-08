@@ -555,7 +555,7 @@ export default function PetScreen({ navigation }) {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.screen}>
       {/* HEADER */}
 
       <View style={styles.header}>

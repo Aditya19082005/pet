@@ -11,7 +11,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 15,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 12,
+    marginBottom: 4,
+    backgroundColor: "#fffaf7",
+    borderBottomWidth: 1,
+    borderBottomColor: "#fed7aa",
   },
 
   closeIcon: {
@@ -23,23 +29,31 @@ const styles = StyleSheet.create({
 
   heading: {
     fontSize: 28,
-    fontWeight: "bold",
+    fontWeight: "800",
     color: "#f97316",
+    marginLeft: 2,
   },
 
   addBtn: {
     backgroundColor: "#f97316",
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 58,
+    height: 58,
+    borderRadius: 18,
     justifyContent: "center",
     alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#fb923c",
+    elevation: 4,
+    shadowColor: "#f97316",
+    shadowOpacity: 0.22,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
   },
 
   container: {
-    padding: 15,
+    padding: 16,
     paddingBottom: 100,
-    backgroundColor: "#fff",
+    backgroundColor: "#f8fafc",
     flexGrow: 1,
   },
 
@@ -47,10 +61,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
-    padding: 12,
-    borderRadius: 12,
-    marginBottom: 12,
+    padding: 14,
+    borderRadius: 18,
+    marginBottom: 14,
     elevation: 3,
+    shadowColor: "#f97316",
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
   },
 
   petImage: {
@@ -83,6 +101,42 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginRight: 10,
     marginBottom: 10,
+  },
+
+  imageThumbWrapper: {
+    marginRight: 12,
+    position: "relative",
+    paddingTop: 6,
+    paddingRight: 6,
+  },
+
+  imageThumb: {
+    width: 104,
+    height: 104,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+  },
+
+  removeImageBtn: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: "#ef4444",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#fff",
+    zIndex: 2,
+  },
+
+  removeImageText: {
+    color: "#fff",
+    fontWeight: "800",
+    fontSize: 12,
   },
 
   actionRow: {
@@ -118,12 +172,19 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
 
+  screen: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+
   modalContent: {
     backgroundColor: "#fff",
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    padding: 20,
-    maxHeight: "90%",
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingHorizontal: 18,
+    paddingTop: 18,
+    paddingBottom: 26,
+    maxHeight: "92%",
   },
 
   modalTitle: {
@@ -136,11 +197,62 @@ const styles = StyleSheet.create({
 
   input: {
     borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 10,
-    padding: 12,
+    borderColor: "#e5e7eb",
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    minHeight: 52,
     marginBottom: 12,
     backgroundColor: "#fff",
+    fontSize: 15,
+    color: "#111827",
+  },
+
+  inputError: {
+    borderColor: "#ef4444",
+    backgroundColor: "#fff1f2",
+  },
+
+  dateInput: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    minHeight: 52,
+    marginBottom: 12,
+    backgroundColor: "#fff",
+  },
+
+  dateInputText: {
+    flex: 1,
+    color: "#111827",
+    fontSize: 15,
+  },
+
+  fieldLabel: {
+    marginBottom: 6,
+    fontWeight: "700",
+    color: "#374151",
+    fontSize: 14,
+  },
+
+  fieldLabelError: {
+    color: "#dc2626",
+  },
+
+  requiredHint: {
+    color: "#dc2626",
+    fontWeight: "800",
+  },
+
+  helperText: {
+    color: "#6b7280",
+    fontSize: 12,
+    marginBottom: 8,
   },
 
   imageBtn: {
@@ -160,24 +272,24 @@ const styles = StyleSheet.create({
   button: {
     flex: 1,
     backgroundColor: "#f97316",
-    padding: 15,
-    borderRadius: 10,
+    padding: 14,
+    borderRadius: 14,
     alignItems: "center",
   },
 
   nextBtn: {
     flex: 1,
     backgroundColor: "#10b981",
-    padding: 15,
-    borderRadius: 10,
+    padding: 14,
+    borderRadius: 14,
     alignItems: "center",
   },
 
   backBtn: {
     flex: 1,
     backgroundColor: "#6b7280",
-    padding: 15,
-    borderRadius: 10,
+    padding: 14,
+    borderRadius: 14,
     alignItems: "center",
     marginRight: 10,
   },

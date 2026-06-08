@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 
 import {
   Modal,
@@ -7,7 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  Image,
+  Alert,
 } from "react-native";
 
 import StepIndicator from "./StepIndicator";
@@ -33,6 +33,65 @@ export default function PetFormModal({
   onClose,
   onSubmit,
 }) {
+  const [fieldErrors, setFieldErrors] = useState({});
+
+  const requiredFieldsByStep = useMemo(
+    () => ({
+      1: [
+        "pet_name",
+        "pet_type",
+        "breed",
+        "gender",
+        "age",
+        "date_of_birth",
+        "weight",
+      ],
+      2: [],
+      3: ["food_type"],
+    }),
+    [],
+  );
+
+  const validateCurrentStep = () => {
+    const currentRequiredFields = requiredFieldsByStep[step] || [];
+    const missing = {};
+
+    currentRequiredFields.forEach((field) => {
+      const value = petData?.[field];
+      if (typeof value === "string" && !value.trim()) {
+        missing[field] = true;
+      } else if (!value) {
+        missing[field] = true;
+      }
+    });
+
+    setFieldErrors(missing);
+
+    if (Object.keys(missing).length > 0) {
+      const labels = currentRequiredFields
+        .filter((field) => missing[field])
+        .map((field) => field.replace(/_/g, " "));
+
+      Alert.alert(
+        "Required fields missing",
+        `Please complete: ${labels.join(", ")}`,
+      );
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleNext = () => {
+    if (!validateCurrentStep()) return;
+    setStep(step + 1);
+  };
+
+  const handleSubmit = () => {
+    if (!validateCurrentStep()) return;
+    onSubmit();
+  };
+
   return (
     <Modal visible={visible} animationType="slide" transparent>
       <View style={styles.modalContainer}>
@@ -57,6 +116,7 @@ export default function PetFormModal({
               petData={petData}
               setPetData={setPetData}
               styles={styles}
+              fieldErrors={fieldErrors}
               pickImages={pickImages}
               selectedImages={selectedImages}
               removeImage={removeImage}
@@ -76,6 +136,7 @@ export default function PetFormModal({
               petData={petData}
               setPetData={setPetData}
               styles={styles}
+              fieldErrors={fieldErrors}
             />
           )}
 
@@ -92,16 +153,13 @@ export default function PetFormModal({
             )}
 
             {step < 3 ? (
-              <TouchableOpacity
-                style={styles.nextBtn}
-                onPress={() => setStep(step + 1)}
-              >
+              <TouchableOpacity style={styles.nextBtn} onPress={handleNext}>
                 <Text style={styles.buttonText}>Next</Text>
               </TouchableOpacity>
             ) : (
               <TouchableOpacity
                 style={styles.button}
-                onPress={onSubmit}
+                onPress={handleSubmit}
                 disabled={loading}
               >
                 {loading ? (
