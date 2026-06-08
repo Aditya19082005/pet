@@ -13,7 +13,8 @@ import {
 
 import { LinearGradient } from "expo-linear-gradient";
 
-import styles from "./boardingStyles";
+import styles from "./styles/boardingStyles";
+import { fetchBoardingCenterByIdApi } from "./services/boardingService";
 
 const { width } = Dimensions.get("window");
 
@@ -30,15 +31,8 @@ export default function BoardingDetailsScreen({ route, navigation }) {
 
   const fetchDetails = async () => {
     try {
-      const response = await fetch(
-        `https://www.cgpisoftware.com/cheerytail/api/boarding/${centerId}`,
-      );
-
-      const data = await response.json();
-
-      if (data.status === "success") {
-        setCenter(data.data);
-      }
+      const data = await fetchBoardingCenterByIdApi(centerId);
+      setCenter(data);
     } catch (error) {
       console.log(error);
     } finally {

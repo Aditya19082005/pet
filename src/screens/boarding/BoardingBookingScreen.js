@@ -14,6 +14,7 @@ import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
+import { fetchCapacityApi, checkAvailabilityApi } from "./services/boardingService";
 
 export default function BoardingBookingScreen({ route, navigation }) {
   const { centerId, centerName, pricePerDay } = route.params;
@@ -92,15 +93,8 @@ export default function BoardingBookingScreen({ route, navigation }) {
   const getCapacity = async () => {
     try {
       setLoadingCapacity(true);
-
-      const response = await fetch(
-        `https://www.cgpisoftware.com/cheerytail/api/availability/capacity?center_id=${centerId}`,
-      );
-
-      const data = await response.json();
-
+      const data = await fetchCapacityApi(centerId);
       console.log("Capacity:", data);
-
       setCapacity(data);
     } catch (error) {
       console.log(error);
@@ -112,26 +106,13 @@ export default function BoardingBookingScreen({ route, navigation }) {
   const checkAvailability = async () => {
     try {
       setCheckingAvailability(true);
-
-      const response = await fetch(
-        "https://www.cgpisoftware.com/cheerytail/api/availability/check",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            center_id: centerId,
-            start_date: formatDate(checkInDate),
-            end_date: formatDate(checkOutDate),
-          }),
-        },
-      );
-
-      const data = await response.json();
+      const data = await checkAvailabilityApi({
+        centerId,
+        startDate: formatDate(checkInDate),
+        endDate: formatDate(checkOutDate),
+      });
 
       console.log("Availability:", data);
-
       setAvailable(data);
     } catch (error) {
       console.log(error);

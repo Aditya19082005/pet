@@ -7,8 +7,9 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import styles from "./boardingStyles";
+import styles from "./styles/boardingStyles";
+import CenterCard from "./components/CenterCard";
+import { fetchBoardingCentersApi } from "./services/boardingService";
 
 export default function BoardingCentersScreen({ navigation, route }) {
   const city = route?.params?.city || "";
@@ -24,29 +25,8 @@ export default function BoardingCentersScreen({ navigation, route }) {
   const fetchCenters = async () => {
     try {
       setLoading(true);
-
-      const queryParams = new URLSearchParams();
-
-      if (city) {
-        queryParams.append("city", city);
-      }
-
-      if (type) {
-        queryParams.append("type", type);
-      }
-
-      const url = `https://www.cgpisoftware.com/cheerytail/api/boarding/list?${queryParams.toString()}`;
-
-      console.log("Boarding API:", url);
-
-      const response = await fetch(url);
-      const data = await response.json();
-
-      if (data?.status === "success") {
-        setCenters(data.data || []);
-      } else {
-        setCenters([]);
-      }
+      const list = await fetchBoardingCentersApi(city, type);
+      setCenters(list);
     } catch (error) {
       console.log("Boarding List Error:", error);
       setCenters([]);
@@ -56,57 +36,11 @@ export default function BoardingCentersScreen({ navigation, route }) {
   };
 
   const renderCenter = ({ item }) => (
-    <TouchableOpacity
-      activeOpacity={0.9}
-      onPress={() =>
-        navigation.navigate("BoardingDetails", {
-          centerId: item.id,
-        })
-      }
-    >
-      <LinearGradient
-        colors={["#fff7ed", "#ffffff", "#f5f3ff"]}
-        style={styles.card}
-      >
-        <Image
-          source={{
-            uri: item.images?.[0] || "https://via.placeholder.com/300x200",
-          }}
-          style={styles.image}
-        />
-
-        <View style={styles.content}>
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>
-              {item.center_type?.toUpperCase()}
-            </Text>
-          </View>
-
-          <Text style={styles.title}>{item.center_name}</Text>
-
-          <Text style={styles.desc} numberOfLines={2}>
-            {item.description}
-          </Text>
-
-          <View style={styles.infoRow}>
-            <Text style={styles.label}>📍 {item.city}</Text>
-
-            <Text style={styles.price}>₹ {item.price_per_day}/day</Text>
-          </View>
-
-          <TouchableOpacity
-            style={styles.primaryBtn}
-            onPress={() =>
-              navigation.navigate("BoardingDetails", {
-                centerId: item.id,
-              })
-            }
-          >
-            <Text style={styles.primaryBtnText}>View Details</Text>
-          </TouchableOpacity>
-        </View>
-      </LinearGradient>
-    </TouchableOpacity>
+    <CenterCard
+      item={item}
+      onPress={() => navigation.navigate("BoardingDetails", { centerId: item.id })}
+      onViewDetails={() => navigation.navigate("BoardingDetails", { centerId: item.id })}
+    />
   );
 
   if (loading) {
