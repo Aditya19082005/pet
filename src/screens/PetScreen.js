@@ -72,6 +72,7 @@ export default function PetScreen({ navigation }) {
     vaccination_status: "",
     vaccination_details: "",
     vaccination_notes: "",
+    vaccination_certificate: null,
 
     deworming_date: "",
     flea_tick_treatment_date: "",
@@ -276,6 +277,12 @@ export default function PetScreen({ navigation }) {
       const payload = {
         ...petData,
 
+        vaccination_certificate:
+          petData.vaccination_certificate?.name ||
+          petData.vaccination_certificate?.uri ||
+          petData.vaccination_certificate ||
+          null,
+
         pet_type: petData.pet_type,
         gender: petData.gender,
         food_type: petData.food_type,
@@ -453,6 +460,9 @@ export default function PetScreen({ navigation }) {
         vaccination_details: fullPet?.health?.vaccination_details || "",
 
         vaccination_notes: fullPet?.health?.vaccination_notes || "",
+
+        vaccination_certificate:
+          fullPet?.health?.vaccination_certificate || null,
 
         deworming_date:
           fullPet?.health?.deworming_date === "0000-00-00"

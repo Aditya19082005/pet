@@ -103,6 +103,10 @@ export default function PetDetailsScreen({ route }) {
         value={health.vaccination_details}
       />
       <DetailRow label="Vaccination Notes" value={health.vaccination_notes} />
+      <DetailRow
+        label="Vaccination Certificate"
+        value={health.vaccination_certificate?.name || health.vaccination_certificate?.uri || health.vaccination_certificate}
+      />
       <DetailRow label="Deworming Date" value={health.deworming_date} />
       <DetailRow
         label="Flea Tick Treatment Date"

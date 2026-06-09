@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 
-import { View, TextInput, Switch, Text, TouchableOpacity } from "react-native";
+import { View, TextInput, Switch, Text, TouchableOpacity, Alert } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
 
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+
+import * as DocumentPicker from "expo-document-picker";
 
 export default function PhaseTwoForm({ petData, setPetData, styles }) {
   const [showDewormingPicker, setShowDewormingPicker] = useState(false);
@@ -13,6 +15,35 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
 
   const formatDate = (date) => {
     return date.toISOString().split("T")[0];
+  };
+
+  const pickVaccinationCertificate = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "application/pdf",
+      });
+
+      if (!result.canceled) {
+        const file = result.assets?.[0] || result;
+        const fileSize = file.size || file.fileSize || 0;
+
+        if (fileSize > 100 * 1024) {
+          Alert.alert(
+            "File too large",
+            "Vaccination certificate must be a PDF under 100KB.",
+          );
+          return;
+        }
+
+        setPetData({
+          ...petData,
+          vaccination_certificate: file,
+        });
+      }
+    } catch (error) {
+      console.log("Document picker error:", error);
+      Alert.alert("Error", "Unable to pick vaccination certificate");
+    }
   };
 
   return (
@@ -90,6 +121,34 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
           })
         }
       />
+
+      <Text
+        style={{
+          marginBottom: 5,
+          fontWeight: "600",
+        }}
+      >
+        Vaccination Certificate
+      </Text>
+
+      <TouchableOpacity
+        style={[
+          styles.dateInput,
+          {
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          },
+        ]}
+        onPress={pickVaccinationCertificate}
+      >
+        <Text style={styles.dateInputText} numberOfLines={1}>
+          {petData.vaccination_certificate?.name ||
+            petData.vaccination_certificate?.uri?.split("/").pop() ||
+            "Select PDF certificate"}
+        </Text>
+        <Ionicons name="cloud-upload-outline" size={18} color="#f97316" />
+      </TouchableOpacity>
 
       {/* DEWORMING DATE */}
 

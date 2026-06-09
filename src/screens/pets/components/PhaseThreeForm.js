@@ -114,11 +114,7 @@ export default function PhaseThreeForm({
 
       {/* FOOD TYPE */}
 
-      <FormLabel
-        title="Food Type"
-        required
-        error={fieldErrors.food_type}
-      />
+      <FormLabel title="Food Type" required error={fieldErrors.food_type} />
 
       <View
         style={{
@@ -144,6 +140,8 @@ export default function PhaseThreeForm({
           <Picker.Item label="Veg" value="veg" />
 
           <Picker.Item label="Non Veg" value="non_veg" />
+
+          <Picker.Item label="Both" value="both" />
         </Picker>
       </View>
 
