@@ -59,12 +59,12 @@ export default function BoardingCentersScreen({ navigation, route }) {
             flex: 1,
             justifyContent: "center",
             alignItems: "center",
-            marginTop: 80,
+
           }}
         >
           <Text
             style={{
-              fontSize: 16,
+              fontSize: 14,
               color: "#666",
             }}
           >

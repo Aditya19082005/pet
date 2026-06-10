@@ -1,201 +1,219 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  ScrollView,
   TouchableOpacity,
   StyleSheet,
+  ScrollView,
+  Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import { fetchMyBookingsApi } from "./services/boardingService";
+
+const screenWidth = Dimensions.get("window").width;
 
 export default function BookingStatus() {
-  const bookingStatuses = [
-    {
-      id: 1,
-      petName: "Buddy",
-      petEmoji: "🐕",
-      type: "Upcoming",
-      checkInDate: "Apr 15, 2024",
-      checkOutDate: "Apr 18, 2024",
-      totalCost: 135,
-      gradient: ["#60a5fa", "#2563eb"], // blue
-      bg: "#eff6ff",
-      badgeBg: "#bfdbfe",
-      badgeText: "#1d4ed8",
-      iconColor: "#2563eb",
-      status: "upcoming",
-    },
-    {
-      id: 2,
-      petName: "Luna",
-      petEmoji: "🐱",
-      type: "Active Boarding",
-      checkInDate: "Apr 10, 2024",
-      checkOutDate: "Apr 14, 2024",
-      totalCost: 180,
-      gradient: ["#4ade80", "#16a34a"], // green
-      bg: "#f0fdf4",
-      badgeBg: "#bbf7d0",
-      badgeText: "#166534",
-      iconColor: "#16a34a",
-      status: "active",
-      daysRemaining: 2,
-    },
-    {
-      id: 3,
-      petName: "Max",
-      petEmoji: "🐶",
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadBookings();
+  }, []);
+
+  const loadBookings = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+
+      const data = await fetchMyBookingsApi(token);
+
+      setBookings(data || []);
+    } catch (error) {
+      console.log("Booking Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getBookingType = (booking) => {
+    const today = new Date();
+
+    const start = new Date(booking.start_date);
+    const end = new Date(booking.end_date);
+
+    if (today < start) {
+      return {
+        type: "Upcoming",
+        gradient: ["#60a5fa", "#2563eb"],
+        bg: "#eff6ff",
+        badgeBg: "#bfdbfe",
+        badgeText: "#1d4ed8",
+        iconColor: "#2563eb",
+      };
+    }
+
+    if (today >= start && today <= end) {
+      return {
+        type: "Active Boarding",
+        gradient: ["#4ade80", "#16a34a"],
+        bg: "#f0fdf4",
+        badgeBg: "#bbf7d0",
+        badgeText: "#166534",
+        iconColor: "#16a34a",
+      };
+    }
+
+    return {
       type: "Completed",
-      checkInDate: "Apr 1, 2024",
-      checkOutDate: "Apr 7, 2024",
-      totalCost: 270,
-      gradient: ["#c084fc", "#9333ea"], // purple
+      gradient: ["#c084fc", "#9333ea"],
       bg: "#faf5ff",
       badgeBg: "#e9d5ff",
       badgeText: "#6b21a8",
       iconColor: "#9333ea",
-      status: "completed",
-    },
-  ];
+    };
+  };
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <ActivityIndicator size="large" color="#9333ea" />
+      </View>
+    );
+  }
 
   return (
-    <ScrollView style={styles.container}>
-      {/* HEADER */}
+    <View style={styles.container}>
       <Text style={styles.title}>
         Your Booking <Text style={styles.gradientText}>Status</Text>
       </Text>
 
       <Text style={styles.subtitle}>
-        Track all your pet's boarding reservations
+        Track all your pet's boarding reservations 🐾
       </Text>
 
-      {/* CARDS */}
-      {bookingStatuses.map((booking) => (
-        <View
-          key={booking.id}
-          style={[styles.card, { backgroundColor: booking.bg }]}
-        >
-          {/* HEADER */}
-          <View style={styles.row}>
-            <View style={styles.petRow}>
-              {/* ICON BOX */}
-              <LinearGradient colors={booking.gradient} style={styles.iconBox}>
-                <Text style={{ fontSize: 22 }}>{booking.petEmoji}</Text>
-              </LinearGradient>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContainer}
+      >
+        {bookings.map((booking) => {
+          const bookingInfo = getBookingType(booking);
 
-              <View>
-                <Text style={styles.petName}>{booking.petName}</Text>
-                <Text style={styles.type}>{booking.type}</Text>
+          return (
+            <View
+              key={booking.id}
+              style={[
+                styles.card,
+                {
+                  backgroundColor: bookingInfo.bg,
+                },
+              ]}
+            >
+              <View style={styles.row}>
+                <View style={styles.petRow}>
+                  <LinearGradient
+                    colors={bookingInfo.gradient}
+                    style={styles.iconBox}
+                  >
+                    <Text style={styles.petEmoji}>
+                      {booking.pet?.pet_type === "dog" ? "🐕" : "🐈"}
+                    </Text>
+                  </LinearGradient>
+
+                  <View>
+                    <Text style={styles.petName}>{booking.pet?.pet_name}</Text>
+
+                    <Text style={styles.type}>{bookingInfo.type}</Text>
+                  </View>
+                </View>
+
+                <MaterialCommunityIcons
+                  name="clock-outline"
+                  size={22}
+                  color={bookingInfo.iconColor}
+                />
+              </View>
+
+              <View
+                style={[
+                  styles.badge,
+                  {
+                    backgroundColor: bookingInfo.badgeBg,
+                  },
+                ]}
+              >
+                <Text
+                  style={{
+                    color: bookingInfo.badgeText,
+                    fontWeight: "600",
+                  }}
+                >
+                  {booking.status?.toUpperCase()}
+                </Text>
+              </View>
+
+              <View style={styles.infoBox}>
+                <Text style={styles.label}>Boarding Center</Text>
+                <Text style={styles.value}>{booking.center?.center_name}</Text>
+              </View>
+
+              <View style={styles.infoBox}>
+                <Text style={styles.label}>Check In</Text>
+                <Text style={styles.value}>{booking.start_date}</Text>
+              </View>
+
+              <View style={styles.infoBox}>
+                <Text style={styles.label}>Check Out</Text>
+                <Text style={styles.value}>{booking.end_date}</Text>
+              </View>
+
+              <View style={styles.infoBox}>
+                <Text style={styles.label}>Total Days</Text>
+                <Text style={styles.value}>{booking.total_days}</Text>
+              </View>
+
+              <View style={styles.infoBox}>
+                <Text style={styles.label}>Total Cost</Text>
+
+                <Text
+                  style={[
+                    styles.costText,
+                    {
+                      color: bookingInfo.gradient[1],
+                    },
+                  ]}
+                >
+                  ₹{booking.total_price}
+                </Text>
               </View>
             </View>
-
-            <MaterialCommunityIcons
-              name="clock-outline"
-              size={22}
-              color={booking.iconColor}
-            />
-          </View>
-
-          {/* BADGE */}
-          <View style={[styles.badge, { backgroundColor: booking.badgeBg }]}>
-            <Text style={{ color: booking.badgeText, fontWeight: "600" }}>
-              {booking.status === "active"
-                ? `In Progress (${booking.daysRemaining} days)`
-                : booking.status === "completed"
-                  ? "Completed"
-                  : "Confirmed"}
-            </Text>
-          </View>
-
-          {/* DATE BOX */}
-          <View style={styles.infoBox}>
-            <Text style={styles.label}>Check-in to Check-out</Text>
-            <Text style={styles.value}>
-              {booking.checkInDate} - {booking.checkOutDate}
-            </Text>
-          </View>
-
-          {/* COST */}
-          <View style={styles.infoBox}>
-            <Text style={styles.label}>Total Cost</Text>
-
-            <Text style={[styles.costText, { color: booking.gradient[1] }]}>
-              ₹{booking.totalCost}
-            </Text>
-          </View>
-
-          {/* BUTTONS */}
-          {booking.status === "upcoming" && (
-            <>
-              <TouchableOpacity>
-                <LinearGradient colors={booking.gradient} style={styles.button}>
-                  <Text style={styles.btnText}>Modify Booking</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.outlineBtn}>
-                <Text>Cancel</Text>
-              </TouchableOpacity>
-            </>
-          )}
-
-          {booking.status === "active" && (
-            <>
-              <TouchableOpacity>
-                <LinearGradient colors={booking.gradient} style={styles.button}>
-                  <Text style={styles.btnText}>View Details</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.greenOutline}>
-                <Text style={{ color: "#16a34a" }}>Extend Stay</Text>
-              </TouchableOpacity>
-            </>
-          )}
-
-          {booking.status === "completed" && (
-            <>
-              <TouchableOpacity>
-                <LinearGradient colors={booking.gradient} style={styles.button}>
-                  <Text style={styles.btnText}>View Receipt</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.purpleOutline}>
-                <Text style={{ color: "#9333ea" }}>Book Again</Text>
-              </TouchableOpacity>
-            </>
-          )}
-        </View>
-      ))}
-
-      {/* SUPPORT */}
-      <LinearGradient colors={["#ffedd5", "#fce7f3"]} style={styles.supportBox}>
-        <Text style={styles.supportTitle}>Need Help?</Text>
-        <Text style={styles.supportText}>
-          Our support team is available 24/7
-        </Text>
-
-        <TouchableOpacity>
-          <LinearGradient colors={["#f97316", "#ec4899"]} style={styles.button}>
-            <Text style={styles.btnText}>Contact Support</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      </LinearGradient>
-    </ScrollView>
+          );
+        })}
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 30,
+    paddingBottom: 60, // increase as needed
     backgroundColor: "#fff",
-    padding: 16,
   },
 
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: "bold",
+    textAlign: "center",
     color: "#1f2937",
   },
 
@@ -204,28 +222,47 @@ const styles = StyleSheet.create({
   },
 
   subtitle: {
+    textAlign: "center",
     color: "#6b7280",
-    marginBottom: 20,
+    marginTop: 8,
+    marginBottom: 15,
+  },
+
+  scrollContainer: {
+    paddingHorizontal: 15,
   },
 
   card: {
-    padding: 20,
-    borderRadius: 24,
-    marginBottom: 16,
+    width: screenWidth * 0.82,
+    borderRadius: 25,
+    marginRight: 15,
+    padding: 10,
+    overflow: "hidden",
+    marginBottom: 10,
+
     borderWidth: 1,
     borderColor: "#e5e7eb",
+
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    elevation: 5,
   },
 
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 10,
+    alignItems: "center",
+    marginBottom: 5,
   },
 
   petRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
   },
 
   iconBox: {
@@ -234,11 +271,17 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
+    marginRight: 10,
+  },
+
+  petEmoji: {
+    fontSize: 22,
   },
 
   petName: {
     fontWeight: "bold",
     fontSize: 16,
+    color: "#111827",
   },
 
   type: {
@@ -247,7 +290,8 @@ const styles = StyleSheet.create({
   },
 
   badge: {
-    padding: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
     borderRadius: 20,
     alignSelf: "flex-start",
     marginVertical: 10,
@@ -268,13 +312,15 @@ const styles = StyleSheet.create({
   },
 
   value: {
+    marginTop: 4,
     fontWeight: "bold",
+    color: "#111827",
   },
 
   costText: {
+    marginTop: 4,
     fontSize: 22,
     fontWeight: "bold",
-    color: "white",
   },
 
   button: {
@@ -318,6 +364,7 @@ const styles = StyleSheet.create({
 
   supportBox: {
     marginTop: 20,
+    marginHorizontal: 15,
     padding: 20,
     borderRadius: 24,
   },
@@ -329,5 +376,6 @@ const styles = StyleSheet.create({
 
   supportText: {
     marginVertical: 10,
+    color: "#6b7280",
   },
 });

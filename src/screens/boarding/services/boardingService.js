@@ -1,4 +1,5 @@
 import { BOARDING_API_URL, AVAILABILITY_API_URL } from "../constants/api";
+import { BOOKING_API_URL } from "../constants/api";
 
 export const fetchBoardingCentersApi = async (city = "", type = "") => {
   const queryParams = new URLSearchParams();
@@ -6,7 +7,9 @@ export const fetchBoardingCentersApi = async (city = "", type = "") => {
   if (city) queryParams.append("city", city);
   if (type) queryParams.append("type", type);
 
-  const response = await fetch(`${BOARDING_API_URL}/list?${queryParams.toString()}`);
+  const response = await fetch(
+    `${BOARDING_API_URL}/list?${queryParams.toString()}`,
+  );
   const text = await response.text();
 
   if (!text || text.trim() === "") {
@@ -44,7 +47,11 @@ export const fetchCapacityApi = async (centerId) => {
   return JSON.parse(text);
 };
 
-export const checkAvailabilityApi = async ({ centerId, startDate, endDate }) => {
+export const checkAvailabilityApi = async ({
+  centerId,
+  startDate,
+  endDate,
+}) => {
   const response = await fetch(`${AVAILABILITY_API_URL}/check`, {
     method: "POST",
     headers: {
@@ -64,4 +71,26 @@ export const checkAvailabilityApi = async ({ centerId, startDate, endDate }) => 
   }
 
   return JSON.parse(text);
+};
+
+export const fetchMyBookingsApi = async (token) => {
+  try {
+    const response = await fetch(`${BOOKING_API_URL}/my-bookings`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    const text = await response.text();
+
+    const json = JSON.parse(text);
+
+    return json?.data || [];
+  } catch (error) {
+    console.log("FETCH FAILED:", error);
+    return [];
+  }
 };

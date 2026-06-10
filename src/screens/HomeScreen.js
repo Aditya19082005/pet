@@ -1,12 +1,13 @@
 import { ScrollView, View, RefreshControl } from "react-native";
 import { useState } from "react";
-import { useTheme } from "../context/ThemeContext"; // 👈 IMPORT
+import { useTheme } from "../context/ThemeContext";
 import Hero from "../components/Hero";
 import Categories from "../components/Categories";
 import DogGallery from "../components/DogGallery";
+import BookingStatus from "./boarding/BookingStatus";
 
 export default function HomeScreen() {
-  const { theme } = useTheme(); // 👈 GET THEME
+  const { theme } = useTheme();
 
   const [refreshing, setRefreshing] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -22,16 +23,25 @@ export default function HomeScreen() {
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: theme.background }} // ✅ FIXED
+      style={{
+        flex: 1,
+        backgroundColor: theme.background,
+      }}
+      contentContainerStyle={{
+        paddingBottom: 30,
+      }}
+      showsVerticalScrollIndicator={false}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
-      <View style={{ flex: 1 }}>
-        <Hero key={`hero-${refreshKey}`} />
-        <Categories key={`cat-${refreshKey}`} />
-        <DogGallery key={`dog-${refreshKey}`} />
-      </View>
+
+
+      <BookingStatus />
+
+      <Categories key={`cat-${refreshKey}`} />
+
+      <DogGallery key={`dog-${refreshKey}`} />
     </ScrollView>
   );
 }

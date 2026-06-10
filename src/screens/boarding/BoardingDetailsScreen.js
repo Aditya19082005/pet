@@ -14,7 +14,10 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 
 import styles from "./styles/boardingStyles";
-import { fetchBoardingCenterByIdApi } from "./services/boardingService";
+import {
+  fetchBoardingCenterByIdApi,
+  fetchCapacityApi,
+} from "./services/boardingService";
 
 const { width } = Dimensions.get("window");
 
@@ -25,9 +28,29 @@ export default function BoardingDetailsScreen({ route, navigation }) {
 
   const [loading, setLoading] = useState(true);
 
+  const [capacity, setCapacity] = useState(null);
+  const [capacityLoading, setCapacityLoading] = useState(true);
+
   useEffect(() => {
     fetchDetails();
+    loadCapacity();
   }, [centerId]);
+
+  const loadCapacity = async () => {
+    try {
+      setCapacityLoading(true);
+
+      const data = await fetchCapacityApi(centerId);
+
+      console.log("Capacity:", data);
+
+      setCapacity(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setCapacityLoading(false);
+    }
+  };
 
   const fetchDetails = async () => {
     try {
@@ -148,26 +171,6 @@ export default function BoardingDetailsScreen({ route, navigation }) {
           </Text>
         </View>
 
-        {/* CONTACT */}
-
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Contact Details</Text>
-
-          <View style={styles.infoRow}>
-            <Text style={styles.label}>Phone</Text>
-
-            <Text style={styles.infoText}>{center.primary_contact_number}</Text>
-          </View>
-
-          <View style={styles.divider} />
-
-          <View style={styles.infoRow}>
-            <Text style={styles.label}>Email</Text>
-
-            <Text style={styles.infoText}>{center.email_address}</Text>
-          </View>
-        </View>
-
         {/* TIMINGS */}
 
         <View style={styles.sectionCard}>
@@ -185,47 +188,51 @@ export default function BoardingDetailsScreen({ route, navigation }) {
         {/* CAPACITY */}
 
         <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Capacity</Text>
+          <Text style={styles.sectionTitle}>Capacity Status</Text>
 
-          <View style={styles.infoRow}>
-            <Text style={styles.label}>Daily</Text>
+          {capacityLoading ? (
+            <ActivityIndicator color="#f97316" />
+          ) : (
+            <>
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Total Capacity</Text>
+                <Text style={styles.infoText}>
+                  {capacity?.data?.total_capacity || 0}
+                </Text>
+              </View>
 
-            <Text style={styles.infoText}>{center.daily_capacity}</Text>
-          </View>
+              <View style={styles.divider} />
 
-          <View style={styles.divider} />
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Available</Text>
+                <Text style={styles.infoText}>
+                  {capacity?.data?.available_capacity || 0}
+                </Text>
+              </View>
 
-          <View style={styles.infoRow}>
-            <Text style={styles.label}>Total</Text>
+              <View style={styles.divider} />
 
-            <Text style={styles.infoText}>{center.total_capacity}</Text>
-          </View>
-        </View>
+              <View style={styles.infoRow}>
+                <Text style={styles.label}>Booked</Text>
+                <Text style={styles.infoText}>
+                  {capacity?.data?.booked_count || 0}
+                </Text>
+              </View>
 
-        {/* LICENSE */}
-
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>License Information</Text>
-
-          <Text
-            style={[
-              styles.infoText,
-              {
-                textAlign: "left",
-              },
-            ]}
-          >
-            {center.registration_license_number}
-          </Text>
-
-          {center.license_proof && (
-            <Image
-              source={{
-                uri: center.license_proof,
-              }}
-              style={styles.licenseImage}
-              resizeMode="cover"
-            />
+              <Text
+                style={{
+                  marginTop: 15,
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  fontSize: 16,
+                  color: capacity?.data?.is_available ? "green" : "red",
+                }}
+              >
+                {capacity?.data?.is_available
+                  ? "🟢 Slots Available"
+                  : "🔴 Fully Booked"}
+              </Text>
+            </>
           )}
         </View>
 

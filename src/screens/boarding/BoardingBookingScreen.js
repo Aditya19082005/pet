@@ -14,7 +14,10 @@ import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
-import { fetchCapacityApi, checkAvailabilityApi } from "./services/boardingService";
+import {
+  fetchCapacityApi,
+  checkAvailabilityApi,
+} from "./services/boardingService";
 
 export default function BoardingBookingScreen({ route, navigation }) {
   const { centerId, centerName, pricePerDay } = route.params;
@@ -252,34 +255,6 @@ export default function BoardingBookingScreen({ route, navigation }) {
                 }
               }}
             />
-          )}
-        </View>
-
-        <View style={styles.card}>
-          <Text style={styles.heading}>Capacity Status</Text>
-
-          {loadingCapacity ? (
-            <ActivityIndicator />
-          ) : (
-            <>
-              <Text>Total Capacity : {capacity?.data?.total_capacity}</Text>
-
-              <Text>
-                Available Capacity : {capacity?.data?.available_capacity}
-              </Text>
-
-              <Text>Booked Count : {capacity?.data?.booked_count}</Text>
-
-              <Text
-                style={{
-                  marginTop: 10,
-                  color: capacity?.data?.is_available ? "green" : "red",
-                  fontWeight: "bold",
-                }}
-              >
-                {capacity?.data?.is_available ? "Available" : "Not Available"}
-              </Text>
-            </>
           )}
         </View>
 
