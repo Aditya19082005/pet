@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,12 +8,13 @@ import {
   Alert,
   TextInput,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function BookingInterface() {
+export default function BookingInterface({ navigation }) {
   const [pets, setPets] = useState(["Buddy", "Luna", "Max", "Bella"]);
   const [selectedPet, setSelectedPet] = useState("Buddy");
 
@@ -29,6 +30,7 @@ export default function BookingInterface() {
   const [showAddPet, setShowAddPet] = useState(false);
   const [newPetName, setNewPetName] = useState("");
   const [newPetType, setNewPetType] = useState("Dog");
+  const [isGuest, setIsGuest] = useState(false);
 
   const pricePerDay = 45;
 
@@ -39,11 +41,39 @@ export default function BookingInterface() {
     return diff > 0 ? diff : 1;
   };
 
+  useEffect(() => {
+    const loadGuestStatus = async () => {
+      const guestRole = await AsyncStorage.getItem("guestRole");
+      setIsGuest(!!guestRole);
+    };
+
+    loadGuestStatus();
+  }, []);
+
+  const promptSignIn = () => {
+    Alert.alert(
+      "Sign in required",
+      "Please sign in or create an account to continue.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Sign In / Sign Up",
+          onPress: () => navigation.navigate("Auth"),
+        },
+      ],
+    );
+  };
+
   const totalDays = calculateDays();
   const totalCost = totalDays * pricePerDay;
 
   // ✅ ADD PET WITH FORM DATA
   const handleAddPet = () => {
+    if (isGuest) {
+      promptSignIn();
+      return;
+    }
+
     if (!newPetName.trim()) {
       Alert.alert("Error", "Please enter pet name");
       return;
@@ -59,6 +89,11 @@ export default function BookingInterface() {
   };
 
   const handleBooking = () => {
+    if (isGuest) {
+      promptSignIn();
+      return;
+    }
+
     if (checkOutDate <= checkInDate) {
       Alert.alert("Invalid Dates", "Check-out must be after check-in");
       return;
@@ -120,13 +155,21 @@ export default function BookingInterface() {
             ))}
 
             {/* ➕ Toggle Add Pet Form */}
-            <TouchableOpacity onPress={() => setShowAddPet(!showAddPet)}>
+            <TouchableOpacity
+              onPress={() => {
+                if (isGuest) {
+                  promptSignIn();
+                  return;
+                }
+                setShowAddPet(!showAddPet);
+              }}
+            >
               <LinearGradient
                 colors={["#e0e7ff", "#c7d2fe"]}
                 style={styles.addPetChip}
               >
                 <Text style={{ fontWeight: "bold", color: "#4338ca" }}>
-                  + Add Pet
+                  {isGuest ? "Sign in to add pet" : "+ Add Pet"}
                 </Text>
               </LinearGradient>
             </TouchableOpacity>

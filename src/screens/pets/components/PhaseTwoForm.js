@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 
-import { View, TextInput, Switch, Text, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  TextInput,
+  Switch,
+  Text,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
 
@@ -286,15 +293,8 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
         }
       />
 
-      <View style={{ marginBottom: 15 }}>
-        <Text
-          style={{
-            fontWeight: "600",
-            marginBottom: 8,
-          }}
-        >
-          Neutered / Spayed
-        </Text>
+      <View style={styles.switchContainer}>
+        <Text style={styles.switchLabel}>Neutered / Spayed</Text>
 
         <Switch
           value={petData.neutered_spayed}

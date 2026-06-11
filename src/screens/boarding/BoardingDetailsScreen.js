@@ -9,8 +9,10 @@ import {
   TouchableOpacity,
   Linking,
   Dimensions,
+  Alert,
 } from "react-native";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 
 import styles from "./styles/boardingStyles";
@@ -61,6 +63,31 @@ export default function BoardingDetailsScreen({ route, navigation }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleBookingPress = async () => {
+    const guestRole = await AsyncStorage.getItem("guestRole");
+    if (guestRole) {
+      Alert.alert(
+        "Sign in required",
+        "Please sign in or sign up to book this center.",
+        [
+          { text: "Cancel", style: "cancel" },
+          {
+            text: "Sign In / Sign Up",
+            onPress: () => navigation.navigate("Auth"),
+          },
+        ],
+      );
+      return;
+    }
+
+    navigation.navigate("BoardingBooking", {
+      centerId: center.id,
+      centerName: center.center_name,
+      pricePerDay: center.price_per_day,
+      centerType: center.center_type,
+    });
   };
 
   if (loading) {
@@ -254,14 +281,7 @@ export default function BoardingDetailsScreen({ route, navigation }) {
 
         <TouchableOpacity
           style={styles.primaryBtn}
-          onPress={() =>
-            navigation.navigate("BoardingBooking", {
-              centerId: center.id,
-              centerName: center.center_name,
-              pricePerDay: center.price_per_day,
-              centerType: center.center_type,
-            })
-          }
+          onPress={handleBookingPress}
         >
           <Text style={styles.primaryBtnText}>Book Now</Text>
         </TouchableOpacity>

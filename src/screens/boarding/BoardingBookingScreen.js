@@ -14,9 +14,11 @@ import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
+import { Calendar } from "react-native-calendars";
 import {
   fetchCapacityApi,
   checkAvailabilityApi,
+  fetchBookedDatesApi,
 } from "./services/boardingService";
 
 export default function BoardingBookingScreen({ route, navigation }) {
@@ -30,6 +32,9 @@ export default function BoardingBookingScreen({ route, navigation }) {
   const [checkOutDate, setCheckOutDate] = useState(
     new Date(Date.now() + 86400000),
   );
+
+  const [bookedDates, setBookedDates] = useState([]);
+  const [fetchingBookedDates, setFetchingBookedDates] = useState(false);
 
   const [showPicker, setShowPicker] = useState(false);
 
@@ -48,13 +53,131 @@ export default function BoardingBookingScreen({ route, navigation }) {
   const [specialInstructions, setSpecialInstructions] = useState("");
 
   useEffect(() => {
-    loadPets();
-    getCapacity();
+    const checkGuestAndLoad = async () => {
+      const guestRole = await AsyncStorage.getItem("guestRole");
+      if (guestRole) {
+        Alert.alert(
+          "Sign in required",
+          "Please sign in or create an account to continue booking.",
+          [
+            {
+              text: "Cancel",
+              style: "cancel",
+              onPress: () => navigation.goBack(),
+            },
+            {
+              text: "Sign In / Sign Up",
+              onPress: () => navigation.navigate("Auth"),
+            },
+          ],
+        );
+        return;
+      }
+
+      loadPets();
+      getCapacity();
+    };
+
+    checkGuestAndLoad();
   }, []);
 
   const formatDate = (date) => {
     return date.toISOString().split("T")[0];
   };
+
+  const normalizeBookedDates = (dates) => {
+    if (!Array.isArray(dates)) return [];
+    return dates
+      .map((date) => {
+        if (typeof date === "string") return date;
+        if (date && typeof date === "object") return date.date || date.booked_date || "";
+        return "";
+      })
+      .filter(Boolean);
+  };
+
+  const getDatesBetween = (startDate, endDate) => {
+    const dates = [];
+    const current = new Date(startDate);
+
+    while (current <= endDate) {
+      dates.push(formatDate(current));
+      current.setDate(current.getDate() + 1);
+    }
+
+    return dates;
+  };
+
+  const getMarkedDates = () => {
+    const marked = {};
+
+    bookedDates.forEach((date) => {
+      marked[date] = {
+        disabled: true,
+        disableTouchEvent: true,
+        marked: true,
+        dotColor: "#ef4444",
+      };
+    });
+
+    const selectedRange = getDatesBetween(checkInDate, checkOutDate);
+    selectedRange.forEach((date) => {
+      marked[date] = {
+        ...(marked[date] || {}),
+        selected: true,
+        selectedColor: "#f97316",
+      };
+    });
+
+    return marked;
+  };
+
+  const loadBookedDatesForMonth = async (date) => {
+    if (!centerId || !date) return;
+
+    try {
+      setFetchingBookedDates(true);
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const data = await fetchBookedDatesApi(centerId, year, month);
+      setBookedDates(normalizeBookedDates(data));
+    } catch (error) {
+      console.log("Booked dates fetch failed:", error);
+      setBookedDates([]);
+    } finally {
+      setFetchingBookedDates(false);
+    }
+  };
+
+  const isDateBooked = async (date) => {
+    const isoDate = formatDate(date);
+    if (bookedDates.includes(isoDate)) {
+      return true;
+    }
+
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    const loadedMonth = checkInDate.getMonth() + 1;
+    const loadedYear = checkInDate.getFullYear();
+
+    if (month !== loadedMonth || year !== loadedYear) {
+      const data = await fetchBookedDatesApi(centerId, year, month);
+      const normalized = normalizeBookedDates(data);
+      if (normalized.includes(isoDate)) {
+        return true;
+      }
+
+      if (year === loadedYear && month === loadedMonth) {
+        setBookedDates(normalized);
+      }
+    }
+
+    return false;
+  };
+
+  useEffect(() => {
+    loadBookedDatesForMonth(checkInDate);
+  }, [centerId, checkInDate.getFullYear(), checkInDate.getMonth()]);
 
   const totalDays = Math.max(
     1,
@@ -123,6 +246,31 @@ export default function BoardingBookingScreen({ route, navigation }) {
       Alert.alert("Error", "Failed to check availability");
     } finally {
       setCheckingAvailability(false);
+    }
+  };
+
+  const handleDateSelection = async (date) => {
+    if (!date) return;
+
+    if (await isDateBooked(date)) {
+      Alert.alert(
+        "Unavailable",
+        `${formatDate(date)} is already booked. Please select another date.`,
+      );
+      return;
+    }
+
+    if (pickerMode === "checkin") {
+      setCheckInDate(date);
+      if (date >= checkOutDate) {
+        setCheckOutDate(new Date(date.getTime() + 86400000));
+      }
+    } else {
+      if (date <= checkInDate) {
+        Alert.alert("Invalid Dates", "End date must be after start date");
+        return;
+      }
+      setCheckOutDate(date);
     }
   };
 
@@ -238,6 +386,26 @@ export default function BoardingBookingScreen({ route, navigation }) {
             <Text>Check Out : {checkOutDate.toDateString()}</Text>
           </TouchableOpacity>
 
+          <Calendar
+            current={formatDate(checkInDate)}
+            minDate={formatDate(new Date())}
+            markingType="simple"
+            markedDates={getMarkedDates()}
+            disableAllTouchEventsForDisabledDays={true}
+            onDayPress={(day) => handleDateSelection(new Date(day.dateString))}
+            onMonthChange={({ dateString }) => {
+              const [year, month] = dateString.split("-").map(Number);
+              loadBookedDatesForMonth(new Date(year, month - 1, 1));
+            }}
+            theme={{
+              selectedDayBackgroundColor: "#f97316",
+              todayTextColor: "#10b981",
+              arrowColor: "#f97316",
+              disabledArrowColor: "#d1d5db",
+            }}
+            style={{ marginTop: 12, borderRadius: 16 }}
+          />
+
           {showPicker && (
             <DateTimePicker
               value={pickerMode === "checkin" ? checkInDate : checkOutDate}
@@ -248,13 +416,27 @@ export default function BoardingBookingScreen({ route, navigation }) {
 
                 if (!date) return;
 
-                if (pickerMode === "checkin") {
-                  setCheckInDate(date);
-                } else {
-                  setCheckOutDate(date);
-                }
+                handleDateSelection(date);
               }}
             />
+          )}
+
+          {fetchingBookedDates ? (
+            <ActivityIndicator style={{ marginTop: 10 }} />
+          ) : bookedDates.length > 0 ? (
+            <Text
+              style={{
+                marginTop: 10,
+                color: "#ef4444",
+                fontWeight: "600",
+              }}
+            >
+              {bookedDates.length} unavailable date(s) in this month.
+            </Text>
+          ) : (
+            <Text style={{ marginTop: 10, color: "#4b5563" }}>
+              No unavailable dates found for the selected month.
+            </Text>
           )}
         </View>
 

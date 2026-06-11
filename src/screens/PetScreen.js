@@ -11,6 +11,7 @@ import {
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import * as ImagePicker from "expo-image-picker";
 
@@ -114,9 +115,51 @@ export default function PetScreen({ navigation }) {
   };
 
   const [petData, setPetData] = useState(initialPetData);
+  const [isGuest, setIsGuest] = useState(false);
+
+  const promptSignIn = () => {
+    Alert.alert(
+      "Sign in required",
+      "Please sign in or create an account to continue.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Sign In / Sign Up",
+          onPress: () => navigation.navigate("Auth"),
+        },
+      ],
+    );
+  };
 
   useEffect(() => {
-    loadPets();
+    const loadGuestStatus = async () => {
+      const guestRole = await AsyncStorage.getItem("guestRole");
+      const isGuestUser = !!guestRole;
+      setIsGuest(isGuestUser);
+
+      if (isGuestUser) {
+        Alert.alert(
+          "Sign in required",
+          "Please sign in or create an account to manage pets.",
+          [
+            {
+              text: "Cancel",
+              style: "cancel",
+              onPress: () => navigation.goBack(),
+            },
+            {
+              text: "Sign In / Sign Up",
+              onPress: () => navigation.navigate("Auth"),
+            },
+          ],
+        );
+        return;
+      }
+
+      loadPets();
+    };
+
+    loadGuestStatus();
   }, []);
 
   // LOAD PETS
@@ -369,6 +412,11 @@ export default function PetScreen({ navigation }) {
 
   // DELETE PET
   const handleDelete = async (id) => {
+    if (isGuest) {
+      promptSignIn();
+      return;
+    }
+
     Alert.alert("Delete Pet", "Are you sure?", [
       {
         text: "Cancel",
@@ -574,6 +622,11 @@ export default function PetScreen({ navigation }) {
         <TouchableOpacity
           style={styles.addBtn}
           onPress={() => {
+            if (isGuest) {
+              promptSignIn();
+              return;
+            }
+
             setEditingId(null);
 
             setSelectedImages([]);
@@ -611,7 +664,13 @@ export default function PetScreen({ navigation }) {
             petImages={petImages}
             styles={styles}
             navigation={navigation}
-            onEdit={editPet}
+            onEdit={(pet) => {
+              if (isGuest) {
+                promptSignIn();
+                return;
+              }
+              editPet(pet);
+            }}
             onDelete={handleDelete}
           />
         )}

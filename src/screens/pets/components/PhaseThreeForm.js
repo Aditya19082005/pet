@@ -181,15 +181,8 @@ export default function PhaseThreeForm({
         }
       />
 
-      <View style={{ marginBottom: 15 }}>
-        <Text
-          style={{
-            fontWeight: "600",
-            marginBottom: 8,
-          }}
-        >
-          Friendly With Humans
-        </Text>
+      <View style={styles.switchContainer}>
+        <Text style={styles.switchLabel}>Friendly With Humans</Text>
 
         <Switch
           value={petData.friendly_with_humans}
@@ -202,15 +195,8 @@ export default function PhaseThreeForm({
         />
       </View>
 
-      <View style={{ marginBottom: 15 }}>
-        <Text
-          style={{
-            fontWeight: "600",
-            marginBottom: 8,
-          }}
-        >
-          Friendly With Dogs
-        </Text>
+      <View style={styles.switchContainer}>
+        <Text style={styles.switchLabel}>Friendly With Dogs</Text>
 
         <Switch
           value={petData.friendly_with_dogs}
@@ -223,15 +209,8 @@ export default function PhaseThreeForm({
         />
       </View>
 
-      <View style={{ marginBottom: 15 }}>
-        <Text
-          style={{
-            fontWeight: "600",
-            marginBottom: 8,
-          }}
-        >
-          Aggressive Behavior
-        </Text>
+      <View style={styles.switchContainer}>
+        <Text style={styles.switchLabel}>Aggressive Behavior</Text>
 
         <Switch
           value={petData.aggressive_behavior}
@@ -244,15 +223,8 @@ export default function PhaseThreeForm({
         />
       </View>
 
-      <View style={{ marginBottom: 15 }}>
-        <Text
-          style={{
-            fontWeight: "600",
-            marginBottom: 8,
-          }}
-        >
-          Treats Allowed
-        </Text>
+      <View style={styles.switchContainer}>
+        <Text style={styles.switchLabel}>Treats Allowed</Text>
 
         <Switch
           value={petData.treats_allowed}
@@ -265,15 +237,8 @@ export default function PhaseThreeForm({
         />
       </View>
 
-      <View style={{ marginBottom: 15 }}>
-        <Text
-          style={{
-            fontWeight: "600",
-            marginBottom: 8,
-          }}
-        >
-          Food Allergies
-        </Text>
+      <View style={styles.switchContainer}>
+        <Text style={styles.switchLabel}>Food Allergies</Text>
 
         <Switch
           value={petData.food_allergies}

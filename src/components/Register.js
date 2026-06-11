@@ -53,10 +53,17 @@ export default function RegisterScreen({
         "true"
       );
 
-      // navigation.reset({
-      //   index: 0,
-      //   routes: [{ name: "Root" }],
-      // });
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name:
+              guestRole === "boarding_owner"
+                ? "GuestBoarding"
+                : "GuestPetOwner",
+          },
+        ],
+      });
     };
 
   return (

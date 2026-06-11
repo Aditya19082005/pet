@@ -315,6 +315,20 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
   },
+
+  switchContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+
+  switchLabel: {
+    fontWeight: "600",
+    fontSize: 15,
+    color: "#374151",
+    flex: 1,
+  },
 });
 
 export default styles;

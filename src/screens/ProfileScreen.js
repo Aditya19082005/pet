@@ -114,6 +114,12 @@ const [isGuest, setIsGuest] =
     }
   };
 
+  const handleSignIn = async () => {
+    await AsyncStorage.removeItem("guestRole");
+    setIsGuest(false);
+    navigation.navigate("Auth");
+  };
+
   if (loading) {
     return (
       <View style={styles.loaderContainer}>
@@ -176,11 +182,7 @@ if (isGuest) {
           borderRadius: 12,
           marginTop: 25,
         }}
-        onPress={async () => {
-          await AsyncStorage.removeItem(
-            "guestRole"
-          );
-        }}
+        onPress={handleSignIn}
       >
         <Text
           style={{

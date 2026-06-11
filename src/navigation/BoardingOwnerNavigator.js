@@ -58,6 +58,7 @@ const handleSignIn = async () => {
   );
 
   setGuestRole(null);
+  navigation.navigate("Auth");
 };
  const handleLogout = async () => {
   try {

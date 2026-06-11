@@ -89,51 +89,44 @@ const [guestRole, setGuestRole] =
     );
   }
 
+  const initialRouteName = isLoggedIn
+    ? userRole === "boarding_owner"
+      ? "BoardingOwner"
+      : "PetOwner"
+    : guestRole === "boarding_owner"
+    ? "GuestBoarding"
+    : guestRole === "pet_owner"
+    ? "GuestPetOwner"
+    : "Auth";
+
   return (
     <NavigationContainer theme={isDark ? DarkTheme : DefaultTheme}>
       <Stack.Navigator
+        initialRouteName={initialRouteName}
         screenOptions={{
           headerShown: false,
         }}
       >
-
-   {isLoggedIn ? (
-
-  userRole === "boarding_owner" ? (
-    <Stack.Screen
-      name="BoardingOwner"
-      component={BoardingOwnerNavigator}
-    />
-  ) : (
-    <Stack.Screen
-      name="PetOwner"
-      component={DrawerNavigator}
-    />
-  )
-
-) : guestRole === "boarding_owner" ? (
-
-  <Stack.Screen
-    name="GuestBoarding"
-    component={BoardingOwnerNavigator}
-  />
-
-) : guestRole === "pet_owner" ? (
-
-  <Stack.Screen
-    name="GuestPetOwner"
-    component={DrawerNavigator}
-  />
-
-) : (
-
-  <Stack.Screen
-    name="Auth"
-    component={AuthNavigator}
-  />
-
-)}
-
+        <Stack.Screen
+          name="Auth"
+          component={AuthNavigator}
+        />
+        <Stack.Screen
+          name="BoardingOwner"
+          component={BoardingOwnerNavigator}
+        />
+        <Stack.Screen
+          name="PetOwner"
+          component={DrawerNavigator}
+        />
+        <Stack.Screen
+          name="GuestBoarding"
+          component={BoardingOwnerNavigator}
+        />
+        <Stack.Screen
+          name="GuestPetOwner"
+          component={DrawerNavigator}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -51,6 +51,7 @@ function CustomDrawerContent({ navigation }) {
     await AsyncStorage.removeItem("guestRole");
 
     setGuestRole(null);
+    navigation.navigate("Auth");
   };
   // LOGOUT FUNCTION
   const handleLogout = async () => {
