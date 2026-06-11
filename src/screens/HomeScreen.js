@@ -4,7 +4,7 @@ import { useTheme } from "../context/ThemeContext";
 import Hero from "../components/Hero";
 import Categories from "../components/Categories";
 import DogGallery from "../components/DogGallery";
-import BookingStatus from "./boarding/BookingStatus";
+import BookingStatus from "./boarding/components/BookingStatus";
 
 export default function HomeScreen() {
   const { theme } = useTheme();

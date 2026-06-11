@@ -94,19 +94,3 @@ export const fetchMyBookingsApi = async (token) => {
     return [];
   }
 };
-
-export const fetchBookedDatesApi = async (centerId, year, month) => {
-  const response = await fetch(
-    `${AVAILABILITY_API_URL}/booked-dates?center_id=${centerId}&year=${year}&month=${month}`,
-  );
-
-  const text = await response.text();
-
-  if (!text || text.trim() === "") {
-    return [];
-  }
-
-  const data = JSON.parse(text);
-
-  return data?.data?.booked_dates || [];
-};

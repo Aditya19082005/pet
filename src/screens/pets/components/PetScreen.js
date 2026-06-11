@@ -15,11 +15,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import * as ImagePicker from "expo-image-picker";
 
-import PetCard from "./pets/components/PetCard";
+import PetCard from "./PetCard";
 
-import PetFormModal from "./pets/components/PetFormModal";
+import PetFormModal from "./PetFormModal";
 
-import styles from "./pets/styles/petStyles";
+import styles from "../styles/petStyles";
 
 import {
   fetchPetByIdApi,
@@ -27,13 +27,13 @@ import {
   addPetApi,
   updatePetApi,
   deletePetApi,
-} from "./pets/services/petService";
+} from "../services/petService";
 
 import {
   fetchPetImagesApi,
   uploadPetImagesApi,
   deletePetImageApi,
-} from "./pets/services/imageService";
+} from "../services/imageService";
 
 export default function PetScreen({ navigation }) {
   const [pets, setPets] = useState([]);

@@ -4,7 +4,7 @@ import BookingScreen from "../screens/BookingScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import StatusScreen from "../screens/StatusScreen";
 import RegisterScreen from "../components/Register";
-import PetScreen from "../screens/PetScreen";
+import PetScreen from "../screens/pets/components/PetScreen";
 import BoardingStack from "./BoardingStack";
 import PetStack from "./PetStack";
 

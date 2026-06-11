@@ -7,9 +7,9 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-import styles from "./styles/boardingStyles";
-import CenterCard from "./components/CenterCard";
-import { fetchBoardingCentersApi } from "./services/boardingService";
+import styles from "../styles/boardingStyles";
+import CenterCard from "./CenterCard";
+import { fetchBoardingCentersApi } from "../services/boardingService";
 
 export default function BoardingCentersScreen({ navigation, route }) {
   const city = route?.params?.city || "";

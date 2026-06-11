@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { Calendar } from "react-native-calendars";
@@ -19,7 +18,7 @@ import {
   fetchCapacityApi,
   checkAvailabilityApi,
   fetchBookedDatesApi,
-} from "./services/boardingService";
+} from "../services/boardingService";
 
 export default function BoardingBookingScreen({ route, navigation }) {
   const { centerId, centerName, pricePerDay } = route.params;
@@ -35,8 +34,6 @@ export default function BoardingBookingScreen({ route, navigation }) {
 
   const [bookedDates, setBookedDates] = useState([]);
   const [fetchingBookedDates, setFetchingBookedDates] = useState(false);
-
-  const [showPicker, setShowPicker] = useState(false);
 
   const [pickerMode, setPickerMode] = useState("checkin");
 
@@ -108,6 +105,11 @@ export default function BoardingBookingScreen({ route, navigation }) {
     return dates;
   };
 
+  const hasBookedDateInRange = (startDate, endDate) => {
+    const range = getDatesBetween(startDate, endDate);
+    return range.some((date) => bookedDates.includes(date));
+  };
+
   const getMarkedDates = () => {
     const marked = {};
 
@@ -115,17 +117,24 @@ export default function BoardingBookingScreen({ route, navigation }) {
       marked[date] = {
         disabled: true,
         disableTouchEvent: true,
-        marked: true,
-        dotColor: "#ef4444",
+        color: "#fee2e2",
+        textColor: "#991b1b",
       };
     });
 
     const selectedRange = getDatesBetween(checkInDate, checkOutDate);
     selectedRange.forEach((date) => {
+      const isStart = date === formatDate(checkInDate);
+      const isEnd = date === formatDate(checkOutDate);
+
       marked[date] = {
         ...(marked[date] || {}),
-        selected: true,
-        selectedColor: "#f97316",
+        disabled: marked[date]?.disabled ?? false,
+        disableTouchEvent: marked[date]?.disableTouchEvent ?? false,
+        startingDay: isStart,
+        endingDay: isEnd,
+        color: isStart || isEnd ? "#f97316" : "#fed7aa",
+        textColor: "#111827",
       };
     });
 
@@ -263,15 +272,27 @@ export default function BoardingBookingScreen({ route, navigation }) {
     if (pickerMode === "checkin") {
       setCheckInDate(date);
       if (date >= checkOutDate) {
-        setCheckOutDate(new Date(date.getTime() + 86400000));
+        const nextDay = new Date(date);
+        nextDay.setDate(nextDay.getDate() + 1);
+        setCheckOutDate(nextDay);
       }
-    } else {
-      if (date <= checkInDate) {
-        Alert.alert("Invalid Dates", "End date must be after start date");
-        return;
-      }
-      setCheckOutDate(date);
+      return;
     }
+
+    if (date <= checkInDate) {
+      Alert.alert("Invalid Dates", "End date must be after the start date");
+      return;
+    }
+
+    if (hasBookedDateInRange(checkInDate, date)) {
+      Alert.alert(
+        "Unavailable range",
+        "The selected stay overlaps unavailable dates. Please choose a different range.",
+      );
+      return;
+    }
+
+    setCheckOutDate(date);
   };
 
   const createBooking = async () => {
@@ -364,32 +385,42 @@ export default function BoardingBookingScreen({ route, navigation }) {
         <View style={styles.card}>
           <Text style={styles.heading}>Booking Dates</Text>
 
-          <TouchableOpacity
-            style={styles.dateInput}
-            onPress={() => {
-              setPickerMode("checkin");
-              setShowPicker(true);
-            }}
-          >
-            <Ionicons name="calendar-outline" size={20} />
-            <Text>Check In : {checkInDate.toDateString()}</Text>
-          </TouchableOpacity>
+          <View style={styles.dateRow}>
+            <TouchableOpacity
+              style={[
+                styles.datePill,
+                pickerMode === "checkin" && styles.activePill,
+              ]}
+              onPress={() => setPickerMode("checkin")}
+            >
+              <Text style={[styles.dateLabel, pickerMode === "checkin" && styles.activePillText]}>
+                Check In
+              </Text>
+              <Text style={[styles.dateValue, pickerMode === "checkin" && styles.activePillText]}>
+                {checkInDate.toDateString()}
+              </Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.dateInput}
-            onPress={() => {
-              setPickerMode("checkout");
-              setShowPicker(true);
-            }}
-          >
-            <Ionicons name="calendar-outline" size={20} />
-            <Text>Check Out : {checkOutDate.toDateString()}</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.datePill,
+                pickerMode === "checkout" && styles.activePill,
+              ]}
+              onPress={() => setPickerMode("checkout")}
+            >
+              <Text style={[styles.dateLabel, pickerMode === "checkout" && styles.activePillText]}>
+                Check Out
+              </Text>
+              <Text style={[styles.dateValue, pickerMode === "checkout" && styles.activePillText]}>
+                {checkOutDate.toDateString()}
+              </Text>
+            </TouchableOpacity>
+          </View>
 
           <Calendar
             current={formatDate(checkInDate)}
             minDate={formatDate(new Date())}
-            markingType="simple"
+            markingType="period"
             markedDates={getMarkedDates()}
             disableAllTouchEventsForDisabledDays={true}
             onDayPress={(day) => handleDateSelection(new Date(day.dateString))}
@@ -398,7 +429,6 @@ export default function BoardingBookingScreen({ route, navigation }) {
               loadBookedDatesForMonth(new Date(year, month - 1, 1));
             }}
             theme={{
-              selectedDayBackgroundColor: "#f97316",
               todayTextColor: "#10b981",
               arrowColor: "#f97316",
               disabledArrowColor: "#d1d5db",
@@ -406,20 +436,14 @@ export default function BoardingBookingScreen({ route, navigation }) {
             style={{ marginTop: 12, borderRadius: 16 }}
           />
 
-          {showPicker && (
-            <DateTimePicker
-              value={pickerMode === "checkin" ? checkInDate : checkOutDate}
-              mode="date"
-              minimumDate={new Date()}
-              onChange={(event, date) => {
-                setShowPicker(false);
-
-                if (!date) return;
-
-                handleDateSelection(date);
-              }}
-            />
-          )}
+          <View style={styles.legendRow}>
+            <View style={[styles.markerBadge, { backgroundColor: "#fee2e2" }]} />
+            <Text style={styles.markerText}>Booked / unavailable dates</Text>
+          </View>
+          <View style={styles.legendRow}>
+            <View style={[styles.markerBadge, { backgroundColor: "#f97316" }]} />
+            <Text style={styles.markerText}>Selected stay range</Text>
+          </View>
 
           {fetchingBookedDates ? (
             <ActivityIndicator style={{ marginTop: 10 }} />
@@ -561,6 +585,59 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 12,
     marginBottom: 10,
+  },
+
+  dateRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 16,
+  },
+
+  datePill: {
+    flex: 1,
+    borderRadius: 16,
+    padding: 14,
+    backgroundColor: "#f3f4f6",
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+    marginRight: 12,
+  },
+
+  activePillText: {
+    color: "#ffffff",
+  },
+
+  activePill: {
+    backgroundColor: "#f97316",
+    borderColor: "#f97316",
+  },
+
+  dateLabel: {
+    fontSize: 12,
+    color: "#6b7280",
+    marginBottom: 6,
+  },
+
+  dateValue: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#111827",
+  },
+
+  legendRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 12,
+  },
+
+  markerBadge: {
+    width: 14,
+    height: 14,
+    borderRadius: 4,
+  },
+
+  markerText: {
+    color: "#4b5563",
   },
 
   orangeBtn: {

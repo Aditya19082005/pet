@@ -21,6 +21,7 @@ export default function OTPVerification({
   password,
   onSuccess,
   onBack,
+  navigation,
 }) {
 
   const [otp, setOtp] =
@@ -194,9 +195,19 @@ export default function OTPVerification({
           );
 
           setTimeout(() => {
+            if (navigation && user?.role) {
+              const nextRoute =
+                user.role === "boarding_owner"
+                  ? "BoardingOwner"
+                  : "PetOwner";
 
-            onSuccess?.();
-
+              navigation.reset({
+                index: 0,
+                routes: [{ name: nextRoute }],
+              });
+            } else {
+              onSuccess?.();
+            }
           }, 100);
 
         } else {

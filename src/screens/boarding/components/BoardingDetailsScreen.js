@@ -15,11 +15,11 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 
-import styles from "./styles/boardingStyles";
+import styles from "../styles/boardingStyles";
 import {
   fetchBoardingCenterByIdApi,
   fetchCapacityApi,
-} from "./services/boardingService";
+} from "../services/boardingService";
 
 const { width } = Dimensions.get("window");
 
