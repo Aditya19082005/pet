@@ -4,8 +4,8 @@ import {
   Text,
   ScrollView,
   ActivityIndicator,
-  StyleSheet,
 } from "react-native";
+import styles from "../styles/petStyles";
 
 import { fetchPetByIdApi } from "../services/petService";
 
@@ -35,7 +35,7 @@ export default function PetDetailsScreen({ route }) {
 
   if (loading) {
     return (
-      <View style={styles.loader}>
+      <View style={styles.detailsLoader}>
         <ActivityIndicator size="large" color="#f97316" />
       </View>
     );
@@ -66,8 +66,8 @@ export default function PetDetailsScreen({ route }) {
   );
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Text style={styles.heading}>Pet Details</Text>
+    <ScrollView style={styles.detailsContainer} showsVerticalScrollIndicator={false}>
+      <Text style={styles.detailsHeading}>Pet Details</Text>
 
       {/* PET DETAILS */}
       <Text style={styles.section}>Pet Information</Text>
@@ -175,55 +175,8 @@ export default function PetDetailsScreen({ route }) {
         value={behavior.food_allergy_details}
       />
 
-      <View style={{ height: 30 }} />
+      <View style={styles.spacer} />
     </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    padding: 15,
-  },
-
-  loader: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  heading: {
-    fontSize: 26,
-    fontWeight: "bold",
-    color: "#f97316",
-    marginBottom: 15,
-  },
-
-  section: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#f97316",
-    marginTop: 20,
-    marginBottom: 10,
-  },
-
-  row: {
-    marginBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-    paddingBottom: 8,
-  },
-
-  label: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#444",
-  },
-
-  value: {
-    marginTop: 4,
-    fontSize: 15,
-    color: "#666",
-  },
-});

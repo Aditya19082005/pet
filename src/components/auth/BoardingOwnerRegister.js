@@ -27,9 +27,6 @@ export default function BoardingOwnerRegister({
   const [loading, setLoading] =
     useState(false);
 
-  // =====================================
-  // STEP 1 - OWNER DETAILS
-  // =====================================
 
   const [fullName, setFullName] =
     useState("");
@@ -67,9 +64,6 @@ export default function BoardingOwnerRegister({
     setBusinessName,
   ] = useState("");
 
-  // =====================================
-  // STEP 2 - CENTER DETAILS
-  // =====================================
 
   const [
     centerName,
@@ -125,9 +119,6 @@ const [longitude, setLongitude] = useState("");
     setPricePerDay,
   ] = useState("");
 
-  // =====================================
-  // STEP 3 - SERVICES
-  // =====================================
 
   const [
     acceptedPetTypes,
@@ -164,9 +155,6 @@ const [longitude, setLongitude] = useState("");
     setVaccinationPolicy,
   ] = useState("");
 
-  // =====================================
-  // STEP 4 - DOCUMENTS
-  // =====================================
 
   const [aadharFile, setAadharFile] =
     useState(null);
@@ -181,9 +169,6 @@ const [longitude, setLongitude] = useState("");
     setCenterPhotos,
   ] = useState([]);
 
-  // =====================================
-  // STEP 5 - EXTRA DETAILS
-  // =====================================
 
   const [
     vetClinicName,
@@ -249,7 +234,6 @@ const [insuranceExpiryDate, setInsuranceExpiryDate] = useState(null);
     setTermsAccepted,
   ] = useState(false);
 
-  //file pickers
     const pickAadhar = async () => {
 
     const result =
@@ -307,9 +291,6 @@ const [insuranceExpiryDate, setInsuranceExpiryDate] = useState(null);
     };
 
 
-      // =====================================
-  // STEP VALIDATION
-  // =====================================
 
   const validateStep = () => {
 
@@ -368,9 +349,6 @@ const [insuranceExpiryDate, setInsuranceExpiryDate] = useState(null);
     return true;
   };
 
-  // =====================================
-  // NEXT STEP
-  // =====================================
 
   const nextStep = () => {
 
@@ -381,9 +359,6 @@ const [insuranceExpiryDate, setInsuranceExpiryDate] = useState(null);
     );
   };
 
-  // =====================================
-  // PREVIOUS STEP
-  // =====================================
 
   const prevStep = () => {
 
@@ -392,9 +367,6 @@ const [insuranceExpiryDate, setInsuranceExpiryDate] = useState(null);
     );
   };
 
-  // =====================================
-  // SUBMIT REGISTRATION
-  // =====================================
 
   const handleRegister = async () => {
 
@@ -415,9 +387,6 @@ const [insuranceExpiryDate, setInsuranceExpiryDate] = useState(null);
       const formData =
         new FormData();
 
-      // ==========================
-      // OWNER
-      // ==========================
 
       formData.append(
         "full_name",
@@ -454,19 +423,12 @@ const [insuranceExpiryDate, setInsuranceExpiryDate] = useState(null);
         emergencyContactNumber
       );
 
-    //   formData.append(
-    //     "residential_address",
-    //     residentialAddress
-    //   );
 
       formData.append(
         "business_name",
         businessName
       );
 
-      // ==========================
-      // CENTER
-      // ==========================
 
       formData.append(
         "center_name",
@@ -531,9 +493,6 @@ formData.append(
         pricePerDay
       );
 
-      // ==========================
-      // ARRAYS
-      // ==========================
 
       formData.append(
         "accepted_pet_types",
@@ -600,9 +559,6 @@ formData.append(
         vaccinationPolicy
       );
 
-      // ==========================
-      // EXTRA DETAILS
-      // ==========================
 
       formData.append(
         "vet_clinic_name",
@@ -678,9 +634,6 @@ formData.append(
         "1"
       );
 
-      // ==========================
-      // FILES
-      // ==========================
 
       if (aadharFile) {
 

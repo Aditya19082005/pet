@@ -2,7 +2,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { API_URL } from "../constants/api";
 
-// FETCH SINGLE PET DETAILS
 export const fetchPetByIdApi = async (id) => {
   const token = await AsyncStorage.getItem("token");
 
@@ -25,7 +24,6 @@ export const fetchPetByIdApi = async (id) => {
   return data?.data || data;
 };
 
-// FETCH PETS
 export const fetchPetsApi = async () => {
   const token = await AsyncStorage.getItem("token");
 
@@ -48,7 +46,6 @@ export const fetchPetsApi = async () => {
   return Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : [];
 };
 
-// ADD PET
 export const addPetApi = async (payload) => {
   const token = await AsyncStorage.getItem("token");
 
@@ -70,7 +67,6 @@ export const addPetApi = async (payload) => {
   };
 };
 
-// UPDATE PET
 export const updatePetApi = async (payload) => {
   const token = await AsyncStorage.getItem("token");
 
@@ -92,7 +88,6 @@ export const updatePetApi = async (payload) => {
   };
 };
 
-// DELETE PET
 export const deletePetApi = async (id) => {
   const token = await AsyncStorage.getItem("token");
 
@@ -105,3 +100,4 @@ export const deletePetApi = async (id) => {
 
   return response.ok;
 };
+

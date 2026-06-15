@@ -2,13 +2,17 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
+  TextInput,
   StyleSheet,
   TouchableOpacity,
   Image,
   ActivityIndicator,
   ScrollView,
+  Alert,
+  Linking,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as DocumentPicker from "expo-document-picker";
 import { LinearGradient } from "expo-linear-gradient";
 
 const API_URL = "https://www.cgpisoftware.com/cheerytail";
@@ -16,8 +20,16 @@ const API_URL = "https://www.cgpisoftware.com/cheerytail";
 export default function ProfileScreen({ navigation }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-const [isGuest, setIsGuest] =
-  useState(false);
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [alternatePhone, setAlternatePhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [emergencyName, setEmergencyName] = useState("");
+  const [emergencyNumber, setEmergencyNumber] = useState("");
+  const [aadharFile, setAadharFile] = useState(null);
+  const [isGuest, setIsGuest] = useState(false);
   useEffect(() => {
     fetchProfile();
   }, []);
@@ -44,7 +56,6 @@ const [isGuest, setIsGuest] =
       guestRole
     );
 
-    // GUEST USER
     if (!token) {
       if (guestRole) {
         setIsGuest(true);
@@ -71,39 +82,59 @@ const [isGuest, setIsGuest] =
         JSON.stringify(result, null, 2)
       );
 
-     if (response.ok && result.status === "success") {
-  const details = result.data.owner_details || {};
+      const data = result?.data || result;
+      const details =
+        data?.owner_details ||
+        data?.owner ||
+        result?.owner ||
+        data ||
+        {};
 
-  setUser({
-    id: result.data.id,
-    role: result.data.role,
-    email_verified: result.data.email_verified,
+      const statusSuccess =
+        result?.status === "success" ||
+        result?.status === true ||
+        result?.status === 1 ||
+        result?.status === "1" ||
+        (!result?.status && !!data);
 
-    full_name: details.full_name || "",
-    email: details.email || "",
-    phone: details.mobile_number || "",
-    alternate_phone:
-      details.alternate_contact_number || "",
+      if (response.ok && statusSuccess) {
+        setUser({
+          id:
+            data?.id ||
+            result?.user_id ||
+            result?.id ||
+            null,
+          role: data?.role || result?.role || "",
+          email_verified:
+            data?.email_verified ||
+            result?.email_verified ||
+            false,
 
-    address:
-      details.residential_address || "",
+          full_name: details.full_name || "",
+          email: details.email || "",
+          phone: details.mobile_number || "",
+          alternate_phone:
+            details.alternate_contact_number || "",
 
-    emergency_name:
-      details.emergency_contact_name || "",
+          address:
+            details.residential_address || "",
 
-    emergency_number:
-      details.emergency_contact_number || "",
+          emergency_name:
+            details.emergency_contact_name || "",
 
-    aadhar_file:
-      details.aadhar_file || "",
+          emergency_number:
+            details.emergency_contact_number || "",
 
-    created_at:
-      result.data.created_at || "",
+          aadhar_file:
+            details.aadhar_file || "",
 
-    updated_at:
-      result.data.updated_at || "",
-  });
-}
+          created_at:
+            data?.created_at || result?.created_at || "",
+
+          updated_at:
+            data?.updated_at || result?.updated_at || "",
+        });
+      }
     } catch (error) {
       console.log(
         "PROFILE ERROR =>",
@@ -111,6 +142,145 @@ const [isGuest, setIsGuest] =
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const startEditing = () => {
+    setFullName(user?.full_name || "");
+    setPhone(user?.phone || "");
+    setAlternatePhone(user?.alternate_phone || "");
+    setAddress(user?.address || "");
+    setEmergencyName(user?.emergency_name || "");
+    setEmergencyNumber(user?.emergency_number || "");
+    setAadharFile(null);
+    setEditing(true);
+  };
+
+  const cancelEdit = () => {
+    setEditing(false);
+    setAadharFile(null);
+  };
+
+  const pickAadhar = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: ["image/*", "application/pdf"],
+      });
+
+      if (!result.canceled) {
+        setAadharFile(result.assets[0]);
+      }
+    } catch (error) {
+      console.log("AADHAAR PICK ERROR =>", error);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    if (
+      !fullName ||
+      !phone ||
+      !address ||
+      !emergencyName ||
+      !emergencyNumber
+    ) {
+      Alert.alert(
+        "Validation",
+        "Please fill all required fields."
+      );
+      return;
+    }
+
+    setSaving(true);
+
+    try {
+      const token = await AsyncStorage.getItem("token");
+
+      if (!token) {
+        Alert.alert(
+          "Session Required",
+          "Please sign in again to update your profile."
+        );
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("full_name", fullName);
+      formData.append("mobile_number", phone);
+      formData.append(
+        "alternate_contact_number",
+        alternatePhone
+      );
+      formData.append("residential_address", address);
+      formData.append(
+        "emergency_contact_name",
+        emergencyName
+      );
+      formData.append(
+        "emergency_contact_number",
+        emergencyNumber
+      );
+
+      if (aadharFile) {
+        formData.append("aadhar_file", {
+          uri: aadharFile.uri,
+          name:
+            aadharFile.name ||
+            `aadhar.${aadharFile.uri
+              .split(".")
+              .pop() ||
+              "jpg"}`,
+          type:
+            aadharFile.mimeType ||
+            "application/octet-stream",
+        });
+      }
+
+      const response = await fetch(
+        `${API_URL}/api/user/profile/update`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+          body: formData,
+        }
+      );
+
+      const result = await response.json();
+
+      console.log(
+        "PROFILE UPDATE RESPONSE =>",
+        JSON.stringify(result, null, 2)
+      );
+
+      if (
+        response.ok &&
+        (result.status === true ||
+          result.status === "success")
+      ) {
+        Alert.alert(
+          "Success",
+          "Profile updated successfully."
+        );
+        setEditing(false);
+        setAadharFile(null);
+        fetchProfile();
+      } else {
+        Alert.alert(
+          "Update Failed",
+          result.message ||
+            "Unable to update profile."
+        );
+      }
+    } catch (error) {
+      console.log("PROFILE UPDATE ERROR =>", error);
+      Alert.alert(
+        "Error",
+        "Unable to update profile. Please try again."
+      );
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -196,6 +366,11 @@ if (isGuest) {
     </View>
   );
 }
+
+  const currentAadharIsPdf = user?.aadhar_file
+    ?.toLowerCase()
+    .endsWith(".pdf");
+
   return (
     <ScrollView
       style={styles.wrapper}
@@ -306,19 +481,132 @@ if (isGuest) {
   </Text>
 </View>
 
+{editing ? (
+  <View style={styles.editCard}>
+    <Text style={styles.editTitle}>Edit Profile</Text>
+
+    <Text style={styles.formLabel}>Full Name</Text>
+    <TextInput
+      value={fullName}
+      onChangeText={setFullName}
+      style={styles.input}
+    />
+
+    <Text style={styles.formLabel}>Mobile Number</Text>
+    <TextInput
+      value={phone}
+      onChangeText={setPhone}
+      style={styles.input}
+      keyboardType="phone-pad"
+    />
+
+    <Text style={styles.formLabel}>Alternate Contact Number</Text>
+    <TextInput
+      value={alternatePhone}
+      onChangeText={setAlternatePhone}
+      style={styles.input}
+      keyboardType="phone-pad"
+    />
+
+    <Text style={styles.formLabel}>Residential Address</Text>
+    <TextInput
+      value={address}
+      onChangeText={setAddress}
+      style={[styles.input, styles.multiLineInput]}
+      multiline
+    />
+
+    <Text style={styles.formLabel}>Emergency Contact Name</Text>
+    <TextInput
+      value={emergencyName}
+      onChangeText={setEmergencyName}
+      style={styles.input}
+    />
+
+    <Text style={styles.formLabel}>Emergency Contact Number</Text>
+    <TextInput
+      value={emergencyNumber}
+      onChangeText={setEmergencyNumber}
+      style={styles.input}
+      keyboardType="phone-pad"
+    />
+
+    <TouchableOpacity
+      style={styles.fileButton}
+      onPress={pickAadhar}
+    >
+      <Text style={styles.fileButtonText}>
+        Choose Aadhaar File
+      </Text>
+    </TouchableOpacity>
+
+    {aadharFile ? (
+      <Text style={styles.fileName}>
+        {aadharFile.name}
+      </Text>
+    ) : user?.aadhar_file ? (
+      <TouchableOpacity
+        style={styles.fileAction}
+        onPress={() =>
+          Linking.openURL(user.aadhar_file)
+        }
+      >
+        <Text style={styles.fileActionText}>
+          {currentAadharIsPdf
+            ? "View current Aadhaar PDF"
+            : "View current Aadhaar image"}
+        </Text>
+      </TouchableOpacity>
+    ) : null}
+
+    <View style={styles.btnRow}>
+      <TouchableOpacity
+        style={styles.primaryBtn}
+        onPress={handleSaveProfile}
+        disabled={saving}
+      >
+        <Text style={styles.primaryBtnText}>
+          {saving ? "Saving..." : "Save Changes"}
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.secondaryBtn, styles.cancelBtn]}
+        onPress={cancelEdit}
+      >
+        <Text style={styles.secondaryBtnText}>
+          Cancel
+        </Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+) : null}
+
 {user?.aadhar_file ? (
   <>
     <Text style={styles.docTitle}>
       Aadhaar Document
     </Text>
 
-    <Image
-      source={{
-        uri: user.aadhar_file,
-      }}
-      style={styles.aadharImage}
-      resizeMode="cover"
-    />
+    {currentAadharIsPdf ? (
+      <TouchableOpacity
+        style={styles.fileAction}
+        onPress={() =>
+          Linking.openURL(user.aadhar_file)
+        }
+      >
+        <Text style={styles.fileActionText}>
+          View Aadhaar PDF
+        </Text>
+      </TouchableOpacity>
+    ) : (
+      <Image
+        source={{
+          uri: user.aadhar_file,
+        }}
+        style={styles.aadharImage}
+        resizeMode="cover"
+      />
+    )}
   </>
 ) : null}
         {/* Description */}
@@ -331,6 +619,7 @@ if (isGuest) {
         <View style={styles.btnRow}>
           <TouchableOpacity
             style={styles.primaryBtn}
+            onPress={startEditing}
           >
             <Text
               style={styles.primaryBtnText}
@@ -506,5 +795,83 @@ aadharImage: {
   height: 220,
   borderRadius: 15,
   marginBottom: 20,
+},
+
+editCard: {
+  width: "100%",
+  backgroundColor: "#fff",
+  borderRadius: 15,
+  padding: 16,
+  marginBottom: 20,
+  marginTop: 10,
+},
+
+editTitle: {
+  fontSize: 18,
+  fontWeight: "bold",
+  marginBottom: 12,
+  color: "#1f2937",
+},
+
+formLabel: {
+  fontSize: 13,
+  color: "#4b5563",
+  marginTop: 12,
+  marginBottom: 6,
+},
+
+input: {
+  width: "100%",
+  backgroundColor: "#f9fafb",
+  borderRadius: 12,
+  borderWidth: 1,
+  borderColor: "#e5e7eb",
+  padding: 12,
+  color: "#111827",
+},
+
+multiLineInput: {
+  minHeight: 80,
+  textAlignVertical: "top",
+},
+
+fileButton: {
+  marginTop: 12,
+  backgroundColor: "#eef2ff",
+  borderRadius: 12,
+  paddingVertical: 12,
+  paddingHorizontal: 16,
+  alignItems: "center",
+},
+
+fileButtonText: {
+  color: "#1d4ed8",
+  fontWeight: "600",
+},
+
+fileName: {
+  marginTop: 10,
+  fontSize: 14,
+  color: "#374151",
+},
+
+fileAction: {
+  marginTop: 10,
+  paddingVertical: 12,
+  paddingHorizontal: 14,
+  borderRadius: 12,
+  backgroundColor: "#f3f4f6",
+  width: "100%",
+  alignItems: "center",
+},
+
+fileActionText: {
+  color: "#2563eb",
+  fontWeight: "600",
+},
+
+cancelBtn: {
+  backgroundColor: "#fff",
+  borderColor: "#d1d5db",
 },
 });

@@ -80,7 +80,7 @@ export default function PickupDropManagement() {
       colors={["#f8fafc", "#eef2ff", "#fdf2f8"]}
       style={styles.pickupContainer}
     >
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
+      <ScrollView contentContainerStyle={styles.pickupContentContainer}>
         {/* HEADER */}
         <Text style={styles.pickupHeading}>Pickup & Drop Management</Text>
         <Text style={styles.pickupSubHeading}>
@@ -123,4 +123,5 @@ export default function PickupDropManagement() {
     </LinearGradient>
   );
 }
+
 

@@ -25,6 +25,8 @@ export default function PhaseOneForm({
   pickImages,
   selectedImages,
   removeImage,
+  profileImageIndex,
+  setProfileImageIndex,
 }) {
   const [showDobPicker, setShowDobPicker] = useState(false);
 
@@ -70,14 +72,10 @@ export default function PhaseOneForm({
       />
 
       <View
-        style={{
-          borderWidth: 1,
-          borderColor: fieldErrors.pet_type ? "#ef4444" : "#e5e7eb",
-          borderRadius: 14,
-          marginBottom: 12,
-          overflow: "hidden",
-          backgroundColor: fieldErrors.pet_type ? "#fff1f2" : "#fff",
-        }}
+        style={[
+          styles.pickerWrapper,
+          fieldErrors.pet_type && styles.inputError,
+        ]}
       >
         <Picker
           selectedValue={petData.pet_type}
@@ -125,14 +123,10 @@ export default function PhaseOneForm({
       />
 
       <View
-        style={{
-          borderWidth: 1,
-          borderColor: fieldErrors.gender ? "#ef4444" : "#e5e7eb",
-          borderRadius: 14,
-          marginBottom: 12,
-          overflow: "hidden",
-          backgroundColor: fieldErrors.gender ? "#fff1f2" : "#fff",
-        }}
+        style={[
+          styles.pickerWrapper,
+          fieldErrors.gender && styles.inputError,
+        ]}
       >
         <Picker
           selectedValue={petData.gender}
@@ -264,7 +258,7 @@ export default function PhaseOneForm({
 
       <TextInput
         placeholder="Additional Details"
-        style={[styles.input, { minHeight: 90, textAlignVertical: "top" }]}
+        style={[styles.input, styles.textArea]}
         multiline
         value={petData.additional_details}
         onChangeText={(text) =>
@@ -280,55 +274,66 @@ export default function PhaseOneForm({
       <Text style={styles.fieldLabel}>Pet Images</Text>
       <Text style={styles.helperText}>You can add one or more photos for the pet profile.</Text>
 
-      <TouchableOpacity
-        onPress={pickImages}
-        style={{
-          borderWidth: 1,
-          borderColor: "#ddd",
-          borderRadius: 10,
-          paddingVertical: 14,
-          paddingHorizontal: 15,
-          marginBottom: 12,
-          backgroundColor: "#fafafa",
-        }}
-      >
-        <Text
-          style={{
-            color: "#666",
-            fontSize: 15,
-          }}
-        >
-        Select Images
-        </Text>
+      <TouchableOpacity onPress={pickImages} style={styles.imageSelectButton}>
+        <Text style={styles.imageSelectButtonText}>Select Images</Text>
       </TouchableOpacity>
 
       {selectedImages?.length > 0 && (
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={{ marginTop: 15 }}
-        >
-          {selectedImages.map((img, index) => (
-            <View key={index} style={styles.imageThumbWrapper}>
-              <Image
-                source={{
-                  uri: img.uri || img.image_url || img.url || img.pet_image,
-                }}
-                style={styles.imageThumb}
-              />
-
+        <>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.imagePreviewContainer}
+          >
+            {selectedImages.map((img, index) => (
               <TouchableOpacity
-                onPress={() => removeImage(index)}
-                style={styles.removeImageBtn}
+                key={index}
+                style={[
+                  styles.imageThumbWrapper,
+                  profileImageIndex === index && styles.selectedThumbWrapper,
+                ]}
+                onPress={() => setProfileImageIndex(index)}
               >
-                <Text style={styles.removeImageText}>
-                  ✕
-                </Text>
+                <Image
+                  source={{
+                    uri: img.uri || img.image_url || img.url || img.pet_image,
+                  }}
+                  style={styles.imageThumb}
+                />
+
+                <View
+                  style={[
+                    styles.profileBadge,
+                    profileImageIndex === index
+                      ? styles.profileBadgeActive
+                      : styles.profileBadgeInactive,
+                  ]}
+                >
+                  <Text style={styles.profileBadgeText}>
+                    {profileImageIndex === index
+                      ? "Profile"
+                      : "Set Profile"}
+                  </Text>
+                </View>
+
+                <TouchableOpacity
+                  onPress={() => removeImage(index)}
+                  style={styles.removeImageBtn}
+                >
+                  <Text style={styles.removeImageText}>✕</Text>
+                </TouchableOpacity>
               </TouchableOpacity>
-            </View>
-          ))}
-        </ScrollView>
+            ))}
+          </ScrollView>
+
+          {profileImageIndex === null && (
+            <Text style={styles.helperText}>
+              Tap a photo to choose the pet profile image.
+            </Text>
+          )}
+        </>
       )}
     </View>
   );
 }
+

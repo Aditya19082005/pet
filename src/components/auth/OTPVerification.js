@@ -50,9 +50,6 @@ export default function OTPVerification({
 
         setLoading(true);
 
-        // ====================================
-        // RESET PASSWORD FLOW
-        // ====================================
 
         if (
           otpType ===
@@ -119,9 +116,6 @@ export default function OTPVerification({
           return;
         }
 
-        // ====================================
-        // LOGIN / REGISTER FLOW
-        // ====================================
 
         const endpoint =
           otpType === "login"
@@ -277,9 +271,17 @@ export default function OTPVerification({
         const result =
           await response.json();
 
+        const resendOtp =
+          result?.otp ||
+          result?.data?.otp ||
+          result?.data?.verification_otp ||
+          "OTP not returned";
+
         console.log(
           "RESEND OTP =>",
-          result
+          result,
+          "OTP CODE =>",
+          resendOtp
         );
 
         Alert.alert(
@@ -424,4 +426,5 @@ const styles =
       color: "#666",
     },
 });
+
 

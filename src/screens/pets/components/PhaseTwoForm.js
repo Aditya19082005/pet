@@ -106,7 +106,7 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
       <TextInput
         placeholder="Vaccination Details"
         multiline
-        style={[styles.input, { minHeight: 90, textAlignVertical: "top" }]}
+        style={[styles.input, styles.textArea]}
         value={petData.vaccination_details}
         onChangeText={(text) =>
           setPetData({
@@ -119,7 +119,7 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
       <TextInput
         placeholder="Vaccination Notes"
         multiline
-        style={[styles.input, { minHeight: 80, textAlignVertical: "top" }]}
+        style={[styles.input, styles.textArea]}
         value={petData.vaccination_notes}
         onChangeText={(text) =>
           setPetData({
@@ -129,26 +129,9 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
         }
       />
 
-      <Text
-        style={{
-          marginBottom: 5,
-          fontWeight: "600",
-        }}
-      >
-        Vaccination Certificate
-      </Text>
+      <Text style={styles.sectionLabel}>Vaccination Certificate</Text>
 
-      <TouchableOpacity
-        style={[
-          styles.dateInput,
-          {
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          },
-        ]}
-        onPress={pickVaccinationCertificate}
-      >
+      <TouchableOpacity style={styles.dateInput} onPress={pickVaccinationCertificate}>
         <Text style={styles.dateInputText} numberOfLines={1}>
           {petData.vaccination_certificate?.name ||
             petData.vaccination_certificate?.uri?.split("/").pop() ||
@@ -159,19 +142,9 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
 
       {/* DEWORMING DATE */}
 
-      <Text
-        style={{
-          marginBottom: 5,
-          fontWeight: "600",
-        }}
-      >
-        Deworming Date
-      </Text>
+      <Text style={styles.sectionLabel}>Deworming Date</Text>
 
-      <TouchableOpacity
-        style={styles.dateInput}
-        onPress={() => setShowDewormingPicker(true)}
-      >
+      <TouchableOpacity style={styles.dateInput} onPress={() => setShowDewormingPicker(true)}>
         <Text style={styles.dateInputText}>
           {petData.deworming_date || "Select Deworming Date"}
         </Text>
@@ -195,19 +168,9 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
 
       {/* FLEA TICK DATE */}
 
-      <Text
-        style={{
-          marginBottom: 5,
-          fontWeight: "600",
-        }}
-      >
-        Flea Tick Treatment Date
-      </Text>
+      <Text style={styles.sectionLabel}>Flea Tick Treatment Date</Text>
 
-      <TouchableOpacity
-        style={styles.dateInput}
-        onPress={() => setShowFleaTickPicker(true)}
-      >
+      <TouchableOpacity style={styles.dateInput} onPress={() => setShowFleaTickPicker(true)}>
         <Text style={styles.dateInputText}>
           {petData.flea_tick_treatment_date ||
             "Select Flea Tick Treatment Date"}
@@ -233,7 +196,7 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
       <TextInput
         placeholder="Medical History"
         multiline
-        style={[styles.input, { minHeight: 90, textAlignVertical: "top" }]}
+        style={[styles.input, styles.textArea]}
         value={petData.medical_history}
         onChangeText={(text) =>
           setPetData({
@@ -258,7 +221,7 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
       <TextInput
         placeholder="Medical Conditions"
         multiline
-        style={[styles.input, { minHeight: 90, textAlignVertical: "top" }]}
+        style={[styles.input, styles.textArea]}
         value={petData.medical_conditions}
         onChangeText={(text) =>
           setPetData({
@@ -283,7 +246,7 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
       <TextInput
         placeholder="Surgery History"
         multiline
-        style={[styles.input, { minHeight: 90, textAlignVertical: "top" }]}
+        style={[styles.input, styles.textArea]}
         value={petData.surgery_history}
         onChangeText={(text) =>
           setPetData({
@@ -309,3 +272,4 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
     </View>
   );
 }
+

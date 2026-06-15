@@ -160,40 +160,15 @@ export default function BoardingDetailsScreen({ route, navigation }) {
         <View style={styles.sectionCard}>
           <Text style={styles.sectionTitle}>Address</Text>
 
-          <Text
-            style={[
-              styles.infoText,
-              {
-                textAlign: "left",
-              },
-            ]}
-          >
-            📍 {center.address}
-          </Text>
+          <Text style={styles.addressInfoText}>📍 {center.address}</Text>
 
           {!!center.address_line_2 && (
-            <Text
-              style={[
-                styles.infoText,
-                {
-                  textAlign: "left",
-                  marginTop: 4,
-                },
-              ]}
-            >
+            <Text style={[styles.addressInfoText, styles.addressLine]}>
               {center.address_line_2}
             </Text>
           )}
 
-          <Text
-            style={[
-              styles.infoText,
-              {
-                textAlign: "left",
-                marginTop: 4,
-              },
-            ]}
-          >
+          <Text style={[styles.addressInfoText, styles.addressLine]}>
             {center.city}, {center.state} - {center.zip_code}
           </Text>
         </View>
@@ -247,13 +222,10 @@ export default function BoardingDetailsScreen({ route, navigation }) {
               </View>
 
               <Text
-                style={{
-                  marginTop: 15,
-                  textAlign: "center",
-                  fontWeight: "bold",
-                  fontSize: 16,
-                  color: capacity?.data?.is_available ? "green" : "red",
-                }}
+                style={[
+                  styles.capacityStatusText,
+                  { color: capacity?.data?.is_available ? "green" : "red" },
+                ]}
               >
                 {capacity?.data?.is_available
                   ? "🟢 Slots Available"
@@ -289,3 +261,4 @@ export default function BoardingDetailsScreen({ route, navigation }) {
     </ScrollView>
   );
 }
+

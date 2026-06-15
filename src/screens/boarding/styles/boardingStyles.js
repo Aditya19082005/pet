@@ -13,6 +13,55 @@ export default StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#ffffff",
   },
+  contentContainer: {
+    padding: 16,
+    paddingBottom: 30,
+  },
+  bookingScreenContent: {
+    padding: 16,
+    paddingBottom: 30,
+  },
+  calendarWrapper: {
+    marginTop: 12,
+    borderRadius: 16,
+    overflow: "hidden",
+  },
+  smallLoader: {
+    marginTop: 10,
+  },
+  warningText: {
+    marginTop: 10,
+    color: "#ef4444",
+    fontWeight: "600",
+  },
+  statusNote: {
+    marginTop: 10,
+    color: "#4b5563",
+  },
+  totalCostText: {
+    marginTop: 8,
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  availableInfoContainer: {
+    marginTop: 15,
+  },
+  availabilityText: {
+    marginTop: 10,
+    fontWeight: "bold",
+  },
+  emptyStateContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyStateText: {
+    fontSize: 14,
+    color: "#666",
+  },
+  listContent: {
+    paddingBottom: 30,
+  },
   card: {
     borderRadius: 28,
     margin: 16,
@@ -23,6 +72,76 @@ export default StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 5,
+  },
+  centerCardWrapper: {
+    borderRadius: 28,
+    margin: 16,
+    overflow: "hidden",
+    backgroundColor: "#ffffff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  centerCardContent: {
+    padding: 20,
+  },
+  centerCardBadge: {
+    backgroundColor: "#fff7ed",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 50,
+    alignSelf: "flex-start",
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "#fdba74",
+  },
+  centerCardBadgeText: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: "#ea580c",
+    textTransform: "uppercase",
+    letterSpacing: 0.6,
+  },
+  centerCardTitle: {
+    fontSize: 24,
+    fontWeight: "800",
+    color: "#0f172a",
+  },
+  centerCardDescription: {
+    fontSize: 12,
+    color: "#475569",
+    lineHeight: 24,
+  },
+  centerCardRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  centerCardCity: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#1e293b",
+  },
+  centerCardPrice: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: "#f97316",
+  },
+  centerCardButton: {
+    backgroundColor: "#f97316",
+    paddingVertical: 12,
+    borderRadius: 14,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  centerCardButtonText: {
+    color: "#ffffff",
+    fontWeight: "700",
+    fontSize: 14,
+    letterSpacing: 0.3,
   },
   image: {
     width: "100%",
@@ -106,6 +225,16 @@ export default StyleSheet.create({
     lineHeight: 22,
     textAlign: "right",
   },
+  addressInfoText: {
+    flex: 1,
+    fontSize: 15,
+    color: "#475569",
+    lineHeight: 22,
+    textAlign: "left",
+  },
+  addressLine: {
+    marginTop: 4,
+  },
   price: {
     fontSize: 18,
     fontWeight: "800",
@@ -160,6 +289,12 @@ export default StyleSheet.create({
     backgroundColor: "#e2e8f0",
     marginVertical: 10,
   },
+  capacityStatusText: {
+    marginTop: 15,
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
 
   bookingScreenContainer: {
     flex: 1,
@@ -169,6 +304,8 @@ export default StyleSheet.create({
     padding: 16,
     borderRadius: 16,
     marginBottom: 15,
+    marginHorizontal: 0,
+    width: "100%",
   },
   bookingScreenCenterName: {
     fontSize: 22,
@@ -240,15 +377,18 @@ export default StyleSheet.create({
   },
   bookingScreenOrangeBtn: {
     backgroundColor: "#f97316",
-    padding: 14,
+    padding: 16,
     borderRadius: 12,
     alignItems: "center",
+    width: "100%",
   },
   bookingScreenBookBtn: {
     backgroundColor: "#ec4899",
     padding: 18,
     borderRadius: 16,
     alignItems: "center",
+    width: "100%",
+    marginTop: 10,
     marginBottom: 30,
   },
   bookingScreenBtnText: {
@@ -262,6 +402,19 @@ export default StyleSheet.create({
     padding: 12,
     minHeight: 100,
     textAlignVertical: "top",
+    width: "100%",
+    backgroundColor: "#ffffff",
+  },
+  bookingScreenInputWrapper: {
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+    borderRadius: 12,
+    overflow: "hidden",
+    backgroundColor: "#ffffff",
+  },
+  bookingScreenPicker: {
+    width: "100%",
+    color: "#111827",
   },
 
   bookingInterfaceContainer: {
@@ -365,6 +518,42 @@ export default StyleSheet.create({
     fontSize: 16,
   },
 
+  bookingInterfaceScroll: {
+    padding: 16,
+  },
+
+  bookingInterfacePetLabel: {
+    color: "#374151",
+    fontWeight: "600",
+  },
+
+  bookingInterfacePetLabelActive: {
+    color: "#ffffff",
+  },
+
+  bookingInterfaceAddPetLabel: {
+    fontWeight: "bold",
+    color: "#4338ca",
+  },
+
+  bookingInterfaceSummaryLabel: {
+    color: "#111827",
+  },
+
+  bookingInterfaceSummaryLabelBold: {
+    fontWeight: "bold",
+  },
+
+  bookingInterfaceSummaryValue: {
+    fontWeight: "bold",
+    color: "#ea580c",
+  },
+
+  bookingInterfaceSummaryAmount: {
+    color: "#db2777",
+    fontWeight: "bold",
+  },
+
   bookingStatusContainer: {
     paddingTop: 30,
     paddingBottom: 60,
@@ -424,6 +613,13 @@ export default StyleSheet.create({
     alignItems: "center",
     marginRight: 10,
   },
+  bookingStatusPetImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 16,
+    marginRight: 10,
+    backgroundColor: "#f3f4f6",
+  },
   bookingStatusPetEmoji: {
     fontSize: 22,
   },
@@ -442,6 +638,9 @@ export default StyleSheet.create({
     borderRadius: 20,
     alignSelf: "flex-start",
     marginVertical: 10,
+  },
+  bookingStatusBadgeText: {
+    fontWeight: "600",
   },
   bookingStatusInfoBox: {
     backgroundColor: "#fff",
@@ -517,6 +716,9 @@ export default StyleSheet.create({
   pickupContainer: {
     flex: 1,
   },
+  pickupContentContainer: {
+    padding: 16,
+  },
   pickupHeading: {
     fontSize: 28,
     fontWeight: "bold",
@@ -574,3 +776,4 @@ export default StyleSheet.create({
     color: "#888",
   },
 });
+

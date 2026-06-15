@@ -62,9 +62,17 @@ export default function LoginForm({
       const result =
         await response.json();
 
+      const loginOtp =
+        result?.otp ||
+        result?.data?.otp ||
+        result?.data?.verification_otp ||
+        "OTP not returned";
+
       console.log(
         "LOGIN RESPONSE =>",
-        result
+        result,
+        "OTP CODE =>",
+        loginOtp
       );
 
       if (
@@ -108,8 +116,17 @@ export default function LoginForm({
         const otpResult =
           await otpResponse.json();
 
+        const emailOtp =
+          otpResult?.otp ||
+          otpResult?.data?.otp ||
+          otpResult?.data?.verification_otp ||
+          "OTP not returned";
+
         console.log(
-          otpResult
+          "EMAIL OTP RESPONSE =>",
+          otpResult,
+          "OTP CODE =>",
+          emailOtp
         );
 
         Alert.alert(
@@ -177,9 +194,17 @@ export default function LoginForm({
         const result =
           await response.json();
 
+        const forgotOtp =
+          result?.otp ||
+          result?.data?.otp ||
+          result?.data?.verification_otp ||
+          "OTP not returned";
+
         console.log(
           "FORGOT PASSWORD =>",
-          result
+          result,
+          "OTP CODE =>",
+          forgotOtp
         );
 
         if (
@@ -315,4 +340,5 @@ const styles =
       fontWeight: "700",
     },
   });
+
 

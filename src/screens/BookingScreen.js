@@ -5,3 +5,4 @@ export default function BookingScreen() {
   console.log("BookingScreen rendered");
   return <BoardingStack />;
 }
+

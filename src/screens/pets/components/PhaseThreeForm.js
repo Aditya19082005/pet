@@ -53,7 +53,7 @@ export default function PhaseThreeForm({
 
       <TextInput
         placeholder="Special Care Required"
-        style={[styles.input, { minHeight: 90, textAlignVertical: "top" }]}
+        style={[styles.input, styles.textArea]}
         multiline
         value={petData.special_care_required}
         onChangeText={(text) =>
@@ -117,14 +117,10 @@ export default function PhaseThreeForm({
       <FormLabel title="Food Type" required error={fieldErrors.food_type} />
 
       <View
-        style={{
-          borderWidth: 1,
-          borderColor: fieldErrors.food_type ? "#ef4444" : "#e5e7eb",
-          borderRadius: 14,
-          marginBottom: 12,
-          overflow: "hidden",
-          backgroundColor: fieldErrors.food_type ? "#fff1f2" : "#fff",
-        }}
+        style={[
+          styles.pickerWrapper,
+          fieldErrors.food_type && styles.inputError,
+        ]}
       >
         <Picker
           selectedValue={petData.food_type}
@@ -147,7 +143,7 @@ export default function PhaseThreeForm({
 
       <TextInput
         placeholder="Food Brand"
-        style={[styles.input, { minHeight: 70 }]}
+        style={[styles.input, styles.textArea]}
         value={petData.food_brand}
         onChangeText={(text) =>
           setPetData({
@@ -159,7 +155,7 @@ export default function PhaseThreeForm({
 
       <TextInput
         placeholder="Feeding Schedule"
-        style={[styles.input, { minHeight: 70 }]}
+        style={[styles.input, styles.textArea]}
         value={petData.feeding_schedule}
         onChangeText={(text) =>
           setPetData({
@@ -171,7 +167,7 @@ export default function PhaseThreeForm({
 
       <TextInput
         placeholder="Quantity Per Meal"
-        style={[styles.input, { minHeight: 70 }]}
+        style={[styles.input, styles.textArea]}
         value={petData.quantity_per_meal}
         onChangeText={(text) =>
           setPetData({
@@ -267,3 +263,4 @@ export default function PhaseThreeForm({
     </View>
   );
 }
+

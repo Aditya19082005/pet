@@ -90,6 +90,16 @@ const handleSignIn = async () => {
 
     setGuestRole(null);
 
+    const parentNav = navigation.getParent?.();
+    if (parentNav) {
+      parentNav.reset({
+        index: 0,
+        routes: [{ name: "Auth" }],
+      });
+    } else {
+      navigation.navigate("Auth");
+    }
+
     Alert.alert(
       "Success",
       "Logged out successfully"

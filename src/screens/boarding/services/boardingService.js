@@ -73,6 +73,33 @@ export const checkAvailabilityApi = async ({
   return JSON.parse(text);
 };
 
+export const fetchBookedDatesApi = async (centerId, year, month) => {
+  const response = await fetch(
+    `${AVAILABILITY_API_URL}/booked-dates?center_id=${centerId}&year=${year}&month=${month}`,
+  );
+
+  const text = await response.text();
+
+  if (!text || text.trim() === "") {
+    return [];
+  }
+
+  const json = JSON.parse(text);
+  let dates = [];
+
+  if (Array.isArray(json)) {
+    dates = json;
+  } else if (Array.isArray(json.data)) {
+    dates = json.data;
+  } else if (Array.isArray(json.booked_dates)) {
+    dates = json.booked_dates;
+  } else if (Array.isArray(json.data?.booked_dates)) {
+    dates = json.data.booked_dates;
+  }
+
+  return dates;
+};
+
 export const fetchMyBookingsApi = async (token) => {
   try {
     const response = await fetch(`${BOOKING_API_URL}/my-bookings`, {

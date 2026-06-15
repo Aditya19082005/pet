@@ -7,13 +7,13 @@ import {
   ActivityIndicator,
   Alert,
   TextInput,
-  StyleSheet,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { Calendar } from "react-native-calendars";
+import styles from "../styles/boardingStyles";
 import {
   fetchCapacityApi,
   checkAvailabilityApi,
@@ -83,8 +83,17 @@ export default function BoardingBookingScreen({ route, navigation }) {
   };
 
   const normalizeBookedDates = (dates) => {
-    if (!Array.isArray(dates)) return [];
-    return dates
+    let rawDates = [];
+
+    if (Array.isArray(dates)) {
+      rawDates = dates;
+    } else if (dates && Array.isArray(dates.data)) {
+      rawDates = dates.data;
+    } else if (dates && Array.isArray(dates.booked_dates)) {
+      rawDates = dates.booked_dates;
+    }
+
+    return rawDates
       .map((date) => {
         if (typeof date === "string") return date;
         if (date && typeof date === "object") return date.date || date.booked_date || "";
@@ -117,6 +126,8 @@ export default function BoardingBookingScreen({ route, navigation }) {
       marked[date] = {
         disabled: true,
         disableTouchEvent: true,
+        startingDay: true,
+        endingDay: true,
         color: "#fee2e2",
         textColor: "#991b1b",
       };
@@ -124,13 +135,17 @@ export default function BoardingBookingScreen({ route, navigation }) {
 
     const selectedRange = getDatesBetween(checkInDate, checkOutDate);
     selectedRange.forEach((date) => {
+      if (marked[date]?.disabled) {
+        return;
+      }
+
       const isStart = date === formatDate(checkInDate);
       const isEnd = date === formatDate(checkOutDate);
 
       marked[date] = {
         ...(marked[date] || {}),
-        disabled: marked[date]?.disabled ?? false,
-        disableTouchEvent: marked[date]?.disableTouchEvent ?? false,
+        disabled: false,
+        disableTouchEvent: false,
         startingDay: isStart,
         endingDay: isEnd,
         color: isStart || isEnd ? "#f97316" : "#fed7aa",
@@ -149,7 +164,10 @@ export default function BoardingBookingScreen({ route, navigation }) {
       const year = date.getFullYear();
       const month = date.getMonth() + 1;
       const data = await fetchBookedDatesApi(centerId, year, month);
-      setBookedDates(normalizeBookedDates(data));
+      const dates = normalizeBookedDates(data);
+
+      console.log("Fetched booked dates:", dates);
+      setBookedDates(dates);
     } catch (error) {
       console.log("Booked dates fetch failed:", error);
       setBookedDates([]);
@@ -352,66 +370,65 @@ export default function BoardingBookingScreen({ route, navigation }) {
   return (
     <LinearGradient
       colors={["#faf5ff", "#fdf2f8", "#fff7ed"]}
-      style={styles.container}
+      style={styles.bookingScreenContainer}
     >
-      <ScrollView
-        contentContainerStyle={{
-          padding: 16,
-        }}
-      >
-        <View style={styles.card}>
-          <Text style={styles.centerName}>{centerName}</Text>
+      <ScrollView contentContainerStyle={styles.bookingScreenContent}>
+        <View style={styles.bookingScreenCard}>
+          <Text style={styles.bookingScreenCenterName}>{centerName}</Text>
 
-          <Text style={styles.price}>₹{pricePerDay} / day</Text>
+          <Text style={styles.bookingScreenPrice}>₹{pricePerDay} / day</Text>
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.heading}>Select Pet</Text>
+        <View style={styles.bookingScreenCard}>
+          <Text style={styles.bookingScreenHeading}>Select Pet</Text>
 
-          <Picker
-            selectedValue={selectedPetId}
-            onValueChange={(value) => setSelectedPetId(value)}
-          >
-            {pets.map((pet, index) => (
-              <Picker.Item
-                key={pet.pet_id || pet.id || index}
-                label={pet.pet_name || pet.name || "Pet"}
-                value={pet.pet_id || pet.id}
-              />
-            ))}
-          </Picker>
+          <View style={styles.bookingScreenInputWrapper}>
+            <Picker
+              selectedValue={selectedPetId}
+              onValueChange={(value) => setSelectedPetId(value)}
+              style={styles.bookingScreenPicker}
+            >
+              {pets.map((pet, index) => (
+                <Picker.Item
+                  key={pet.pet_id || pet.id || index}
+                  label={pet.pet_name || pet.name || "Pet"}
+                  value={pet.pet_id || pet.id}
+                />
+              ))}
+            </Picker>
+          </View>
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.heading}>Booking Dates</Text>
+        <View style={styles.bookingScreenCard}>
+          <Text style={styles.bookingScreenHeading}>Booking Dates</Text>
 
-          <View style={styles.dateRow}>
+          <View style={styles.bookingScreenDateRow}>
             <TouchableOpacity
               style={[
-                styles.datePill,
-                pickerMode === "checkin" && styles.activePill,
+                styles.bookingScreenDatePill,
+                pickerMode === "checkin" && styles.bookingScreenActivePill,
               ]}
               onPress={() => setPickerMode("checkin")}
             >
-              <Text style={[styles.dateLabel, pickerMode === "checkin" && styles.activePillText]}>
+              <Text style={[styles.bookingScreenDateLabel, pickerMode === "checkin" && styles.bookingScreenActivePillText]}>
                 Check In
               </Text>
-              <Text style={[styles.dateValue, pickerMode === "checkin" && styles.activePillText]}>
+              <Text style={[styles.bookingScreenDateValue, pickerMode === "checkin" && styles.bookingScreenActivePillText]}>
                 {checkInDate.toDateString()}
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[
-                styles.datePill,
-                pickerMode === "checkout" && styles.activePill,
+                styles.bookingScreenDatePill,
+                pickerMode === "checkout" && styles.bookingScreenActivePill,
               ]}
               onPress={() => setPickerMode("checkout")}
             >
-              <Text style={[styles.dateLabel, pickerMode === "checkout" && styles.activePillText]}>
+              <Text style={[styles.bookingScreenDateLabel, pickerMode === "checkout" && styles.bookingScreenActivePillText]}>
                 Check Out
               </Text>
-              <Text style={[styles.dateValue, pickerMode === "checkout" && styles.activePillText]}>
+              <Text style={[styles.bookingScreenDateValue, pickerMode === "checkout" && styles.bookingScreenActivePillText]}>
                 {checkOutDate.toDateString()}
               </Text>
             </TouchableOpacity>
@@ -433,59 +450,45 @@ export default function BoardingBookingScreen({ route, navigation }) {
               arrowColor: "#f97316",
               disabledArrowColor: "#d1d5db",
             }}
-            style={{ marginTop: 12, borderRadius: 16 }}
+            style={styles.calendarWrapper}
           />
 
-          <View style={styles.legendRow}>
-            <View style={[styles.markerBadge, { backgroundColor: "#fee2e2" }]} />
-            <Text style={styles.markerText}>Booked / unavailable dates</Text>
+          <View style={styles.bookingScreenLegendRow}>
+            <View style={[styles.bookingScreenMarkerBadge, { backgroundColor: "#fee2e2" }]} />
+            <Text style={styles.bookingScreenMarkerText}>Booked / unavailable dates</Text>
           </View>
-          <View style={styles.legendRow}>
-            <View style={[styles.markerBadge, { backgroundColor: "#f97316" }]} />
-            <Text style={styles.markerText}>Selected stay range</Text>
+          <View style={styles.bookingScreenLegendRow}>
+            <View style={[styles.bookingScreenMarkerBadge, { backgroundColor: "#f97316" }]} />
+            <Text style={styles.bookingScreenMarkerText}>Selected stay range</Text>
           </View>
 
           {fetchingBookedDates ? (
-            <ActivityIndicator style={{ marginTop: 10 }} />
+            <ActivityIndicator style={styles.smallLoader} />
           ) : bookedDates.length > 0 ? (
-            <Text
-              style={{
-                marginTop: 10,
-                color: "#ef4444",
-                fontWeight: "600",
-              }}
-            >
+            <Text style={styles.warningText}>
               {bookedDates.length} unavailable date(s) in this month.
             </Text>
           ) : (
-            <Text style={{ marginTop: 10, color: "#4b5563" }}>
+            <Text style={styles.statusNote}>
               No unavailable dates found for the selected month.
             </Text>
           )}
         </View>
 
-        <View style={styles.card}>
+        <View style={styles.bookingScreenCard}>
           <TouchableOpacity
-            style={styles.orangeBtn}
+            style={styles.bookingScreenOrangeBtn}
             onPress={checkAvailability}
           >
-            <Text style={styles.btnText}>Check Availability</Text>
+            <Text style={styles.bookingScreenBtnText}>Check Availability</Text>
           </TouchableOpacity>
 
           {checkingAvailability && (
-            <ActivityIndicator
-              style={{
-                marginTop: 10,
-              }}
-            />
+            <ActivityIndicator style={styles.smallLoader} />
           )}
 
           {available?.data && (
-            <View
-              style={{
-                marginTop: 15,
-              }}
-            >
+            <View style={styles.availableInfoContainer}>
               <Text>Total Days : {available.data.total_days}</Text>
 
               <Text>Available Days : {available.data.available_days}</Text>
@@ -495,11 +498,10 @@ export default function BoardingBookingScreen({ route, navigation }) {
               <Text>Capacity : {available.data.capacity}</Text>
 
               <Text
-                style={{
-                  marginTop: 10,
-                  color: available.data.is_available ? "green" : "red",
-                  fontWeight: "bold",
-                }}
+                style={[
+                  styles.availabilityText,
+                  { color: available.data.is_available ? "green" : "red" },
+                ]}
               >
                 {available.data.is_available ? "Available" : "Not Available"}
               </Text>
@@ -507,38 +509,32 @@ export default function BoardingBookingScreen({ route, navigation }) {
           )}
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.heading}>Special Instructions</Text>
+        <View style={styles.bookingScreenCard}>
+          <Text style={styles.bookingScreenHeading}>Special Instructions</Text>
 
           <TextInput
             placeholder="Please feed twice daily..."
             value={specialInstructions}
             onChangeText={setSpecialInstructions}
             multiline
-            style={styles.input}
+            style={styles.bookingScreenInput}
           />
         </View>
 
-        <View style={styles.card}>
+        <View style={styles.bookingScreenCard}>
           <Text>Total Days : {totalDays}</Text>
 
-          <Text
-            style={{
-              marginTop: 8,
-              fontWeight: "bold",
-              fontSize: 18,
-            }}
-          >
+          <Text style={styles.totalCostText}>
             Total Amount : ₹{totalCost}
           </Text>
         </View>
 
         <TouchableOpacity
-          style={styles.bookBtn}
+          style={styles.bookingScreenBookBtn}
           onPress={createBooking}
           disabled={bookingLoading}
         >
-          <Text style={styles.btnText}>
+          <Text style={styles.bookingScreenBtnText}>
             {bookingLoading ? "Creating Booking..." : "Confirm Booking"}
           </Text>
         </TouchableOpacity>
@@ -547,125 +543,3 @@ export default function BoardingBookingScreen({ route, navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-
-  card: {
-    backgroundColor: "#fff",
-    padding: 16,
-    borderRadius: 16,
-    marginBottom: 15,
-  },
-
-  centerName: {
-    fontSize: 22,
-    fontWeight: "bold",
-  },
-
-  price: {
-    marginTop: 5,
-    color: "#ea580c",
-    fontWeight: "700",
-  },
-
-  heading: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginBottom: 12,
-  },
-
-  dateInput: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 10,
-  },
-
-  dateRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 16,
-  },
-
-  datePill: {
-    flex: 1,
-    borderRadius: 16,
-    padding: 14,
-    backgroundColor: "#f3f4f6",
-    borderWidth: 1,
-    borderColor: "#e5e7eb",
-    marginRight: 12,
-  },
-
-  activePillText: {
-    color: "#ffffff",
-  },
-
-  activePill: {
-    backgroundColor: "#f97316",
-    borderColor: "#f97316",
-  },
-
-  dateLabel: {
-    fontSize: 12,
-    color: "#6b7280",
-    marginBottom: 6,
-  },
-
-  dateValue: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "#111827",
-  },
-
-  legendRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 12,
-  },
-
-  markerBadge: {
-    width: 14,
-    height: 14,
-    borderRadius: 4,
-  },
-
-  markerText: {
-    color: "#4b5563",
-  },
-
-  orangeBtn: {
-    backgroundColor: "#f97316",
-    padding: 14,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-
-  bookBtn: {
-    backgroundColor: "#ec4899",
-    padding: 18,
-    borderRadius: 16,
-    alignItems: "center",
-    marginBottom: 30,
-  },
-
-  btnText: {
-    color: "#fff",
-    fontWeight: "700",
-  },
-
-  input: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 12,
-    padding: 12,
-    minHeight: 100,
-    textAlignVertical: "top",
-  },
-});

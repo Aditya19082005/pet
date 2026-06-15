@@ -53,13 +53,10 @@ function CustomDrawerContent({ navigation }) {
     setGuestRole(null);
     navigation.navigate("Auth");
   };
-  // LOGOUT FUNCTION
   const handleLogout = async () => {
     try {
-      // GET TOKEN
       const token = await AsyncStorage.getItem("token");
 
-      // API LOGOUT
       await fetch("https://www.cgpisoftware.com/cheerytail/api/auth/logout", {
         method: "POST",
         headers: {
@@ -68,7 +65,6 @@ function CustomDrawerContent({ navigation }) {
         },
       });
 
-      // REMOVE TOKEN
       await AsyncStorage.removeItem("token");
       await AsyncStorage.removeItem("user");
       await AsyncStorage.removeItem("role");
@@ -76,13 +72,18 @@ function CustomDrawerContent({ navigation }) {
 
       setGuestRole(null);
 
+      const parentNav = navigation.getParent?.();
+      if (parentNav) {
+        parentNav.reset({
+          index: 0,
+          routes: [{ name: "Auth" }],
+        });
+      } else {
+        navigation.navigate("Auth");
+      }
+
       Alert.alert("Success", "Logged out successfully");
 
-      // RESET NAVIGATION
-      // navigation.reset({
-      //   index: 0,
-      //   routes: [{ name: "Auth" }],
-      // });
     } catch (error) {
       console.log(error);
 
@@ -322,3 +323,4 @@ const styles = {
     fontWeight: "500",
   },
 };
+

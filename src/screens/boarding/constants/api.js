@@ -5,3 +5,4 @@ export const AVAILABILITY_API_URL = `${BASE_URL}/api/availability`;
 export const BOOKING_API_URL = `${BASE_URL}/api/bookings`;
 
 export default BASE_URL;
+

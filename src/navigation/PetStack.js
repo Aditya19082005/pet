@@ -1,4 +1,3 @@
-// src/navigation/PetStack.js
 
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -27,3 +26,4 @@ export default function PetStack() {
     </Stack.Navigator>
   );
 }
+

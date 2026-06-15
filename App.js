@@ -33,7 +33,6 @@ const [guestRole, setGuestRole] =
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // CHECK LOGIN
  const checkLogin = async () => {
   try {
     const token =
@@ -67,7 +66,6 @@ const [guestRole, setGuestRole] =
   useEffect(() => {
     checkLogin();
 
-    // AUTO CHECK EVERY SECOND
     const interval = setInterval(() => {
       checkLogin();
     }, 1000);
@@ -139,3 +137,4 @@ export default function App() {
     </ThemeProvider>
   );
 }
+

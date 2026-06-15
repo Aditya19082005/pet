@@ -13,7 +13,6 @@ export default function FloatingInput({
   const [focused, setFocused] = useState(false);
   const [internalValue, setInternalValue] = useState(value);
 
-  // ✅ IMPORTANT FIX: sync external value
   useEffect(() => {
     setInternalValue(value);
   }, [value]);

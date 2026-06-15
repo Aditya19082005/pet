@@ -13,8 +13,18 @@ export default function PetCard({
 }) {
   const petId = item.pet_id || item.id;
 
+  const profileImage =
+    petImages[petId]?.find(
+      (img) =>
+        img?.is_profile === "1" ||
+        img?.is_profile === 1 ||
+        img?.is_profile === true,
+    ) || petImages[petId]?.[0];
+
   const image =
-    petImages[petId]?.[0]?.image_url || "https://via.placeholder.com/100";
+    profileImage?.image_url ||
+    petImages[petId]?.[0]?.image_url ||
+    "https://via.placeholder.com/100";
 
   return (
     <TouchableOpacity
@@ -43,3 +53,4 @@ export default function PetCard({
     </TouchableOpacity>
   );
 }
+

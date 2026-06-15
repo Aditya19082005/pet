@@ -7,6 +7,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
+  spacer: {
+    height: 30,
+  },
+
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -110,6 +114,13 @@ const styles = StyleSheet.create({
     paddingRight: 6,
   },
 
+  selectedThumbWrapper: {
+    borderWidth: 2,
+    borderColor: "#f97316",
+    borderRadius: 16,
+    padding: 2,
+  },
+
   imageThumb: {
     width: 104,
     height: 104,
@@ -137,6 +148,30 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "800",
     fontSize: 12,
+  },
+
+  profileBadge: {
+    position: "absolute",
+    bottom: 8,
+    left: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    backgroundColor: "rgba(0,0,0,0.6)",
+  },
+
+  profileBadgeActive: {
+    backgroundColor: "#f97316",
+  },
+
+  profileBadgeInactive: {
+    backgroundColor: "rgba(255,255,255,0.95)",
+  },
+
+  profileBadgeText: {
+    color: "#111",
+    fontSize: 12,
+    fontWeight: "700",
   },
 
   actionRow: {
@@ -177,6 +212,52 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
 
+  detailsContainer: {
+    flex: 1,
+    backgroundColor: "#fff",
+    padding: 15,
+  },
+
+  detailsLoader: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  detailsHeading: {
+    fontSize: 26,
+    fontWeight: "bold",
+    color: "#f97316",
+    marginBottom: 15,
+  },
+
+  section: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#f97316",
+    marginTop: 20,
+    marginBottom: 10,
+  },
+
+  row: {
+    marginBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+    paddingBottom: 8,
+  },
+
+  label: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#444",
+  },
+
+  value: {
+    marginTop: 4,
+    fontSize: 15,
+    color: "#666",
+  },
+
   modalContent: {
     backgroundColor: "#fff",
     borderTopLeftRadius: 28,
@@ -208,6 +289,39 @@ const styles = StyleSheet.create({
     color: "#111827",
   },
 
+  textArea: {
+    minHeight: 90,
+    textAlignVertical: "top",
+  },
+
+  pickerWrapper: {
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+    borderRadius: 14,
+    marginBottom: 12,
+    overflow: "hidden",
+    backgroundColor: "#fff",
+  },
+
+  imageSelectButton: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 10,
+    paddingVertical: 14,
+    paddingHorizontal: 15,
+    marginBottom: 12,
+    backgroundColor: "#fafafa",
+  },
+
+  imageSelectButtonText: {
+    color: "#666",
+    fontSize: 15,
+  },
+
+  imagePreviewContainer: {
+    marginTop: 15,
+  },
+
   inputError: {
     borderColor: "#ef4444",
     backgroundColor: "#fff1f2",
@@ -233,6 +347,21 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
 
+  dateFieldText: {
+    color: "#000",
+  },
+
+  dateFieldPlaceholder: {
+    color: "#999",
+  },
+
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 10,
+    marginBottom: 12,
+  },
+
   fieldLabel: {
     marginBottom: 6,
     fontWeight: "700",
@@ -240,7 +369,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 
-  fieldLabelError: {
+  formLabel: {
+    marginBottom: 6,
+    fontWeight: "700",
+    color: "#374151",
+    fontSize: 14,
+  },
+
+  formLabelError: {
+    color: "#dc2626",
+  },
+
+  formLabelRequired: {
     color: "#dc2626",
   },
 
@@ -253,6 +393,11 @@ const styles = StyleSheet.create({
     color: "#6b7280",
     fontSize: 12,
     marginBottom: 8,
+  },
+
+  sectionLabel: {
+    marginBottom: 5,
+    fontWeight: "600",
   },
 
   imageBtn: {
@@ -300,6 +445,41 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 
+  stepIndicatorContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 20,
+  },
+
+  stepIndicatorCircle: {
+    width: 35,
+    height: 35,
+    borderRadius: 20,
+    backgroundColor: "#ddd",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  stepIndicatorActive: {
+    backgroundColor: "#f97316",
+  },
+
+  stepIndicatorText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+
+  stepIndicatorLine: {
+    width: 50,
+    height: 3,
+    backgroundColor: "#ddd",
+  },
+
+  stepIndicatorActiveLine: {
+    backgroundColor: "#f97316",
+  },
+
   stepButtonRow: {
     flexDirection: "row",
     marginTop: 20,
@@ -332,3 +512,4 @@ const styles = StyleSheet.create({
 });
 
 export default styles;
+

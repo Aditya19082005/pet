@@ -26,7 +26,6 @@ export default function BookingInterface({ navigation }) {
   const [showPicker, setShowPicker] = useState(false);
   const [pickerMode, setPickerMode] = useState("checkin");
 
-  // ✅ NEW STATES FOR ADD PET FORM
   const [showAddPet, setShowAddPet] = useState(false);
   const [newPetName, setNewPetName] = useState("");
   const [newPetType, setNewPetType] = useState("Dog");
@@ -67,7 +66,6 @@ export default function BookingInterface({ navigation }) {
   const totalDays = calculateDays();
   const totalCost = totalDays * pricePerDay;
 
-  // ✅ ADD PET WITH FORM DATA
   const handleAddPet = () => {
     if (isGuest) {
       promptSignIn();
@@ -82,7 +80,6 @@ export default function BookingInterface({ navigation }) {
     setPets([...pets, newPetName]);
     setSelectedPet(newPetName);
 
-    // reset form
     setNewPetName("");
     setNewPetType("Dog");
     setShowAddPet(false);
@@ -110,7 +107,7 @@ export default function BookingInterface({ navigation }) {
       colors={["#faf5ff", "#fdf2f8", "#fff7ed"]}
       style={styles.bookingInterfaceContainer}
     >
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
+      <ScrollView contentContainerStyle={styles.bookingInterfaceScroll}>
         {/* TITLE */}
         <Text style={styles.bookingInterfaceTitle}>
           Book Your Pet's <Text style={styles.bookingInterfaceGradientText}>Perfect Stay</Text>
@@ -143,10 +140,10 @@ export default function BookingInterface({ navigation }) {
                   style={styles.bookingInterfacePetChip}
                 >
                   <Text
-                    style={{
-                      color: selectedPet === pet ? "#fff" : "#374151",
-                      fontWeight: "600",
-                    }}
+                    style={[
+                      styles.bookingInterfacePetLabel,
+                      selectedPet === pet && styles.bookingInterfacePetLabelActive,
+                    ]}
                   >
                     {pet}
                   </Text>
@@ -168,7 +165,7 @@ export default function BookingInterface({ navigation }) {
                 colors={["#e0e7ff", "#c7d2fe"]}
                 style={styles.bookingInterfaceAddPetChip}
               >
-                <Text style={{ fontWeight: "bold", color: "#4338ca" }}>
+                <Text style={styles.bookingInterfaceAddPetLabel}>
                   {isGuest ? "Sign in to add pet" : "+ Add Pet"}
                 </Text>
               </LinearGradient>
@@ -196,7 +193,7 @@ export default function BookingInterface({ navigation }) {
               </Picker>
 
               <TouchableOpacity style={styles.bookingInterfaceAddButton} onPress={handleAddPet}>
-                <Text style={{ color: "#fff", fontWeight: "bold" }}>
+                <Text style={styles.bookingInterfaceButtonText}>
                   Add Pet
                 </Text>
               </TouchableOpacity>
@@ -257,21 +254,17 @@ export default function BookingInterface({ navigation }) {
             style={styles.bookingInterfaceSummaryBox}
           >
             <View style={styles.bookingInterfaceRow}>
-              <Text>Total Days</Text>
-              <Text style={{ fontWeight: "bold", color: "#ea580c" }}>
-                {totalDays}
-              </Text>
+              <Text style={styles.bookingInterfaceSummaryLabel}>Total Days</Text>
+              <Text style={styles.bookingInterfaceSummaryValue}>{totalDays}</Text>
             </View>
 
             <View style={styles.bookingInterfaceRow}>
-              <Text>₹ {pricePerDay} / day</Text>
-              <Text style={{ color: "#db2777", fontWeight: "bold" }}>
-                ₹{pricePerDay}
-              </Text>
+              <Text style={styles.bookingInterfaceSummaryLabel}>₹ {pricePerDay} / day</Text>
+              <Text style={styles.bookingInterfaceSummaryAmount}>₹{pricePerDay}</Text>
             </View>
 
             <View style={styles.bookingInterfaceRow}>
-              <Text style={{ fontWeight: "bold" }}>Total</Text>
+              <Text style={styles.bookingInterfaceSummaryLabelBold}>Total</Text>
               <Text style={styles.bookingInterfaceTotalText}>₹{totalCost}</Text>
             </View>
           </LinearGradient>
@@ -287,3 +280,4 @@ export default function BookingInterface({ navigation }) {
     </LinearGradient>
   );
 }
+

@@ -54,22 +54,8 @@ export default function BoardingCentersScreen({ navigation, route }) {
   return (
     <View style={styles.wrapper}>
       {centers.length === 0 ? (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 14,
-              color: "#666",
-            }}
-          >
-            No boarding centers found
-          </Text>
+        <View style={styles.emptyStateContainer}>
+          <Text style={styles.emptyStateText}>No boarding centers found</Text>
         </View>
       ) : (
         <FlatList
@@ -77,11 +63,10 @@ export default function BoardingCentersScreen({ navigation, route }) {
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderCenter}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingBottom: 30,
-          }}
+          contentContainerStyle={styles.listContent}
         />
       )}
     </View>
   );
 }
+

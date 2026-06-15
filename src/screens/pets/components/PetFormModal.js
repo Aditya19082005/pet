@@ -28,6 +28,8 @@ export default function PetFormModal({
   selectedImages,
   pickImages,
   removeImage, // NEW
+  profileImageIndex,
+  setProfileImageIndex,
   loading,
   styles,
   onClose,
@@ -120,6 +122,8 @@ export default function PetFormModal({
               pickImages={pickImages}
               selectedImages={selectedImages}
               removeImage={removeImage}
+              profileImageIndex={profileImageIndex}
+              setProfileImageIndex={setProfileImageIndex}
             />
           )}
 
@@ -183,3 +187,4 @@ export default function PetFormModal({
     </Modal>
   );
 }
+
