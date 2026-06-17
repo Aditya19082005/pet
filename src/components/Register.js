@@ -135,7 +135,7 @@ export default function RegisterScreen({
                         styles.segmentActiveText,
                     ]}
                   >
-                    Login
+                    Sign In
                   </Text>
                 </TouchableOpacity>
 
@@ -157,7 +157,7 @@ export default function RegisterScreen({
                         styles.segmentActiveText,
                     ]}
                   >
-                    Register
+                    Sign Up
                   </Text>
                 </TouchableOpacity>
               </View>

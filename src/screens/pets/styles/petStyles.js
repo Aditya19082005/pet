@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     backgroundColor: "#fffaf7",
     borderBottomWidth: 1,
-    borderBottomColor: "#fed7aa",
+    borderBottomColor: "#e9d5ff",
   },
 
   closeIcon: {
@@ -34,21 +34,21 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 28,
     fontWeight: "800",
-    color: "#f97316",
+    color: "#6b21a8",
     marginLeft: 2,
   },
 
   addBtn: {
-    backgroundColor: "#f97316",
+    backgroundColor: "#6b21a8",
     width: 58,
     height: 58,
     borderRadius: 18,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#fb923c",
+    borderColor: "#8b5cf6",
     elevation: 4,
-    shadowColor: "#f97316",
+    shadowColor: "#6b21a8",
     shadowOpacity: 0.22,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 4 },
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     marginBottom: 14,
     elevation: 3,
-    shadowColor: "#f97316",
+    shadowColor: "#6b21a8",
     shadowOpacity: 0.08,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 4 },
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
 
   selectedThumbWrapper: {
     borderWidth: 2,
-    borderColor: "#f97316",
+    borderColor: "#6b21a8",
     borderRadius: 16,
     padding: 2,
   },
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   },
 
   profileBadgeActive: {
-    backgroundColor: "#f97316",
+    backgroundColor: "#6b21a8",
   },
 
   profileBadgeInactive: {
@@ -227,14 +227,59 @@ const styles = StyleSheet.create({
   detailsHeading: {
     fontSize: 26,
     fontWeight: "bold",
-    color: "#f97316",
-    marginBottom: 15,
+    color: "#6b21a8",
+  },
+
+  detailsHero: {
+    marginBottom: 10,
+    alignItems: "center",
+  },
+
+  heroText: {
+    marginTop: 1,
+    alignItems: "center",
+  },
+
+  petSubtitle: {
+    color: "#6b7280",
+    fontSize: 14,
+  },
+
+  galleryContainer: {
+    marginBottom: 0,
+  },
+
+  galleryLabel: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#6b21a8",
+    marginBottom: 12,
+  },
+
+  thumbnailScroll: {
+    paddingVertical: 2,
+  },
+
+  thumbnailImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 16,
+    marginRight: 12,
+    backgroundColor: "#f3f4f6",
+  },
+
+  detailPetImage: {
+    width: 220,
+    height: 220,
+    borderRadius: 150,
+    marginBottom: 18,
+    backgroundColor: "#f3f4f6",
   },
 
   section: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#f97316",
+    color: "#6b21a8",
     marginTop: 20,
     marginBottom: 10,
   },
@@ -258,6 +303,37 @@ const styles = StyleSheet.create({
     color: "#666",
   },
 
+  pdfLinkRow: {
+    paddingVertical: 6,
+  },
+
+  pdfLinkInner: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f8fafc",
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#e5e7eb",
+  },
+
+  pdfIconWrapper: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: "#6b21a8",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 10,
+  },
+
+  pdfLinkText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#6b21a8",
+  },
+
   modalContent: {
     backgroundColor: "#fff",
     borderTopLeftRadius: 28,
@@ -272,7 +348,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
-    color: "#f97316",
+    color: "#6b21a8",
     textAlign: "center",
   },
 
@@ -416,7 +492,7 @@ const styles = StyleSheet.create({
 
   button: {
     flex: 1,
-    backgroundColor: "#f97316",
+    backgroundColor: "#6b21a8",
     padding: 14,
     borderRadius: 14,
     alignItems: "center",
@@ -424,7 +500,7 @@ const styles = StyleSheet.create({
 
   nextBtn: {
     flex: 1,
-    backgroundColor: "#10b981",
+    backgroundColor: "#6b21a8",
     padding: 14,
     borderRadius: 14,
     alignItems: "center",
@@ -462,7 +538,7 @@ const styles = StyleSheet.create({
   },
 
   stepIndicatorActive: {
-    backgroundColor: "#f97316",
+    backgroundColor: "#6b21a8",
   },
 
   stepIndicatorText: {
@@ -477,7 +553,7 @@ const styles = StyleSheet.create({
   },
 
   stepIndicatorActiveLine: {
-    backgroundColor: "#f97316",
+    backgroundColor: "#6b21a8",
   },
 
   stepButtonRow: {

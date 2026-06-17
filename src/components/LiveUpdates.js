@@ -32,7 +32,7 @@ export default function LiveUpdates() {
       comments: 12,
       shares: 8,
       isVideo: false,
-      color: "#fb923c",
+      color: "#8b5cf6",
     },
     {
       id: 2,
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
   },
 
   bottomBtn: {
-    backgroundColor: "#f97316",
+    backgroundColor: "#6b21a8",
     padding: 15,
     borderRadius: 15,
     marginVertical: 20,

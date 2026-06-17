@@ -4,77 +4,204 @@ import {
   Text,
   ScrollView,
   ActivityIndicator,
+  Image,
+  TouchableOpacity,
+  Linking,
+  Alert,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import styles from "../styles/petStyles";
 
 import { fetchPetByIdApi } from "../services/petService";
+import { fetchPetImagesApi } from "../services/imageService";
+
+const getImageUrl = (image) => {
+  if (!image) return null;
+  if (typeof image === "string") return image;
+  return (
+    image.image_url ||
+    image.url ||
+    image.image ||
+    image.pet_image ||
+    image.profile_image ||
+    image.image_path ||
+    null
+  );
+};
+
+const formatSubtitle = (type, breed) => {
+  if (!type && !breed) return "";
+  const base = type ? `${type.charAt(0).toUpperCase()}${type.slice(1)}` : "";
+  return breed ? `${base}${base ? " • " : ""}${breed}` : base;
+};
 
 export default function PetDetailsScreen({ route }) {
   const { petId } = route.params;
 
   const [petData, setPetData] = useState(null);
+  const [petImages, setPetImages] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadPetDetails();
-  }, []);
+    const loadData = async () => {
+      try {
+        setLoading(true);
 
-  const loadPetDetails = async () => {
-    try {
-      const data = await fetchPetByIdApi(petId);
+        const [details, images] = await Promise.all([
+          fetchPetByIdApi(petId),
+          fetchPetImagesApi(petId),
+        ]);
 
-      console.log("PET DETAILS =>", JSON.stringify(data, null, 2));
+        setPetData(details);
+        setPetImages(Array.isArray(images) ? images : []);
+      } catch (error) {
+        console.log("PET DETAILS ERROR =>", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      setPetData(data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    loadData();
+  }, [petId]);
 
   if (loading) {
     return (
       <View style={styles.detailsLoader}>
-        <ActivityIndicator size="large" color="#f97316" />
+        <ActivityIndicator size="large" color="#6b21a8" />
       </View>
     );
   }
 
   if (!petData) {
     return (
-      <View style={styles.loader}>
-        <Text>No pet details found</Text>
+      <View style={styles.loaderContainer}>
+        <Text style={styles.emptyText}>Pet details are unavailable.</Text>
       </View>
     );
   }
 
   const owner = petData.owner || {};
   const pet = petData.pet || {};
-  const health = petData.health || {};
+  const rawHealth = petData.health || {};
+  const health = {
+    ...rawHealth,
+    deworming_date:
+      rawHealth.deworming_date || petData.deworming_date || null,
+    flea_tick_treatment_date:
+      rawHealth.flea_tick_treatment_date || petData.flea_tick_treatment_date || null,
+  };
   const behavior = petData.behavior_feeding || {};
 
-  const DetailRow = ({ label, value }) => (
+  const galleryImages = petImages
+    .map(getImageUrl)
+    .filter((uri) => Boolean(uri));
+
+  const profileImage =
+    getImageUrl(petData) ||
+    getImageUrl(pet) ||
+    galleryImages[0] ||
+    "https://via.placeholder.com/300";
+
+  const openUrl = async (url) => {
+    if (!url) {
+      Alert.alert("File unavailable", "No vaccination certificate link is available.");
+      return;
+    }
+
+    const normalizedUrl = String(url).trim();
+    const link = normalizedUrl.startsWith("http")
+      ? normalizedUrl
+      : `https://{YOUR_BASE_URL}/${normalizedUrl}`;
+
+    const supported = await Linking.canOpenURL(link);
+
+    if (supported) {
+      await Linking.openURL(link);
+    } else {
+      Alert.alert("Cannot open file", "This certificate link cannot be opened.");
+    }
+  };
+
+  const getCertificateUrl = (certificate) => {
+    if (!certificate) return null;
+
+    if (typeof certificate === "string") {
+      return certificate.trim();
+    }
+
+    return (
+      certificate.uri ||
+      certificate.url ||
+      certificate.path ||
+      certificate.file?.uri ||
+      certificate.file?.url ||
+      certificate.file?.path ||
+      null
+    );
+  };
+
+  const formatCertificateLabel = (certificate) => {
+    const raw =
+      certificate?.name ||
+      certificate?.file?.name ||
+      certificate?.uri ||
+      certificate?.url ||
+      certificate?.path ||
+      certificate ||
+      "Vaccination Certificate";
+
+    if (typeof raw !== "string") return "Vaccination Certificate";
+
+    const filename = raw.split("/").pop();
+    if (!filename) return "Vaccination Certificate";
+    if (filename.toLowerCase().endsWith(".pdf")) return filename;
+    if (filename.includes(".")) return filename;
+    return `${filename}.pdf`;
+  };
+
+  const DetailRow = ({ label, value, onPress, isLink, displayValue }) => (
     <View style={styles.row}>
       <Text style={styles.label}>{label}</Text>
-      <Text style={styles.value}>
-        {value === null || value === undefined || value === ""
-          ? "-"
-          : String(value)}
-      </Text>
+      {isLink ? (
+        <TouchableOpacity onPress={onPress} style={styles.pdfLinkRow}>
+          <View style={styles.pdfLinkInner}>
+            <View style={styles.pdfIconWrapper}>
+              <Ionicons name="document-text-outline" size={18} color="#fff" />
+            </View>
+            <Text style={styles.pdfLinkText}>
+              {displayValue || String(value) || "Vaccination Certificate"}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      ) : (
+        <Text style={styles.value}>
+          {value === null || value === undefined || value === ""
+            ? "-"
+            : String(value)}
+        </Text>
+      )}
     </View>
   );
 
   return (
-    <ScrollView style={styles.detailsContainer} showsVerticalScrollIndicator={false}>
-      <Text style={styles.detailsHeading}>Pet Details</Text>
+    <ScrollView
+      style={styles.detailsContainer}
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={styles.detailsHero}>
+        <Image source={{ uri: profileImage }} style={styles.detailPetImage} />
+        <View style={styles.heroText}>
+          <Text style={styles.detailsHeading}>
+            {pet.pet_name || "Pet Details"}
+          </Text>
+          <Text style={styles.petSubtitle}>
+            {formatSubtitle(pet.pet_type, pet.breed)}
+          </Text>
+        </View>
+      </View>
 
-      {/* PET DETAILS */}
       <Text style={styles.section}>Pet Information</Text>
 
-      <DetailRow label="Pet Name" value={pet.pet_name} />
-      <DetailRow label="Pet Type" value={pet.pet_type} />
-      <DetailRow label="Breed" value={pet.breed} />
       <DetailRow label="Gender" value={pet.gender} />
       <DetailRow label="Age" value={pet.age} />
       <DetailRow label="Date Of Birth" value={pet.date_of_birth} />
@@ -87,14 +214,31 @@ export default function PetDetailsScreen({ route }) {
       <DetailRow label="Registration Number" value={pet.registration_number} />
       <DetailRow label="Additional Details" value={pet.additional_details} />
 
-      {/* FAMILY DETAILS */}
+      {galleryImages.length > 0 && (
+        <View style={styles.galleryContainer}>
+          <Text style={styles.section}>Photo Gallery</Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.thumbnailScroll}
+          >
+            {galleryImages.map((uri, index) => (
+              <Image
+                key={`${uri}-${index}`}
+                source={{ uri }}
+                style={styles.thumbnailImage}
+              />
+            ))}
+          </ScrollView>
+        </View>
+      )}
+
       <Text style={styles.section}>Family Details</Text>
 
       <DetailRow label="Mother Name" value={pet.mother_name} />
       <DetailRow label="Father Name" value={pet.father_name} />
       <DetailRow label="Breeding Line" value={pet.breeding_line} />
 
-      {/* HEALTH DETAILS */}
       <Text style={styles.section}>Health Details</Text>
 
       <DetailRow label="Vaccination Status" value={health.vaccination_status} />
@@ -105,7 +249,12 @@ export default function PetDetailsScreen({ route }) {
       <DetailRow label="Vaccination Notes" value={health.vaccination_notes} />
       <DetailRow
         label="Vaccination Certificate"
-        value={health.vaccination_certificate?.name || health.vaccination_certificate?.uri || health.vaccination_certificate}
+        value={formatCertificateLabel(health.vaccination_certificate)}
+        displayValue={formatCertificateLabel(health.vaccination_certificate)}
+        isLink={Boolean(getCertificateUrl(health.vaccination_certificate))}
+        onPress={() =>
+          openUrl(getCertificateUrl(health.vaccination_certificate))
+        }
       />
       <DetailRow label="Deworming Date" value={health.deworming_date} />
       <DetailRow
@@ -125,7 +274,6 @@ export default function PetDetailsScreen({ route }) {
         value={health.neutered_spayed === "1" ? "Yes" : "No"}
       />
 
-      {/* VET DETAILS */}
       <Text style={styles.section}>Veterinarian Details</Text>
 
       <DetailRow label="Vet Name" value={health.vet_name} />
@@ -136,7 +284,6 @@ export default function PetDetailsScreen({ route }) {
         value={health.special_care_required}
       />
 
-      {/* BEHAVIOR & FEEDING */}
       <Text style={styles.section}>Behavior & Feeding</Text>
 
       <DetailRow label="Eating Habit" value={behavior.eating_habit} />
@@ -179,4 +326,3 @@ export default function PetDetailsScreen({ route }) {
     </ScrollView>
   );
 }
-

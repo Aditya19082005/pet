@@ -17,6 +17,7 @@ import BoardingOwnerNavigator from "./src/navigation/BoardingOwnerNavigator";
 import { ThemeProvider, useTheme } from "./src/context/ThemeContext";
 
 import { View, ActivityIndicator } from "react-native";
+import { appStyles } from "./src/styles/themeStyles";
 
 const Stack = createNativeStackNavigator();
 
@@ -75,14 +76,8 @@ const [guestRole, setGuestRole] =
 
   if (loading) {
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <ActivityIndicator size="large" />
+      <View style={appStyles.loadingContainer}>
+        <ActivityIndicator size="large" color="#6b21a8" />
       </View>
     );
   }

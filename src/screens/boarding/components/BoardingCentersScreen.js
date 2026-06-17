@@ -46,7 +46,7 @@ export default function BoardingCentersScreen({ navigation, route }) {
   if (loading) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#f97316" />
+        <ActivityIndicator size="large" color="#6b21a8" />
       </View>
     );
   }

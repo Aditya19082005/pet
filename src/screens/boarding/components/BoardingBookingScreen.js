@@ -148,7 +148,7 @@ export default function BoardingBookingScreen({ route, navigation }) {
         disableTouchEvent: false,
         startingDay: isStart,
         endingDay: isEnd,
-        color: isStart || isEnd ? "#f97316" : "#fed7aa",
+        color: isStart || isEnd ? "#6b21a8" : "#e9d5ff",
         textColor: "#111827",
       };
     });
@@ -447,7 +447,7 @@ export default function BoardingBookingScreen({ route, navigation }) {
             }}
             theme={{
               todayTextColor: "#10b981",
-              arrowColor: "#f97316",
+              arrowColor: "#6b21a8",
               disabledArrowColor: "#d1d5db",
             }}
             style={styles.calendarWrapper}
@@ -458,7 +458,7 @@ export default function BoardingBookingScreen({ route, navigation }) {
             <Text style={styles.bookingScreenMarkerText}>Booked / unavailable dates</Text>
           </View>
           <View style={styles.bookingScreenLegendRow}>
-            <View style={[styles.bookingScreenMarkerBadge, { backgroundColor: "#f97316" }]} />
+            <View style={[styles.bookingScreenMarkerBadge, { backgroundColor: "#6b21a8" }]} />
             <Text style={styles.bookingScreenMarkerText}>Selected stay range</Text>
           </View>
 

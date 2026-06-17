@@ -180,7 +180,7 @@ export default function PhaseOneForm({
         <Text style={styles.dateInputText}>
           {petData.date_of_birth || "Select Date Of Birth"}
         </Text>
-        <Ionicons name="calendar-outline" size={18} color="#f97316" />
+        <Ionicons name="calendar-outline" size={18} color="#6b21a8" />
       </TouchableOpacity>
 
       <DateTimePickerModal

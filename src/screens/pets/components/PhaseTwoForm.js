@@ -27,17 +27,18 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
   const pickVaccinationCertificate = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
-        type: "application/pdf",
+        type: ["application/pdf", "image/png", "image/jpeg", "image/jpg"],
+        copyToCacheDirectory: true,
       });
 
       if (!result.canceled) {
         const file = result.assets?.[0] || result;
         const fileSize = file.size || file.fileSize || 0;
 
-        if (fileSize > 100 * 1024) {
+        if (fileSize > 5 * 1024 * 1024) {
           Alert.alert(
             "File too large",
-            "Vaccination certificate must be a PDF under 100KB.",
+            "Vaccination certificate must be a PDF under 5MB.",
           );
           return;
         }
@@ -137,7 +138,7 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
             petData.vaccination_certificate?.uri?.split("/").pop() ||
             "Select PDF certificate"}
         </Text>
-        <Ionicons name="cloud-upload-outline" size={18} color="#f97316" />
+        <Ionicons name="cloud-upload-outline" size={18} color="#6b21a8" />
       </TouchableOpacity>
 
       {/* DEWORMING DATE */}
@@ -148,7 +149,7 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
         <Text style={styles.dateInputText}>
           {petData.deworming_date || "Select Deworming Date"}
         </Text>
-        <Ionicons name="calendar-outline" size={18} color="#f97316" />
+        <Ionicons name="calendar-outline" size={18} color="#6b21a8" />
       </TouchableOpacity>
 
       <DateTimePickerModal
@@ -175,7 +176,7 @@ export default function PhaseTwoForm({ petData, setPetData, styles }) {
           {petData.flea_tick_treatment_date ||
             "Select Flea Tick Treatment Date"}
         </Text>
-        <Ionicons name="calendar-outline" size={18} color="#f97316" />
+        <Ionicons name="calendar-outline" size={18} color="#6b21a8" />
       </TouchableOpacity>
 
       <DateTimePickerModal

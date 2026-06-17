@@ -2,6 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 
+import { palette } from "../styles/themeStyles";
 import BoardingDashboardScreen from "../screens/boardingOwner/BoardingDashboardScreen";
 import BoardingBookingsScreen from "../screens/boardingOwner/BoardingBookingsScreen";
 import BoardingProfileScreen from "../screens/boardingOwner/BoardingProfileScreen";
@@ -34,7 +35,7 @@ export default function BoardingOwnerTabs() {
           );
         },
 
-        tabBarActiveTintColor: "#f97316",
+        tabBarActiveTintColor: palette.secondary,
         tabBarInactiveTintColor: "gray",
       })}
     >

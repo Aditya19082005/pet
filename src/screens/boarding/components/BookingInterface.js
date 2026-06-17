@@ -134,7 +134,7 @@ export default function BookingInterface({ navigation }) {
                 <LinearGradient
                   colors={
                     selectedPet === pet
-                      ? ["#fb923c", "#ec4899"]
+                      ? ["#8b5cf6", "#ec4899"]
                       : ["#f1f5f9", "#f1f5f9"]
                   }
                   style={styles.bookingInterfacePetChip}
@@ -202,7 +202,7 @@ export default function BookingInterface({ navigation }) {
         </View>
 
         {/* DATE CARD */}
-        <View style={[styles.bookingInterfaceCard, { borderColor: "#fed7aa" }]}>
+        <View style={[styles.bookingInterfaceCard, { borderColor: "#e9d5ff" }]}>
           <Text style={styles.bookingInterfaceHeading}>Choose Dates</Text>
 
           <TouchableOpacity
@@ -272,7 +272,7 @@ export default function BookingInterface({ navigation }) {
 
         {/* BUTTON */}
         <TouchableOpacity onPress={handleBooking}>
-          <LinearGradient colors={["#f97316", "#ec4899"]} style={styles.bookingInterfaceButton}>
+          <LinearGradient colors={["#6b21a8", "#ec4899"]} style={styles.bookingInterfaceButton}>
             <Text style={styles.bookingInterfaceButtonText}>Book Now →</Text>
           </LinearGradient>
         </TouchableOpacity>

@@ -293,7 +293,7 @@ export default function LoginForm({
               styles.buttonText
             }
           >
-            Login
+              Sign In
           </Text>
         )}
       </TouchableOpacity>

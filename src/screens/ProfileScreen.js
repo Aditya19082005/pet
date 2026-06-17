@@ -631,7 +631,9 @@ if (isGuest) {
           <TouchableOpacity
             style={styles.secondaryBtn}
             onPress={() =>
-              navigation.navigate("Pets")
+              navigation.navigate("Pets", {
+                screen: "PetList",
+              })
             }
           >
             <Text
@@ -709,7 +711,7 @@ const styles = StyleSheet.create({
   roleText: {
     fontSize: 15,
     fontWeight: "600",
-    color: "#f97316",
+    color: "#6b21a8",
     marginTop: 12,
   },
 
@@ -735,7 +737,7 @@ const styles = StyleSheet.create({
   },
 
   primaryBtn: {
-    backgroundColor: "#f97316",
+    backgroundColor: "#6b21a8",
     padding: 14,
     borderRadius: 12,
     alignItems: "center",

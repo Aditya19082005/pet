@@ -100,7 +100,7 @@ export default StyleSheet.create({
   centerCardBadgeText: {
     fontSize: 10,
     fontWeight: "700",
-    color: "#ea580c",
+    color: "#6b21a8",
     textTransform: "uppercase",
     letterSpacing: 0.6,
   },
@@ -128,10 +128,10 @@ export default StyleSheet.create({
   centerCardPrice: {
     fontSize: 18,
     fontWeight: "800",
-    color: "#f97316",
+    color: "#6b21a8",
   },
   centerCardButton: {
-    backgroundColor: "#f97316",
+    backgroundColor: "#6b21a8",
     paddingVertical: 12,
     borderRadius: 14,
     alignItems: "center",
@@ -147,9 +147,63 @@ export default StyleSheet.create({
     width: "100%",
     height: 240,
   },
-  sliderImage: {
+  sliderContainer: {
+    position: "relative",
+    backgroundColor: "#f8fafc",
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+    overflow: "hidden",
+  },
+  sliderImageWrapper: {
     width,
-    height: 320,
+    height: 360,
+    backgroundColor: "#e2e8f0",
+  },
+  sliderImage: {
+    width: "100%",
+    height: "100%",
+  },
+  sliderOverlay: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 140,
+  },
+  sliderCountBadge: {
+    position: "absolute",
+    top: 16,
+    right: 16,
+    backgroundColor: "rgba(15, 23, 42, 0.55)",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+  },
+  sliderCountText: {
+    color: "#ffffff",
+    fontSize: 12,
+    fontWeight: "700",
+    letterSpacing: 0.4,
+  },
+  sliderDots: {
+    position: "absolute",
+    bottom: 16,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  sliderDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: "rgba(255, 255, 255, 0.35)",
+    marginHorizontal: 4,
+  },
+  sliderDotActive: {
+    width: 24,
+    backgroundColor: "#ffffff",
   },
   content: {
     padding: 20,
@@ -167,7 +221,7 @@ export default StyleSheet.create({
   badgeText: {
     fontSize: 12,
     fontWeight: "700",
-    color: "#ea580c",
+    color: "#6b21a8",
     textTransform: "uppercase",
     letterSpacing: 0.6,
   },
@@ -238,7 +292,7 @@ export default StyleSheet.create({
   price: {
     fontSize: 18,
     fontWeight: "800",
-    color: "#f97316",
+    color: "#6b21a8",
   },
   amenitiesContainer: {
     flexDirection: "row",
@@ -256,17 +310,17 @@ export default StyleSheet.create({
     marginBottom: 10,
   },
   amenityText: {
-    color: "#ea580c",
+    color: "#6b21a8",
     fontWeight: "700",
     fontSize: 13,
   },
   primaryBtn: {
-    backgroundColor: "#f97316",
+    backgroundColor: "#6b21a8",
     paddingVertical: 16,
     borderRadius: 18,
     alignItems: "center",
     marginTop: 10,
-    shadowColor: "#f97316",
+    shadowColor: "#6b21a8",
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.25,
     shadowRadius: 8,
@@ -313,7 +367,7 @@ export default StyleSheet.create({
   },
   bookingScreenPrice: {
     marginTop: 5,
-    color: "#ea580c",
+    color: "#6b21a8",
     fontWeight: "700",
   },
   bookingScreenHeading: {
@@ -349,8 +403,8 @@ export default StyleSheet.create({
     color: "#ffffff",
   },
   bookingScreenActivePill: {
-    backgroundColor: "#f97316",
-    borderColor: "#f97316",
+    backgroundColor: "#6b21a8",
+    borderColor: "#6b21a8",
   },
   bookingScreenDateLabel: {
     fontSize: 12,
@@ -376,14 +430,14 @@ export default StyleSheet.create({
     color: "#4b5563",
   },
   bookingScreenOrangeBtn: {
-    backgroundColor: "#f97316",
+    backgroundColor: "#6b21a8",
     padding: 16,
     borderRadius: 12,
     alignItems: "center",
     width: "100%",
   },
   bookingScreenBookBtn: {
-    backgroundColor: "#ec4899",
+    backgroundColor: "#6b21a8",
     padding: 18,
     borderRadius: 16,
     alignItems: "center",
@@ -427,7 +481,7 @@ export default StyleSheet.create({
     color: "#1f2937",
   },
   bookingInterfaceGradientText: {
-    color: "#f97316",
+    color: "#6b21a8",
   },
   bookingInterfaceCard: {
     backgroundColor: "#fff",
@@ -474,7 +528,7 @@ export default StyleSheet.create({
     marginBottom: 10,
   },
   bookingInterfaceAddButton: {
-    backgroundColor: "#f97316",
+    backgroundColor: "#6b21a8",
     padding: 12,
     borderRadius: 12,
     alignItems: "center",
@@ -487,7 +541,7 @@ export default StyleSheet.create({
     padding: 14,
     borderRadius: 16,
     borderWidth: 2,
-    borderColor: "#fed7aa",
+    borderColor: "#e9d5ff",
     marginBottom: 10,
   },
   bookingInterfaceSummaryBox: {
@@ -495,7 +549,7 @@ export default StyleSheet.create({
     padding: 16,
     borderRadius: 20,
     borderWidth: 2,
-    borderColor: "#fed7aa",
+    borderColor: "#e9d5ff",
   },
   bookingInterfaceRow: {
     flexDirection: "row",
@@ -505,7 +559,7 @@ export default StyleSheet.create({
   bookingInterfaceTotalText: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "#ea580c",
+    color: "#6b21a8",
   },
   bookingInterfaceButton: {
     padding: 18,
@@ -546,7 +600,7 @@ export default StyleSheet.create({
 
   bookingInterfaceSummaryValue: {
     fontWeight: "bold",
-    color: "#ea580c",
+    color: "#6b21a8",
   },
 
   bookingInterfaceSummaryAmount: {
@@ -555,8 +609,8 @@ export default StyleSheet.create({
   },
 
   bookingStatusContainer: {
-    paddingTop: 30,
-    paddingBottom: 60,
+    paddingTop: 5,
+    paddingBottom: 15,
     backgroundColor: "#fff",
   },
   bookingStatusTitle: {
@@ -571,7 +625,6 @@ export default StyleSheet.create({
   bookingStatusSubtitle: {
     textAlign: "center",
     color: "#6b7280",
-    marginTop: 8,
     marginBottom: 15,
   },
   bookingStatusScrollContainer: {
@@ -776,4 +829,3 @@ export default StyleSheet.create({
     color: "#888",
   },
 });
-

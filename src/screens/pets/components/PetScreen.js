@@ -325,11 +325,7 @@ export default function PetScreen({ navigation }) {
       const payload = {
         ...petData,
 
-        vaccination_certificate:
-          petData.vaccination_certificate?.name ||
-          petData.vaccination_certificate?.uri ||
-          petData.vaccination_certificate ||
-          null,
+        vaccination_certificate: petData.vaccination_certificate || null,
 
         pet_type: petData.pet_type,
         gender: petData.gender,
@@ -353,10 +349,7 @@ export default function PetScreen({ navigation }) {
       };
 
       if (editingId) {
-        const response = await updatePetApi({
-          pet_id: Number(editingId),
-          ...payload,
-        });
+        const response = await updatePetApi(Number(editingId), payload);
 
         if (response.ok) {
           const newImages = selectedImages.filter(
@@ -589,14 +582,14 @@ export default function PetScreen({ navigation }) {
           fullPet?.health?.vaccination_certificate || null,
 
         deworming_date:
-          fullPet?.health?.deworming_date === "0000-00-00"
+          fullPet && fullPet.health && fullPet.health.deworming_date === "0000-00-00"
             ? ""
-            : fullPet?.health?.deworming_date || "",
+            : (fullPet && fullPet.health && fullPet.health.deworming_date) || fullPet?.deworming_date || "",
 
         flea_tick_treatment_date:
-          fullPet?.health?.flea_tick_treatment_date === "0000-00-00"
+          fullPet && fullPet.health && fullPet.health.flea_tick_treatment_date === "0000-00-00"
             ? ""
-            : fullPet?.health?.flea_tick_treatment_date || "",
+            : (fullPet && fullPet.health && fullPet.health.flea_tick_treatment_date) || fullPet?.flea_tick_treatment_date || "",
 
         medical_history: fullPet?.health?.medical_history || "",
 
@@ -681,7 +674,7 @@ export default function PetScreen({ navigation }) {
   if (loading && pets.length === 0) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#f97316" />
+        <ActivityIndicator size="large" color="#6b21a8" />
       </View>
     );
   }

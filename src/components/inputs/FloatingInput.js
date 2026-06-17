@@ -18,7 +18,7 @@ export default function FloatingInput({
   }, [value]);
 
   const active =
-    focused || String(internalValue ?? "").trim().length > 0;
+    focused || String(internalValue || "").trim().length > 0;
 
   return (
     <View style={[styles.container, multiline && { height }]}>

@@ -9,6 +9,7 @@ import BoardingStack from "./BoardingStack";
 import PetStack from "./PetStack";
 
 import { Ionicons } from "@expo/vector-icons";
+import { palette } from "../styles/themeStyles";
 
 const Tab = createBottomTabNavigator();
 
@@ -36,7 +37,7 @@ export default function BottomTabs() {
           return <Ionicons name={iconName} size={size} color={color} />;
         },
 
-        tabBarActiveTintColor: "#f97316",
+        tabBarActiveTintColor: palette.secondary,
         tabBarInactiveTintColor: "gray",
       })}
     >

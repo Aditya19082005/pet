@@ -4,13 +4,10 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  StyleSheet,
-  Dimensions,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-
-const screenWidth = Dimensions.get("window").width;
+import { categoriesStyles } from "../styles/themeStyles";
 
 export default function Categories() {
   const categories = [
@@ -18,7 +15,7 @@ export default function Categories() {
       icon: "home-outline",
       name: "Boarding",
       description: "Safe & cozy stays",
-      gradient: ["#fb923c", "#ea580c"],
+      gradient: ["#8b5cf6", "#6b21a8"],
       bgColor: "#fff7ed",
       emoji: "🏠",
     },
@@ -65,13 +62,13 @@ export default function Categories() {
   ];
 
   return (
-    <View style={styles.section}>
+    <View style={categoriesStyles.section}>
       {/* TITLE */}
-      <Text style={styles.title}>
-        Explore Our <Text style={styles.gradientText}>Services</Text>
+      <Text style={categoriesStyles.title}>
+        Explore Our <Text style={categoriesStyles.gradientText}>Services</Text>
       </Text>
 
-      <Text style={styles.subtitle}>
+      <Text style={categoriesStyles.subtitle}>
         Everything your pet needs, all in one place
       </Text>
 
@@ -79,17 +76,17 @@ export default function Categories() {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContainer}
+        contentContainerStyle={categoriesStyles.scrollContainer}
       >
         {categories.map((item, index) => (
           <TouchableOpacity
             key={index}
-            style={[styles.card, { backgroundColor: item.bgColor }]}
+            style={[categoriesStyles.card, { backgroundColor: item.bgColor }]}
             activeOpacity={0.9}
           >
             {/* ICON + GRADIENT */}
-            <View style={styles.iconWrapper}>
-              <LinearGradient colors={item.gradient} style={styles.iconBox}>
+            <View style={categoriesStyles.iconWrapper}>
+              <LinearGradient colors={item.gradient} style={categoriesStyles.iconBox}>
                 <MaterialCommunityIcons
                   name={item.icon}
                   size={36}
@@ -97,16 +94,16 @@ export default function Categories() {
                 />
               </LinearGradient>
 
-              <Text style={styles.emoji}>{item.emoji}</Text>
+              <Text style={categoriesStyles.emoji}>{item.emoji}</Text>
             </View>
 
             {/* TEXT */}
-            <Text style={styles.name}>{item.name}</Text>
-            <Text style={styles.desc}>{item.description}</Text>
+            <Text style={categoriesStyles.name}>{item.name}</Text>
+            <Text style={categoriesStyles.desc}>{item.description}</Text>
 
             {/* BUTTON */}
-            <LinearGradient colors={item.gradient} style={styles.button}>
-              <Text style={styles.buttonText}>Explore</Text>
+            <LinearGradient colors={item.gradient} style={categoriesStyles.button}>
+              <Text style={categoriesStyles.buttonText}>Explore</Text>
             </LinearGradient>
           </TouchableOpacity>
         ))}
@@ -115,95 +112,4 @@ export default function Categories() {
   );
 }
 
-const styles = StyleSheet.create({
-  section: {
-    paddingVertical: 30,
-    paddingHorizontal: 15,
-    backgroundColor: "#fff",
-  },
-
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 6,
-    color: "#1f2937",
-  },
-
-  gradientText: {
-    color: "#f97316",
-  },
-
-  subtitle: {
-    textAlign: "center",
-    color: "#6b7280",
-    marginBottom: 25,
-    fontSize: 14,
-  },
-
-  scrollContainer: {
-    paddingHorizontal: 10,
-  },
-
-  card: {
-    width: screenWidth * 0.72,
-    borderRadius: 28,
-    padding: 22,
-    marginRight: 18,
-    marginTop: 10,
-    marginBottom: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 15,
-    elevation: 6,
-    alignItems: "center",
-  },
-
-  iconWrapper: {
-    position: "relative",
-    marginBottom: 14,
-  },
-
-  iconBox: {
-    width: 85,
-    height: 85,
-    borderRadius: 22,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  emoji: {
-    position: "absolute",
-    top: -6,
-    right: -6,
-    fontSize: 22,
-  },
-
-  name: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#1f2937",
-    marginBottom: 4,
-  },
-
-  desc: {
-    fontSize: 13,
-    color: "#6b7280",
-    textAlign: "center",
-    marginBottom: 16,
-  },
-
-  button: {
-    width: "100%",
-    paddingVertical: 12,
-    borderRadius: 14,
-  },
-
-  buttonText: {
-    color: "#fff",
-    textAlign: "center",
-    fontWeight: "600",
-    fontSize: 14,
-  },
-});
 

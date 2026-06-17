@@ -27,11 +27,10 @@ export default function BoardingDetailsScreen({ route, navigation }) {
   const { centerId } = route.params;
 
   const [center, setCenter] = useState(null);
-
   const [loading, setLoading] = useState(true);
-
   const [capacity, setCapacity] = useState(null);
   const [capacityLoading, setCapacityLoading] = useState(true);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     fetchDetails();
@@ -65,6 +64,19 @@ export default function BoardingDetailsScreen({ route, navigation }) {
     }
   };
 
+  const photoList = Array.isArray(center?.images)
+    ? center.images
+    : Array.isArray(center?.center_photos)
+      ? center.center_photos
+      : [];
+
+  const handleImageScroll = (event) => {
+    const index = Math.round(event.nativeEvent.contentOffset.x / width);
+    if (index !== currentImageIndex) {
+      setCurrentImageIndex(index);
+    }
+  };
+
   const handleBookingPress = async () => {
     const guestRole = await AsyncStorage.getItem("guestRole");
     if (guestRole) {
@@ -93,7 +105,7 @@ export default function BoardingDetailsScreen({ route, navigation }) {
   if (loading) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#f97316" />
+        <ActivityIndicator size="large" color="#6b21a8" />
       </View>
     );
   }
@@ -102,20 +114,58 @@ export default function BoardingDetailsScreen({ route, navigation }) {
     <ScrollView style={styles.wrapper} showsVerticalScrollIndicator={false}>
       {/* IMAGE SLIDER */}
 
-      <ScrollView
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-      >
-        {center.images?.map((img, index) => (
-          <Image
-            key={index}
-            source={{ uri: img }}
-            style={styles.sliderImage}
-            resizeMode="cover"
-          />
-        ))}
-      </ScrollView>
+      {photoList.length > 0 ? (
+        <View style={styles.sliderContainer}>
+          <ScrollView
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onMomentumScrollEnd={handleImageScroll}
+          >
+            {photoList.map((img, index) => (
+              <View key={`${img}-${index}`} style={styles.sliderImageWrapper}>
+                <Image
+                  source={{ uri: img }}
+                  style={styles.sliderImage}
+                  resizeMode="cover"
+                />
+                <LinearGradient
+                  colors={[
+                    "rgba(15, 23, 42, 0)",
+                    "rgba(15, 23, 42, 0.22)",
+                    "rgba(15, 23, 42, 0.58)",
+                  ]}
+                  style={styles.sliderOverlay}
+                />
+              </View>
+            ))}
+          </ScrollView>
+
+          <View style={styles.sliderCountBadge}>
+            <Text style={styles.sliderCountText}>
+              {currentImageIndex + 1} / {photoList.length}
+            </Text>
+          </View>
+
+          {photoList.length > 1 && (
+            <View style={styles.sliderDots}>
+              {photoList.map((_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.sliderDot,
+                    index === currentImageIndex && styles.sliderDotActive,
+                  ]}
+                />
+              ))}
+            </View>
+          )}
+        </View>
+      ) : (
+        <View style={styles.loaderContainer}>
+          <Text style={styles.desc}>No images available</Text>
+        </View>
+      )}
 
       <LinearGradient
         colors={["#fff7ed", "#ffffff", "#f8fafc"]}
@@ -193,7 +243,7 @@ export default function BoardingDetailsScreen({ route, navigation }) {
           <Text style={styles.sectionTitle}>Capacity Status</Text>
 
           {capacityLoading ? (
-            <ActivityIndicator color="#f97316" />
+            <ActivityIndicator color="#6b21a8" />
           ) : (
             <>
               <View style={styles.infoRow}>

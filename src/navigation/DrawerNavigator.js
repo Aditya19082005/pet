@@ -22,6 +22,7 @@ import TermsOfUseScreen from "../screens/TermsOfUseScreen";
 import BoardingStack from "./BoardingStack";
 
 import { useTheme } from "../context/ThemeContext";
+import { drawerStyles } from "../styles/themeStyles";
 
 const Drawer = createDrawerNavigator();
 
@@ -92,16 +93,10 @@ function CustomDrawerContent({ navigation }) {
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        paddingTop: 40,
-        backgroundColor: theme.background,
-      }}
-    >
+    <View style={[drawerStyles.container, { backgroundColor: theme.background }]}>
       {/* Home */}
       <Pressable
-        style={styles.item}
+        style={drawerStyles.item}
         onPress={() =>
           navigation.navigate("Main", {
             screen: "Home",
@@ -110,12 +105,12 @@ function CustomDrawerContent({ navigation }) {
       >
         <Ionicons name="home-outline" size={22} color={theme.text} />
 
-        <Text style={[styles.text, { color: theme.text }]}>Home</Text>
+        <Text style={[drawerStyles.text, { color: theme.text }]}>Home</Text>
       </Pressable>
 
       {/* Profile */}
       <Pressable
-        style={styles.item}
+        style={drawerStyles.item}
         onPress={() =>
           navigation.navigate("Main", {
             screen: "Profile",
@@ -124,35 +119,35 @@ function CustomDrawerContent({ navigation }) {
       >
         <Ionicons name="person-outline" size={22} color={theme.text} />
 
-        <Text style={[styles.text, { color: theme.text }]}>Profile</Text>
+        <Text style={[drawerStyles.text, { color: theme.text }]}>Profile</Text>
       </Pressable>
 
       {/* Notifications */}
       <Pressable
-        style={styles.item}
+        style={drawerStyles.item}
         onPress={() => navigation.navigate("Notification")}
       >
         <Ionicons name="notifications-outline" size={22} color={theme.text} />
 
-        <Text style={[styles.text, { color: theme.text }]}>Notifications</Text>
+        <Text style={[drawerStyles.text, { color: theme.text }]}>Notifications</Text>
       </Pressable>
 
       {/* Theme Toggle */}
-      <Pressable style={styles.item} onPress={toggleTheme}>
+      <Pressable style={drawerStyles.item} onPress={toggleTheme}>
         <Ionicons
           name={isDark ? "moon" : "sunny"}
           size={22}
           color={theme.text}
         />
 
-        <Text style={[styles.text, { color: theme.text }]}>
+        <Text style={[drawerStyles.text, { color: theme.text }]}>
           {isDark ? "Dark Mode" : "Light Mode"}
         </Text>
       </Pressable>
 
       {/* Privacy Policy */}
       <Pressable
-        style={styles.item}
+        style={drawerStyles.item}
         onPress={() => navigation.navigate("PrivacyPolicy")}
       >
         <Ionicons
@@ -161,58 +156,53 @@ function CustomDrawerContent({ navigation }) {
           color={theme.text}
         />
 
-        <Text style={[styles.text, { color: theme.text }]}>Privacy Policy</Text>
+        <Text style={[drawerStyles.text, { color: theme.text }]}>Privacy Policy</Text>
       </Pressable>
 
       {/* Terms */}
       <Pressable
-        style={styles.item}
+        style={drawerStyles.item}
         onPress={() => navigation.navigate("Terms")}
       >
         <Ionicons name="document-text-outline" size={22} color={theme.text} />
 
-        <Text style={[styles.text, { color: theme.text }]}>Terms of Use</Text>
+        <Text style={[drawerStyles.text, { color: theme.text }]}>Terms of Use</Text>
       </Pressable>
 
       {/* Refund Policy */}
       <Pressable
-        style={styles.item}
+        style={drawerStyles.item}
         onPress={() => navigation.navigate("RefundPolicy")}
       >
         <Ionicons name="cash-outline" size={22} color={theme.text} />
 
-        <Text style={[styles.text, { color: theme.text }]}>Refund Policy</Text>
+        <Text style={[drawerStyles.text, { color: theme.text }]}>Refund Policy</Text>
       </Pressable>
 
       {/* Logout */}
       {loading ? (
-        <View
-          style={{
-            marginTop: 20,
-            alignItems: "center",
-          }}
-        >
+        <View style={drawerStyles.loader}>
           <ActivityIndicator size="small" color="#6b21a8" />
         </View>
       ) : guestRole ? (
         <Pressable
-          style={[styles.item, { marginTop: 20 }]}
+          style={[drawerStyles.item, { marginTop: 20 }]}
           onPress={handleSignIn}
         >
           <Ionicons name="log-in-outline" size={22} color="#6b21a8" />
 
-          <Text style={[styles.text, { color: "#6b21a8" }]}>
+          <Text style={[drawerStyles.text, { color: "#6b21a8" }]}>
             Sign In / Sign Up
           </Text>
         </Pressable>
       ) : role ? (
         <Pressable
-          style={[styles.item, { marginTop: 20 }]}
+          style={[drawerStyles.item, { marginTop: 20 }]}
           onPress={handleLogout}
         >
           <Ionicons name="log-out-outline" size={22} color="red" />
 
-          <Text style={[styles.text, { color: "red" }]}>Logout</Text>
+          <Text style={[drawerStyles.text, { color: "red" }]}>Logout</Text>
         </Pressable>
       ) : null}
     </View>
@@ -231,19 +221,10 @@ export default function DrawerNavigator() {
         },
 
         headerTitle: () => (
-          <View
-            style={{
-              flex: 1,
-              alignItems: "center",
-            }}
-          >
+          <View style={drawerStyles.headerContainer}>
             <Image
               source={require("../../assets/logo.png")}
-              style={{
-                width: 100,
-                height: 60,
-                resizeMode: "contain",
-              }}
+              style={drawerStyles.headerLogo}
             />
           </View>
         ),
@@ -253,12 +234,10 @@ export default function DrawerNavigator() {
         headerLeft: () => (
           <Pressable
             onPress={() => navigation.toggleDrawer()}
-            style={{
-              marginLeft: 15,
-              backgroundColor: isDark ? "#1f2937" : "#f2f2f2",
-              padding: 8,
-              borderRadius: 10,
-            }}
+            style={[
+              drawerStyles.menuButton,
+              { backgroundColor: isDark ? "#1f2937" : "#f2f2f2" },
+            ]}
           >
             <Ionicons name="menu" size={28} color={theme.text} />
           </Pressable>
@@ -266,7 +245,7 @@ export default function DrawerNavigator() {
 
         headerRight: () => (
           <Pressable
-            style={{ marginRight: 15 }}
+            style={drawerStyles.headerRightButton}
             onPress={() => navigation.navigate("Notification")}
           >
             <Ionicons
@@ -310,17 +289,4 @@ export default function DrawerNavigator() {
   );
 }
 
-const styles = {
-  item: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 15,
-    gap: 10,
-  },
-
-  text: {
-    fontSize: 15,
-    fontWeight: "500",
-  },
-};
 

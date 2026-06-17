@@ -11,7 +11,7 @@ export default function PetStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Pets"
+        name="PetList"
         component={PetsScreen}
         options={{ headerShown: false }}
       />
@@ -20,7 +20,7 @@ export default function PetStack() {
         name="PetDetails"
         component={PetDetailsScreen}
         options={{
-          title: "Pet Details",
+          headerShown: false,
         }}
       />
     </Stack.Navigator>
