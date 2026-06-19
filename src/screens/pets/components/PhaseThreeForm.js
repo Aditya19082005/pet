@@ -4,19 +4,20 @@ import { View, TextInput, Switch, Text } from "react-native";
 
 import { Picker } from "@react-native-picker/picker";
 
+import phaseThreeFormStyles from "../styles/PhaseThreeFormStyles";
+
 import FormLabel from "./FormLabel";
 
 export default function PhaseThreeForm({
   petData,
   setPetData,
-  styles,
   fieldErrors = {},
 }) {
   return (
     <View>
       <TextInput
         placeholder="Vet Name"
-        style={styles.input}
+        style={phaseThreeFormStyles.input}
         value={petData.vet_name}
         onChangeText={(text) =>
           setPetData({
@@ -28,7 +29,7 @@ export default function PhaseThreeForm({
 
       <TextInput
         placeholder="Vet Clinic Name"
-        style={styles.input}
+        style={phaseThreeFormStyles.input}
         value={petData.vet_clinic_name}
         onChangeText={(text) =>
           setPetData({
@@ -41,7 +42,7 @@ export default function PhaseThreeForm({
       <TextInput
         placeholder="Vet Contact"
         keyboardType="phone-pad"
-        style={styles.input}
+        style={phaseThreeFormStyles.input}
         value={petData.vet_contact}
         onChangeText={(text) =>
           setPetData({
@@ -53,7 +54,7 @@ export default function PhaseThreeForm({
 
       <TextInput
         placeholder="Special Care Required"
-        style={[styles.input, styles.textArea]}
+        style={[phaseThreeFormStyles.input, phaseThreeFormStyles.textArea]}
         multiline
         value={petData.special_care_required}
         onChangeText={(text) =>
@@ -66,7 +67,7 @@ export default function PhaseThreeForm({
 
       <TextInput
         placeholder="Eating Habit"
-        style={styles.input}
+        style={phaseThreeFormStyles.input}
         value={petData.eating_habit}
         onChangeText={(text) =>
           setPetData({
@@ -78,7 +79,7 @@ export default function PhaseThreeForm({
 
       <TextInput
         placeholder="Water Intake Habit"
-        style={styles.input}
+        style={phaseThreeFormStyles.input}
         value={petData.water_intake_habit}
         onChangeText={(text) =>
           setPetData({
@@ -90,7 +91,7 @@ export default function PhaseThreeForm({
 
       <TextInput
         placeholder="Anxiety Issues"
-        style={styles.input}
+        style={phaseThreeFormStyles.input}
         value={petData.anxiety_issues}
         onChangeText={(text) =>
           setPetData({
@@ -102,7 +103,7 @@ export default function PhaseThreeForm({
 
       <TextInput
         placeholder="Biting History"
-        style={styles.input}
+        style={phaseThreeFormStyles.input}
         value={petData.biting_history}
         onChangeText={(text) =>
           setPetData({
@@ -118,8 +119,8 @@ export default function PhaseThreeForm({
 
       <View
         style={[
-          styles.pickerWrapper,
-          fieldErrors.food_type && styles.inputError,
+          phaseThreeFormStyles.pickerWrapper,
+          fieldErrors.food_type && phaseThreeFormStyles.inputError,
         ]}
       >
         <Picker
@@ -143,7 +144,7 @@ export default function PhaseThreeForm({
 
       <TextInput
         placeholder="Food Brand"
-        style={[styles.input, styles.textArea]}
+        style={[phaseThreeFormStyles.input, phaseThreeFormStyles.textArea]}
         value={petData.food_brand}
         onChangeText={(text) =>
           setPetData({
@@ -155,7 +156,7 @@ export default function PhaseThreeForm({
 
       <TextInput
         placeholder="Feeding Schedule"
-        style={[styles.input, styles.textArea]}
+        style={[phaseThreeFormStyles.input, phaseThreeFormStyles.textArea]}
         value={petData.feeding_schedule}
         onChangeText={(text) =>
           setPetData({
@@ -167,7 +168,7 @@ export default function PhaseThreeForm({
 
       <TextInput
         placeholder="Quantity Per Meal"
-        style={[styles.input, styles.textArea]}
+        style={[phaseThreeFormStyles.input, phaseThreeFormStyles.textArea]}
         value={petData.quantity_per_meal}
         onChangeText={(text) =>
           setPetData({
@@ -177,8 +178,8 @@ export default function PhaseThreeForm({
         }
       />
 
-      <View style={styles.switchContainer}>
-        <Text style={styles.switchLabel}>Friendly With Humans</Text>
+      <View style={phaseThreeFormStyles.switchContainer}>
+        <Text style={phaseThreeFormStyles.switchLabel}>Friendly With Humans</Text>
 
         <Switch
           value={petData.friendly_with_humans}
@@ -191,8 +192,8 @@ export default function PhaseThreeForm({
         />
       </View>
 
-      <View style={styles.switchContainer}>
-        <Text style={styles.switchLabel}>Friendly With Dogs</Text>
+      <View style={phaseThreeFormStyles.switchContainer}>
+        <Text style={phaseThreeFormStyles.switchLabel}>Friendly With Dogs</Text>
 
         <Switch
           value={petData.friendly_with_dogs}
@@ -205,8 +206,8 @@ export default function PhaseThreeForm({
         />
       </View>
 
-      <View style={styles.switchContainer}>
-        <Text style={styles.switchLabel}>Aggressive Behavior</Text>
+      <View style={phaseThreeFormStyles.switchContainer}>
+        <Text style={phaseThreeFormStyles.switchLabel}>Aggressive Behavior</Text>
 
         <Switch
           value={petData.aggressive_behavior}
@@ -219,8 +220,8 @@ export default function PhaseThreeForm({
         />
       </View>
 
-      <View style={styles.switchContainer}>
-        <Text style={styles.switchLabel}>Treats Allowed</Text>
+      <View style={phaseThreeFormStyles.switchContainer}>
+        <Text style={phaseThreeFormStyles.switchLabel}>Treats Allowed</Text>
 
         <Switch
           value={petData.treats_allowed}
@@ -233,8 +234,8 @@ export default function PhaseThreeForm({
         />
       </View>
 
-      <View style={styles.switchContainer}>
-        <Text style={styles.switchLabel}>Food Allergies</Text>
+      <View style={phaseThreeFormStyles.switchContainer}>
+        <Text style={phaseThreeFormStyles.switchLabel}>Food Allergies</Text>
 
         <Switch
           value={petData.food_allergies}
@@ -250,7 +251,7 @@ export default function PhaseThreeForm({
       {petData.food_allergies && (
         <TextInput
           placeholder="Food Allergy Details"
-          style={styles.input}
+          style={phaseThreeFormStyles.input}
           value={petData.food_allergy_details}
           onChangeText={(text) =>
             setPetData({

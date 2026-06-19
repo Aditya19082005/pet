@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import styles from "../styles/boardingStyles";
+import styles from "../styles/CenterCard";
 
 export default function CenterCard({ item, onPress, onViewDetails }) {
   return (

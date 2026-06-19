@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { notificationStyles } from "../styles/themeStyles";
+import notificationStyles from "../styles/NotificationScreenStyles";
 
 export default function NotificationScreen() {
   const [expandedNotification, setExpandedNotification] = useState(null);

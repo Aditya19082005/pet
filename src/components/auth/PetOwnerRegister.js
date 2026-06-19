@@ -2,15 +2,14 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   Alert,
-  StyleSheet,
 } from "react-native";
 
 import * as DocumentPicker from "expo-document-picker";
 import { PasswordInput } from "../inputs/PasswordInput";
 import FloatingInput from "../inputs/FloatingInput";
+import petOwnerRegisterStyles from "../../styles/PetOwnerRegisterStyles";
 export default function PetOwnerRegister({
   setStep,
   setOtpType,
@@ -270,18 +269,18 @@ try {
   keyboardType="phone-pad"
 />
 
-    <TouchableOpacity style={styles.fileButton} onPress={pickAadhar}>
+    <TouchableOpacity style={petOwnerRegisterStyles.fileButton} onPress={pickAadhar}>
   <Text>
     {aadharFile ? aadharFile.name : "Upload Aadhar File (optional)"}
   </Text>
 </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.button}
+        style={petOwnerRegisterStyles.button}
         onPress={handleRegister}
         disabled={loading}
       >
-        <Text style={styles.btnText}>
+        <Text style={petOwnerRegisterStyles.btnText}>
           {loading
             ? "Registering..."
             : "Register Pet Owner"}
@@ -291,34 +290,3 @@ try {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  input: {
-    backgroundColor: "#fff",
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 12,
-  },
-
-  fileButton: {
-    padding: 14,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 12,
-    marginBottom: 15,
-  },
-
-  button: {
-    backgroundColor: "#6b21a8",
-    padding: 15,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-
-  btnText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-});

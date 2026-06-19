@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { categoriesStyles } from "../styles/themeStyles";
+import categoriesStyles from "../styles/CategoriesStyles";
 
 export default function Categories() {
   const categories = [

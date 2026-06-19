@@ -12,7 +12,7 @@ import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
-import styles from "../styles/boardingStyles";
+import styles from "../styles/BookingInterface";
 
 export default function BookingInterface({ navigation }) {
   const [pets, setPets] = useState(["Buddy", "Luna", "Max", "Bella"]);

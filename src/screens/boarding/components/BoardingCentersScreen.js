@@ -7,7 +7,7 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-import styles from "../styles/boardingStyles";
+import styles from "../styles/BoardingCentersScreen";
 import CenterCard from "./CenterCard";
 import { fetchBoardingCentersApi } from "../services/boardingService";
 

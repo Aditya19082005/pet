@@ -17,7 +17,7 @@ import BoardingOwnerNavigator from "./src/navigation/BoardingOwnerNavigator";
 import { ThemeProvider, useTheme } from "./src/context/ThemeContext";
 
 import { View, ActivityIndicator } from "react-native";
-import { appStyles } from "./src/styles/themeStyles";
+import appStyles from "./src/styles/AppStyles";
 
 const Stack = createNativeStackNavigator();
 

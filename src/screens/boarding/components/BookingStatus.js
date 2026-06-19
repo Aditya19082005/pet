@@ -11,7 +11,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import BASE_URL from "../constants/api";
-import styles from "../styles/boardingStyles";
+import styles from "../styles/BookingStatus";
 
 import { fetchMyBookingsApi } from "../services/boardingService";
 import { fetchPetImagesApi } from "../../pets/services/imageService";

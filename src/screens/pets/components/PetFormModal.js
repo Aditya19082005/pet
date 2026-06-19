@@ -10,6 +10,8 @@ import {
   Alert,
 } from "react-native";
 
+import petFormModalStyles from "../styles/PetFormModalStyles";
+
 import StepIndicator from "./StepIndicator";
 
 import PhaseOneForm from "./PhaseOneForm";
@@ -31,7 +33,6 @@ export default function PetFormModal({
   profileImageIndex,
   setProfileImageIndex,
   loading,
-  styles,
   onClose,
   onSubmit,
 }) {
@@ -96,18 +97,18 @@ export default function PetFormModal({
 
   return (
     <Modal visible={visible} animationType="slide" transparent>
-      <View style={styles.modalContainer}>
+      <View style={petFormModalStyles.modalContainer}>
         <ScrollView
-          style={styles.modalContent}
+          style={petFormModalStyles.modalContent}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.header}>
-            <Text style={styles.modalTitle}>
+          <View style={petFormModalStyles.header}>
+            <Text style={petFormModalStyles.modalTitle}>
               {editingId ? "Update Pet" : "Add Pet"}
             </Text>
 
             <TouchableOpacity onPress={onClose}>
-              <Text style={styles.closeIcon}>✕</Text>
+              <Text style={petFormModalStyles.closeIcon}>✕</Text>
             </TouchableOpacity>
           </View>
 
@@ -117,7 +118,6 @@ export default function PetFormModal({
             <PhaseOneForm
               petData={petData}
               setPetData={setPetData}
-              styles={styles}
               fieldErrors={fieldErrors}
               pickImages={pickImages}
               selectedImages={selectedImages}
@@ -131,7 +131,6 @@ export default function PetFormModal({
             <PhaseTwoForm
               petData={petData}
               setPetData={setPetData}
-              styles={styles}
             />
           )}
 
@@ -139,37 +138,36 @@ export default function PetFormModal({
             <PhaseThreeForm
               petData={petData}
               setPetData={setPetData}
-              styles={styles}
               fieldErrors={fieldErrors}
             />
           )}
 
           {/* BUTTONS */}
 
-          <View style={styles.stepButtonRow}>
+          <View style={petFormModalStyles.stepButtonRow}>
             {step > 1 && (
               <TouchableOpacity
-                style={styles.backBtn}
+                style={petFormModalStyles.backBtn}
                 onPress={() => setStep(step - 1)}
               >
-                <Text style={styles.buttonText}>Back</Text>
+                <Text style={petFormModalStyles.buttonText}>Back</Text>
               </TouchableOpacity>
             )}
 
             {step < 3 ? (
-              <TouchableOpacity style={styles.nextBtn} onPress={handleNext}>
-                <Text style={styles.buttonText}>Next</Text>
+              <TouchableOpacity style={petFormModalStyles.nextBtn} onPress={handleNext}>
+                <Text style={petFormModalStyles.buttonText}>Next</Text>
               </TouchableOpacity>
             ) : (
               <TouchableOpacity
-                style={styles.button}
+                style={petFormModalStyles.button}
                 onPress={handleSubmit}
                 disabled={loading}
               >
                 {loading ? (
                   <ActivityIndicator color="#fff" />
                 ) : (
-                  <Text style={styles.buttonText}>
+                  <Text style={petFormModalStyles.buttonText}>
                     {editingId ? "Update Pet" : "Add Pet"}
                   </Text>
                 )}
@@ -179,8 +177,8 @@ export default function PetFormModal({
 
           {/* CLOSE BUTTON */}
 
-          <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
-            <Text style={styles.closeText}>Close</Text>
+          <TouchableOpacity style={petFormModalStyles.closeBtn} onPress={onClose}>
+            <Text style={petFormModalStyles.closeText}>Close</Text>
           </TouchableOpacity>
         </ScrollView>
       </View>

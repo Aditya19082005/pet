@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import styles from "../styles/petStyles";
+import customPickerStyles from "../styles/CustomPickerStyles";
 
 export default function CustomPicker({
   selectedValue,
@@ -10,7 +10,7 @@ export default function CustomPicker({
   style,
 }) {
   return (
-    <View style={[styles.pickerContainer, style]}>
+    <View style={[customPickerStyles.pickerContainer, style]}>
       <Picker selectedValue={selectedValue} onValueChange={onValueChange}>
         <Picker.Item label="Select" value="" />
 

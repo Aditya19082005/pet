@@ -6,7 +6,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { dogGalleryStyles } from "../styles/themeStyles";
+import dogGalleryStyles from "../styles/DogGalleryStyles";
 
 export default function DogGallery() {
   const services = [

@@ -1,6 +1,6 @@
 import { View, ScrollView } from "react-native";
 import LiveUpdates from "../components/LiveUpdates";
-import { statusStyles } from "../styles/themeStyles";
+import statusStyles from "../styles/StatusScreenStyles";
 
 export default function StatusScreen() {
   return (

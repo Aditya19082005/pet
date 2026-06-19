@@ -7,13 +7,13 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
-  StyleSheet,
   ActivityIndicator,
 } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { PasswordInput } from "../inputs/PasswordInput";
+import otpVerificationStyles from "../../styles/OTPVerificationStyles";
 
 export default function OTPVerification({
   email,
@@ -307,17 +307,17 @@ export default function OTPVerification({
   return (
     <View>
 
-      <Text style={styles.heading}>
+      <Text style={otpVerificationStyles.heading}>
         Verify OTP
       </Text>
 
-      <Text style={styles.subText}>
+      <Text style={otpVerificationStyles.subText}>
         OTP sent to{"\n"}
         {email}
       </Text>
 
       <TextInput
-        style={styles.input}
+        style={otpVerificationStyles.input}
         placeholder="Enter OTP"
         keyboardType="number-pad"
         maxLength={6}
@@ -340,14 +340,14 @@ export default function OTPVerification({
         onPress={handleResendOtp}
       >
         <Text
-          style={styles.resendText}
+          style={otpVerificationStyles.resendText}
         >
           Resend OTP
         </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.button}
+        style={otpVerificationStyles.button}
         onPress={handleVerifyOtp}
         disabled={loading}
       >
@@ -356,7 +356,7 @@ export default function OTPVerification({
         ) : (
           <Text
             style={
-              styles.buttonText
+              otpVerificationStyles.buttonText
             }
           >
             Verify OTP
@@ -367,7 +367,7 @@ export default function OTPVerification({
       <TouchableOpacity
         onPress={onBack}
       >
-        <Text style={styles.backText}>
+        <Text style={otpVerificationStyles.backText}>
           Back
         </Text>
       </TouchableOpacity>
@@ -375,56 +375,5 @@ export default function OTPVerification({
     </View>
   );
 };
-
-const styles =
-  StyleSheet.create({
-
-    heading: {
-      fontSize: 24,
-      fontWeight: "700",
-      marginBottom: 10,
-    },
-
-    subText: {
-      color: "#666",
-      marginBottom: 20,
-    },
-
-    input: {
-      borderWidth: 1,
-      borderColor: "#ddd",
-      borderRadius: 12,
-      padding: 14,
-      marginBottom: 12,
-      backgroundColor:
-        "#fff",
-    },
-
-    resendText: {
-      color: "#6b21a8",
-      textAlign: "center",
-      marginBottom: 20,
-      fontWeight: "600",
-    },
-
-    button: {
-      backgroundColor:
-        "#6b21a8",
-      padding: 15,
-      borderRadius: 12,
-      alignItems: "center",
-    },
-
-    buttonText: {
-      color: "#fff",
-      fontWeight: "700",
-    },
-
-    backText: {
-      textAlign: "center",
-      marginTop: 15,
-      color: "#666",
-    },
-});
 
 

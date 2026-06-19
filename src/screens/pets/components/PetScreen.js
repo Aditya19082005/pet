@@ -19,7 +19,7 @@ import PetCard from "./PetCard";
 
 import PetFormModal from "./PetFormModal";
 
-import styles from "../styles/petStyles";
+import petScreenStyles from "../styles/PetScreenStyles";
 
 import {
   fetchPetByIdApi,
@@ -673,21 +673,21 @@ export default function PetScreen({ navigation }) {
 
   if (loading && pets.length === 0) {
     return (
-      <View style={styles.loaderContainer}>
+      <View style={petScreenStyles.loaderContainer}>
         <ActivityIndicator size="large" color="#6b21a8" />
       </View>
     );
   }
 
   return (
-    <View style={styles.screen}>
+    <View style={petScreenStyles.screen}>
       {/* HEADER */}
 
-      <View style={styles.header}>
-        <Text style={styles.heading}>My Pets 🐾</Text>
+      <View style={petScreenStyles.header}>
+        <Text style={petScreenStyles.heading}>My Pets 🐾</Text>
 
         <TouchableOpacity
-          style={styles.addBtn}
+          style={petScreenStyles.addBtn}
           onPress={() => {
             if (isGuest) {
               promptSignIn();
@@ -725,12 +725,11 @@ export default function PetScreen({ navigation }) {
             }}
           />
         }
-        contentContainerStyle={styles.container}
+        contentContainerStyle={petScreenStyles.container}
         renderItem={({ item }) => (
           <PetCard
             item={item}
             petImages={petImages}
-            styles={styles}
             navigation={navigation}
             onEdit={(pet) => {
               if (isGuest) {
@@ -759,7 +758,6 @@ export default function PetScreen({ navigation }) {
         profileImageIndex={profileImageIndex}
         setProfileImageIndex={setProfileImageIndex}
         loading={loading}
-        styles={styles}
         onClose={closeModal}
         onSubmit={handleAddOrUpdate}
       />

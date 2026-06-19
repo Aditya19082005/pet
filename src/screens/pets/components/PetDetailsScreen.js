@@ -10,7 +10,7 @@ import {
   Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import styles from "../styles/petStyles";
+import petDetailsScreenStyles from "../styles/PetDetailsScreenStyles";
 
 import { fetchPetByIdApi } from "../services/petService";
 import { fetchPetImagesApi } from "../services/imageService";
@@ -66,7 +66,7 @@ export default function PetDetailsScreen({ route }) {
 
   if (loading) {
     return (
-      <View style={styles.detailsLoader}>
+      <View style={petDetailsScreenStyles.detailsLoader}>
         <ActivityIndicator size="large" color="#6b21a8" />
       </View>
     );
@@ -74,8 +74,8 @@ export default function PetDetailsScreen({ route }) {
 
   if (!petData) {
     return (
-      <View style={styles.loaderContainer}>
-        <Text style={styles.emptyText}>Pet details are unavailable.</Text>
+      <View style={petDetailsScreenStyles.loaderContainer}>
+        <Text style={petDetailsScreenStyles.emptyText}>Pet details are unavailable.</Text>
       </View>
     );
   }
@@ -160,21 +160,21 @@ export default function PetDetailsScreen({ route }) {
   };
 
   const DetailRow = ({ label, value, onPress, isLink, displayValue }) => (
-    <View style={styles.row}>
-      <Text style={styles.label}>{label}</Text>
+    <View style={petDetailsScreenStyles.row}>
+      <Text style={petDetailsScreenStyles.label}>{label}</Text>
       {isLink ? (
-        <TouchableOpacity onPress={onPress} style={styles.pdfLinkRow}>
-          <View style={styles.pdfLinkInner}>
-            <View style={styles.pdfIconWrapper}>
+        <TouchableOpacity onPress={onPress} style={petDetailsScreenStyles.pdfLinkRow}>
+          <View style={petDetailsScreenStyles.pdfLinkInner}>
+            <View style={petDetailsScreenStyles.pdfIconWrapper}>
               <Ionicons name="document-text-outline" size={18} color="#fff" />
             </View>
-            <Text style={styles.pdfLinkText}>
+            <Text style={petDetailsScreenStyles.pdfLinkText}>
               {displayValue || String(value) || "Vaccination Certificate"}
             </Text>
           </View>
         </TouchableOpacity>
       ) : (
-        <Text style={styles.value}>
+        <Text style={petDetailsScreenStyles.value}>
           {value === null || value === undefined || value === ""
             ? "-"
             : String(value)}
@@ -185,22 +185,22 @@ export default function PetDetailsScreen({ route }) {
 
   return (
     <ScrollView
-      style={styles.detailsContainer}
+      style={petDetailsScreenStyles.detailsContainer}
       showsVerticalScrollIndicator={false}
     >
-      <View style={styles.detailsHero}>
-        <Image source={{ uri: profileImage }} style={styles.detailPetImage} />
-        <View style={styles.heroText}>
-          <Text style={styles.detailsHeading}>
+      <View style={petDetailsScreenStyles.detailsHero}>
+        <Image source={{ uri: profileImage }} style={petDetailsScreenStyles.detailPetImage} />
+        <View style={petDetailsScreenStyles.heroText}>
+          <Text style={petDetailsScreenStyles.detailsHeading}>
             {pet.pet_name || "Pet Details"}
           </Text>
-          <Text style={styles.petSubtitle}>
+          <Text style={petDetailsScreenStyles.petSubtitle}>
             {formatSubtitle(pet.pet_type, pet.breed)}
           </Text>
         </View>
       </View>
 
-      <Text style={styles.section}>Pet Information</Text>
+      <Text style={petDetailsScreenStyles.section}>Pet Information</Text>
 
       <DetailRow label="Gender" value={pet.gender} />
       <DetailRow label="Age" value={pet.age} />
@@ -215,31 +215,31 @@ export default function PetDetailsScreen({ route }) {
       <DetailRow label="Additional Details" value={pet.additional_details} />
 
       {galleryImages.length > 0 && (
-        <View style={styles.galleryContainer}>
-          <Text style={styles.section}>Photo Gallery</Text>
+        <View style={petDetailsScreenStyles.galleryContainer}>
+          <Text style={petDetailsScreenStyles.section}>Photo Gallery</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.thumbnailScroll}
+            contentContainerStyle={petDetailsScreenStyles.thumbnailScroll}
           >
             {galleryImages.map((uri, index) => (
               <Image
                 key={`${uri}-${index}`}
                 source={{ uri }}
-                style={styles.thumbnailImage}
+                style={petDetailsScreenStyles.thumbnailImage}
               />
             ))}
           </ScrollView>
         </View>
       )}
 
-      <Text style={styles.section}>Family Details</Text>
+      <Text style={petDetailsScreenStyles.section}>Family Details</Text>
 
       <DetailRow label="Mother Name" value={pet.mother_name} />
       <DetailRow label="Father Name" value={pet.father_name} />
       <DetailRow label="Breeding Line" value={pet.breeding_line} />
 
-      <Text style={styles.section}>Health Details</Text>
+      <Text style={petDetailsScreenStyles.section}>Health Details</Text>
 
       <DetailRow label="Vaccination Status" value={health.vaccination_status} />
       <DetailRow
@@ -274,7 +274,7 @@ export default function PetDetailsScreen({ route }) {
         value={health.neutered_spayed === "1" ? "Yes" : "No"}
       />
 
-      <Text style={styles.section}>Veterinarian Details</Text>
+      <Text style={petDetailsScreenStyles.section}>Veterinarian Details</Text>
 
       <DetailRow label="Vet Name" value={health.vet_name} />
       <DetailRow label="Vet Clinic Name" value={health.vet_clinic_name} />
@@ -284,7 +284,7 @@ export default function PetDetailsScreen({ route }) {
         value={health.special_care_required}
       />
 
-      <Text style={styles.section}>Behavior & Feeding</Text>
+      <Text style={petDetailsScreenStyles.section}>Behavior & Feeding</Text>
 
       <DetailRow label="Eating Habit" value={behavior.eating_habit} />
       <DetailRow
@@ -322,7 +322,7 @@ export default function PetDetailsScreen({ route }) {
         value={behavior.food_allergy_details}
       />
 
-      <View style={styles.spacer} />
+      <View style={petDetailsScreenStyles.spacer} />
     </ScrollView>
   );
 }

@@ -1,0 +1,52 @@
+import { StyleSheet } from "react-native";
+
+export default StyleSheet.create({
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  screen: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 12,
+    marginBottom: 4,
+    backgroundColor: "#fffaf7",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e9d5ff",
+  },
+  heading: {
+    fontSize: 28,
+    fontWeight: "800",
+    color: "#6b21a8",
+    marginLeft: 2,
+  },
+  addBtn: {
+    backgroundColor: "#6b21a8",
+    width: 58,
+    height: 58,
+    borderRadius: 18,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#8b5cf6",
+    elevation: 4,
+    shadowColor: "#6b21a8",
+    shadowOpacity: 0.22,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  container: {
+    padding: 16,
+    paddingBottom: 100,
+    backgroundColor: "#f8fafc",
+    flexGrow: 1,
+  },
+});

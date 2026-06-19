@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { policyStyles } from "../styles/themeStyles";
+import policyStyles from "../styles/PrivacyPolicyScreenStyles";
 
 export default function PrivacyPolicyScreen() {
   return (

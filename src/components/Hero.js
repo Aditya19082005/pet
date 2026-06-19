@@ -9,7 +9,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 
 import { useNavigation } from "@react-navigation/native";
-import { heroStyles } from "../styles/themeStyles";
+import heroStyles from "../styles/HeroStyles";
 
 export default function Hero() {
 
@@ -79,32 +79,32 @@ export default function Hero() {
 
         <View style={heroStyles.statsRow}>
 
-          <View style={styles.statBox}>
-            <Text style={styles.statNum}>
+          <View style={heroStyles.statBox}>
+            <Text style={heroStyles.statNum}>
               5000+
             </Text>
 
-            <Text style={styles.statLabel}>
+            <Text style={heroStyles.statLabel}>
               Happy Pets
             </Text>
           </View>
 
-          <View style={styles.statBox}>
-            <Text style={styles.statNum}>
+          <View style={heroStyles.statBox}>
+            <Text style={heroStyles.statNum}>
               500+
             </Text>
 
-            <Text style={styles.statLabel}>
+            <Text style={heroStyles.statLabel}>
               Caregivers
             </Text>
           </View>
 
-          <View style={styles.statBox}>
-            <Text style={styles.statNum}>
+          <View style={heroStyles.statBox}>
+            <Text style={heroStyles.statNum}>
               4.9★
             </Text>
 
-            <Text style={styles.statLabel}>
+            <Text style={heroStyles.statLabel}>
               Rating
             </Text>
           </View>

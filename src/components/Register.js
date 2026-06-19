@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
@@ -19,6 +18,7 @@ import PetOwnerRegister from "./auth/PetOwnerRegister";
 import BoardingOwnerRegister from "./auth/BoardingOwnerRegister";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import registerStyles from "../styles/RegisterScreenStyles";
 
 export default function RegisterScreen({
   navigation,
@@ -67,7 +67,7 @@ export default function RegisterScreen({
     };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={registerStyles.container}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={
@@ -79,31 +79,23 @@ export default function RegisterScreen({
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={
-            styles.scrollContainer
+            registerStyles.scrollContainer
           }
           showsVerticalScrollIndicator={
             false
           }
         >
           <View
-            style={{ marginBottom: 18 }}
+            style={registerStyles.welcomeHeader}
           >
             <Text
-              style={{
-                fontSize: 28,
-                fontWeight: "700",
-                color: "#111827",
-              }}
+              style={registerStyles.welcomeTitle}
             >
               Welcome
             </Text>
 
             <Text
-              style={{
-                marginTop: 4,
-                color: "#6B7280",
-                fontSize: 15,
-              }}
+              style={registerStyles.welcomeSubtitle}
             >
               Sign in to continue or
               create an account
@@ -114,15 +106,15 @@ export default function RegisterScreen({
             <>
               <View
                 style={
-                  styles.segmentContainer
+                  registerStyles.segmentContainer
                 }
               >
                 <TouchableOpacity
                   activeOpacity={0.9}
                   style={[
-                    styles.segmentButton,
+                    registerStyles.segmentButton,
                     isLogin &&
-                      styles.segmentActive,
+                      registerStyles.segmentActive,
                   ]}
                   onPress={() =>
                     setIsLogin(true)
@@ -130,9 +122,9 @@ export default function RegisterScreen({
                 >
                   <Text
                     style={[
-                      styles.segmentText,
+                      registerStyles.segmentText,
                       isLogin &&
-                        styles.segmentActiveText,
+                        registerStyles.segmentActiveText,
                     ]}
                   >
                     Sign In
@@ -142,9 +134,9 @@ export default function RegisterScreen({
                 <TouchableOpacity
                   activeOpacity={0.9}
                   style={[
-                    styles.segmentButton,
+                    registerStyles.segmentButton,
                     !isLogin &&
-                      styles.segmentActive,
+                      registerStyles.segmentActive,
                   ]}
                   onPress={() =>
                     setIsLogin(false)
@@ -152,9 +144,9 @@ export default function RegisterScreen({
                 >
                   <Text
                     style={[
-                      styles.segmentText,
+                      registerStyles.segmentText,
                       !isLogin &&
-                        styles.segmentActiveText,
+                        registerStyles.segmentActiveText,
                     ]}
                   >
                     Sign Up
@@ -164,7 +156,7 @@ export default function RegisterScreen({
 
               {isLogin ? (
                 <View
-                  style={styles.authCard}
+                  style={registerStyles.authCard}
                 >
                   <LoginForm
                     setStep={setStep}
@@ -179,12 +171,12 @@ export default function RegisterScreen({
 
                   <View
                     style={
-                      styles.guestContainer
+                      registerStyles.guestContainer
                     }
                   >
                     <Text
                       style={
-                        styles.guestTitle
+                        registerStyles.guestTitle
                       }
                     >
                       Explore without
@@ -193,7 +185,7 @@ export default function RegisterScreen({
 
                     <TouchableOpacity
                       style={
-                        styles.guestButton
+                        registerStyles.guestButton
                       }
                       onPress={() =>
                         constinueAsGuest(
@@ -203,7 +195,7 @@ export default function RegisterScreen({
                     >
                       <Text
                         style={
-                          styles.guestButtonText
+                          registerStyles.guestButtonText
                         }
                       >
                         Continue as Pet
@@ -213,7 +205,7 @@ export default function RegisterScreen({
 
                     <TouchableOpacity
                       style={
-                        styles.guestButton
+                        registerStyles.guestButton
                       }
                       onPress={() =>
                         constinueAsGuest(
@@ -223,7 +215,7 @@ export default function RegisterScreen({
                     >
                       <Text
                         style={
-                          styles.guestButtonText
+                          registerStyles.guestButtonText
                         }
                       >
                         Continue as
@@ -235,7 +227,7 @@ export default function RegisterScreen({
                 </View>
               ) : (
                 <View
-                  style={styles.authCard}
+                  style={registerStyles.authCard}
                 >
                   <RoleSelector
                     role={role}
@@ -290,107 +282,4 @@ export default function RegisterScreen({
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F5F6FA",
-  },
-
-  scrollContainer: {
-    paddingHorizontal: 18,
-    paddingTop:
-      Platform.OS === "android"
-        ? 25
-        : 15,
-    paddingBottom: 60,
-    flexGrow: 1,
-  },
-
-  authCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 20,
-    padding: 18,
-
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-
-    elevation: 3,
-  },
-
-  guestContainer: {
-    marginTop: 25,
-    borderTopWidth: 1,
-    borderTopColor: "#eee",
-    paddingTop: 20,
-  },
-
-  guestTitle: {
-    textAlign: "center",
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 15,
-  },
-
-  guestButton: {
-    backgroundColor: "#f3f4f6",
-    paddingVertical: 14,
-    borderRadius: 12,
-    marginBottom: 10,
-    alignItems: "center",
-  },
-
-  guestButtonText: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#374151",
-  },
-
-  segmentContainer: {
-    flexDirection: "row",
-    backgroundColor: "#ECE7F5",
-    borderRadius: 16,
-    padding: 4,
-    marginBottom: 24,
-  },
-
-  segmentButton: {
-    flex: 1,
-    height: 48,
-    borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  segmentActive: {
-    backgroundColor: "#FFFFFF",
-
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-
-    elevation: 2,
-  },
-
-  segmentText: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#6B7280",
-  },
-
-  segmentActiveText: {
-    color: "#6b21a8",
-    fontWeight: "700",
-  },
-});
-
 

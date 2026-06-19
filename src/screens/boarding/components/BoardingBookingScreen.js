@@ -13,7 +13,7 @@ import { Picker } from "@react-native-picker/picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { Calendar } from "react-native-calendars";
-import styles from "../styles/boardingStyles";
+import styles from "../styles/BoardingBookingStyles";
 import {
   fetchCapacityApi,
   checkAvailabilityApi,

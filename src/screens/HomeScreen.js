@@ -4,7 +4,7 @@ import { useTheme } from "../context/ThemeContext";
 import Categories from "../components/Categories";
 import DogGallery from "../components/DogGallery";
 import BookingStatus from "./boarding/components/BookingStatus";
-import { homeStyles } from "../styles/themeStyles";
+import homeStyles from "../styles/HomeScreenStyles";
 
 export default function HomeScreen() {
   const { theme } = useTheme();
