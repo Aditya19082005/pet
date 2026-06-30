@@ -225,6 +225,21 @@ export default function RegisterScreen({ navigation }) {
             </>
           )}
 
+          {step === "otp" && (
+            <OTPVerification
+              email={email}
+              otpType={otpType}
+              password={password}
+              setStep={setStep}
+              onSuccess={() => {
+                setStep("auth");
+                setIsLogin(true);
+              }}
+              onBack={() => setStep("auth")}
+              navigation={navigation}
+            />
+          )}
+
           <View style={registerStyles.featuresContainer}>
             <View style={registerStyles.featureItem}>
               <Feather name="shield" size={26} color="#8B5CF6" />
@@ -260,21 +275,6 @@ export default function RegisterScreen({ navigation }) {
               </Text>
             </View>
           </View>
-
-          {step === "otp" && (
-            <OTPVerification
-              email={email}
-              otpType={otpType}
-              password={password}
-              setStep={setStep}
-              onSuccess={() => {
-                setStep("auth");
-                setIsLogin(true);
-              }}
-              onBack={() => setStep("auth")}
-              navigation={navigation}
-            />
-          )}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
