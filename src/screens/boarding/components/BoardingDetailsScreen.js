@@ -168,7 +168,7 @@ export default function BoardingDetailsScreen({ route, navigation }) {
       )}
 
       <LinearGradient
-        colors={["#fff7ed", "#ffffff", "#f8fafc"]}
+        colors={["#faf5ff", "#fdf2f8", "#fff7ed"]}
         style={styles.detailsContainer}
       >
         {/* TITLE */}

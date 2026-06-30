@@ -1,90 +1,154 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
+
+const { width } = Dimensions.get("window");
+
+const isTablet = width >= 768;
+
+const scale = (size) => {
+  if (isTablet) return size * 1.25;
+  if (width < 360) return size * 0.9;
+  return size;
+};
 
 export default StyleSheet.create({
-  centerCardWrapper: {
-    borderRadius: 28,
-    margin: 16,
-    overflow: "hidden",
-    backgroundColor: "#ffffff",
+ centerCardWrapper: {
+  flex: 1,
 
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 5,
+  borderRadius: scale(30),
+
+  borderWidth: 1,
+  borderColor: "#F1F5F9",
+
+   // Glass Effect
+  borderWidth: 1.5,
+  borderColor: "rgba(255,255,255,0.65)",
+
+  backgroundColor: "rgba(255,255,255,0.18)",
+
+  // Depth
+  shadowColor: "#B79FFF",
+  shadowOffset: {
+    width: 0,
+    height: 10,
   },
+  shadowOpacity: 0.08,
+  shadowRadius: 24,
 
-  centerCardContent: {
-    padding: 20,
-  },
+  elevation: 10,
 
+  overflow: "hidden",
+},
+cardContainer: {
+ 
+  margin: 8,
+},
+ centerCardContent: {
+  flex: 1,
+  padding: width * 0.055,
+},
+
+  /* BADGE */
   centerCardBadge: {
-    backgroundColor: "#fff7ed",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 50,
     alignSelf: "flex-start",
-    marginBottom: 16,
+
+    backgroundColor: "#F5F3FF",
+
+    borderRadius: 999,
+
+    paddingHorizontal: scale(14),
+    paddingVertical: scale(8),
+
     borderWidth: 1,
-    borderColor: "#fdba74",
+    borderColor: "#E9D5FF",
+
+    marginBottom: scale(20),
   },
 
   centerCardBadgeText: {
-    fontSize: 10,
+    color: "#7C3AED",
+    fontSize: scale(11),
     fontWeight: "700",
-    color: "#6b21a8",
-    textTransform: "uppercase",
-    letterSpacing: 0.6,
+    letterSpacing: 1,
   },
 
+  /* TITLE */
   centerCardTitle: {
-    fontSize: 24,
+    fontSize: scale(24),
     fontWeight: "800",
-    color: "#0f172a",
-    marginBottom: 8,
+
+    color: "#0F172A",
+
+    lineHeight: scale(32),
+
+    marginBottom: scale(10),
   },
 
+  /* DESCRIPTION */
   centerCardDescription: {
-    fontSize: 12,
-    color: "#475569",
-    lineHeight: 24,
-    marginBottom: 12,
+    fontSize: scale(14),
+    color: "#64748B",
+
+    lineHeight: scale(22),
+
+    marginBottom: scale(22),
   },
 
-  centerCardRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
+  /* CITY + PRICE */
+ centerCardRow: {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center",
+
+  marginTop: "auto",
+  marginBottom: scale(22),
+},
 
   centerCardCity: {
-    fontSize: 18,
+    flex: 1,
+
+    fontSize: scale(17),
     fontWeight: "700",
-    color: "#1e293b",
+
+    color: "#334155",
   },
 
   centerCardPrice: {
-    fontSize: 18,
+    fontSize: scale(17),
     fontWeight: "800",
-    color: "#6b21a8",
+
+    color: "#7C3AED",
+
+    backgroundColor: "#F5F3FF",
+
+    paddingHorizontal: scale(14),
+    paddingVertical: scale(8),
+
+    borderRadius: scale(14),
+
+    overflow: "hidden",
   },
 
+  /* BUTTON */
   centerCardButton: {
-    backgroundColor: "#6b21a8",
-    paddingVertical: 12,
-    borderRadius: 14,
+    height: scale(52),
+
+    borderRadius: scale(18),
+
+    backgroundColor: "#FAFAFF",
+
+    borderWidth: 1.5,
+    borderColor: "#E9D5FF",
+
+    justifyContent: "center",
     alignItems: "center",
-    marginTop: 10,
   },
 
   centerCardButtonText: {
-    color: "#ffffff",
+    fontSize: scale(15),
     fontWeight: "700",
-    fontSize: 14,
-    letterSpacing: 0.3,
+
+    color: "#7C3AED",
+
+    letterSpacing: 0.4,
   },
 });

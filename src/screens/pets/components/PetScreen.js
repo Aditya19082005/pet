@@ -12,6 +12,7 @@ import {
 
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { LinearGradient } from "expo-linear-gradient";
 
 import * as ImagePicker from "expo-image-picker";
 
@@ -36,7 +37,7 @@ import {
   setPetProfileImageApi,
 } from "../services/imageService";
 
-export default function PetScreen({ navigation }) {
+export default function PetScreen({ navigation, route, initialEditPetId }) {
   const [pets, setPets] = useState([]);
 
   const [petImages, setPetImages] = useState({});
@@ -48,6 +49,7 @@ export default function PetScreen({ navigation }) {
   const [showForm, setShowForm] = useState(false);
 
   const [editingId, setEditingId] = useState(null);
+  const [hasOpenedInitialEdit, setHasOpenedInitialEdit] = useState(false);
 
   const [selectedImages, setSelectedImages] = useState([]);
   const [profileImageIndex, setProfileImageIndex] = useState(null);
@@ -271,6 +273,15 @@ export default function PetScreen({ navigation }) {
     setPetData(initialPetData);
   };
 
+  const handleModalClose = () => {
+    if (initialEditPetId && navigation.canGoBack()) {
+      navigation.goBack();
+      return;
+    }
+
+    closeModal();
+  };
+
   const validateForm = () => {
     if (!petData.pet_name?.trim()) {
       Alert.alert("Validation", "Pet Name is required");
@@ -363,8 +374,7 @@ export default function PetScreen({ navigation }) {
           }
 
           const selectedProfileImage =
-            profileImageIndex !== null &&
-            selectedImages[profileImageIndex]
+            profileImageIndex !== null && selectedImages[profileImageIndex]
               ? selectedImages[profileImageIndex]
               : null;
 
@@ -377,9 +387,7 @@ export default function PetScreen({ navigation }) {
 
             if (!profileImageId && !selectedProfileImage.isExisting) {
               const uploadedImages =
-                uploadResult?.data?.data ||
-                uploadResult?.data?.images ||
-                [];
+                uploadResult?.data?.data || uploadResult?.data?.images || [];
 
               const newIndex = newImages.findIndex(
                 (img) =>
@@ -390,7 +398,10 @@ export default function PetScreen({ navigation }) {
               const matched = uploadedImages[newIndex];
 
               profileImageId =
-                matched?.image_id || matched?.id || matched?.imageId || profileImageId;
+                matched?.image_id ||
+                matched?.id ||
+                matched?.imageId ||
+                profileImageId;
             }
 
             if (profileImageId) {
@@ -401,8 +412,11 @@ export default function PetScreen({ navigation }) {
           Alert.alert("Success", "Pet updated successfully");
 
           closeModal();
-
           loadPets();
+
+          if (initialEditPetId && navigation.canGoBack()) {
+            navigation.goBack();
+          }
         } else {
           Alert.alert("Error", response.data || "Update failed");
         }
@@ -426,8 +440,7 @@ export default function PetScreen({ navigation }) {
           }
 
           const selectedProfileImage =
-            profileImageIndex !== null &&
-            selectedImages[profileImageIndex]
+            profileImageIndex !== null && selectedImages[profileImageIndex]
               ? selectedImages[profileImageIndex]
               : null;
 
@@ -440,9 +453,7 @@ export default function PetScreen({ navigation }) {
 
             if (!profileImageId) {
               const uploadedImages =
-                uploadResult?.data?.data ||
-                uploadResult?.data?.images ||
-                [];
+                uploadResult?.data?.data || uploadResult?.data?.images || [];
 
               const newIndex = selectedImages.findIndex(
                 (img) =>
@@ -453,7 +464,10 @@ export default function PetScreen({ navigation }) {
               const matched = uploadedImages[newIndex];
 
               profileImageId =
-                matched?.image_id || matched?.id || matched?.imageId || profileImageId;
+                matched?.image_id ||
+                matched?.id ||
+                matched?.imageId ||
+                profileImageId;
             }
 
             if (profileImageId) {
@@ -464,7 +478,6 @@ export default function PetScreen({ navigation }) {
           Alert.alert("Success", "Pet added successfully");
 
           closeModal();
-
           loadPets();
         } else {
           Alert.alert("Error", response.data || "Add failed");
@@ -496,6 +509,8 @@ export default function PetScreen({ navigation }) {
 
         onPress: async () => {
           try {
+            setLoading(true);
+
             const success = await deletePetApi(id);
 
             if (success) {
@@ -507,6 +522,8 @@ export default function PetScreen({ navigation }) {
             console.log(error);
 
             Alert.alert("Error", "Delete failed");
+          } finally {
+            setLoading(false);
           }
         },
       },
@@ -515,7 +532,12 @@ export default function PetScreen({ navigation }) {
 
   const editPet = async (pet) => {
     try {
-      const id = pet.pet_id || pet.id;
+      const id = pet?.pet_id || pet?.id || pet;
+
+      if (!id) {
+        Alert.alert("Error", "Pet id is missing");
+        return;
+      }
 
       setLoading(true);
 
@@ -582,14 +604,24 @@ export default function PetScreen({ navigation }) {
           fullPet?.health?.vaccination_certificate || null,
 
         deworming_date:
-          fullPet && fullPet.health && fullPet.health.deworming_date === "0000-00-00"
+          fullPet &&
+          fullPet.health &&
+          fullPet.health.deworming_date === "0000-00-00"
             ? ""
-            : (fullPet && fullPet.health && fullPet.health.deworming_date) || fullPet?.deworming_date || "",
+            : (fullPet && fullPet.health && fullPet.health.deworming_date) ||
+              fullPet?.deworming_date ||
+              "",
 
         flea_tick_treatment_date:
-          fullPet && fullPet.health && fullPet.health.flea_tick_treatment_date === "0000-00-00"
+          fullPet &&
+          fullPet.health &&
+          fullPet.health.flea_tick_treatment_date === "0000-00-00"
             ? ""
-            : (fullPet && fullPet.health && fullPet.health.flea_tick_treatment_date) || fullPet?.flea_tick_treatment_date || "",
+            : (fullPet &&
+                fullPet.health &&
+                fullPet.health.flea_tick_treatment_date) ||
+              fullPet?.flea_tick_treatment_date ||
+              "",
 
         medical_history: fullPet?.health?.medical_history || "",
 
@@ -671,6 +703,13 @@ export default function PetScreen({ navigation }) {
     }
   };
 
+  useEffect(() => {
+    if (!initialEditPetId || hasOpenedInitialEdit) return;
+
+    setHasOpenedInitialEdit(true);
+    editPet(initialEditPetId);
+  }, [initialEditPetId, hasOpenedInitialEdit]);
+
   if (loading && pets.length === 0) {
     return (
       <View style={petScreenStyles.loaderContainer}>
@@ -680,7 +719,12 @@ export default function PetScreen({ navigation }) {
   }
 
   return (
-    <View style={petScreenStyles.screen}>
+    <LinearGradient
+      colors={["#faf5ff", "#fdf2f8", "#fff7ed"]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={petScreenStyles.screen}
+    >
       {/* HEADER */}
 
       <View style={petScreenStyles.header}>
@@ -711,6 +755,12 @@ export default function PetScreen({ navigation }) {
       </View>
 
       {/* PET LIST */}
+
+      {loading && (pets.length > 0 || showForm) && (
+        <View style={petScreenStyles.loadingOverlay}>
+          <ActivityIndicator size="large" color="#6b21a8" />
+        </View>
+      )}
 
       <FlatList
         data={pets}
@@ -758,10 +808,9 @@ export default function PetScreen({ navigation }) {
         profileImageIndex={profileImageIndex}
         setProfileImageIndex={setProfileImageIndex}
         loading={loading}
-        onClose={closeModal}
+        onClose={handleModalClose}
         onSubmit={handleAddOrUpdate}
       />
-    </View>
+    </LinearGradient>
   );
 }
-

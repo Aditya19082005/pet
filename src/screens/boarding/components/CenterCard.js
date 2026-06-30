@@ -2,12 +2,33 @@ import React from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import styles from "../styles/CenterCard";
+import { BlurView } from "expo-blur";
 
-export default function CenterCard({ item, onPress, onViewDetails }) {
+export default function CenterCard({
+  item,
+  onPress,
+  onViewDetails,
+  cardWidth,
+}) {
   return (
-    <TouchableOpacity activeOpacity={0.9} onPress={onPress}>
+    <TouchableOpacity
+      activeOpacity={0.9}
+      onPress={onPress}
+      style={[
+        styles.cardContainer,
+        {
+          width: cardWidth,
+        },
+      ]}
+    >
       <LinearGradient
-        colors={["#fff7ed", "#ffffff", "#f5f3ff"]}
+        colors={[
+          "#DCCFFF", // darker violet
+          "#F2EEFF", // soft lavender-white
+          "#D8CBFF", // darker violet
+        ]}
+        start={{ x: -0.1, y: 0 }}
+        end={{ x: 2.2, y: 1 }}
         style={styles.centerCardWrapper}
       >
         <View style={styles.centerCardContent}>
@@ -25,7 +46,9 @@ export default function CenterCard({ item, onPress, onViewDetails }) {
 
           <View style={styles.centerCardRow}>
             <Text style={styles.centerCardCity}>{item.city}</Text>
-            <Text style={styles.centerCardPrice}>₹ {item.price_per_day}/day</Text>
+            <Text style={styles.centerCardPrice}>
+              ₹ {item.price_per_day}/day
+            </Text>
           </View>
 
           <TouchableOpacity
@@ -39,4 +62,3 @@ export default function CenterCard({ item, onPress, onViewDetails }) {
     </TouchableOpacity>
   );
 }
-

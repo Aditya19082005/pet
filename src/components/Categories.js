@@ -1,13 +1,8 @@
 import React from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import categoriesStyles from "../styles/CategoriesStyles";
+import styles from "../styles/CategoriesStyles";
 
 export default function Categories() {
   const categories = [
@@ -15,7 +10,7 @@ export default function Categories() {
       icon: "home-outline",
       name: "Boarding",
       description: "Safe & cozy stays",
-      gradient: ["#8b5cf6", "#6b21a8"],
+      gradient: ["#fb923c", "#ea580c"],
       bgColor: "#fff7ed",
       emoji: "🏠",
     },
@@ -28,7 +23,7 @@ export default function Categories() {
       emoji: "🐕",
     },
     {
-      icon: "shopping-outline",
+      icon: "shopping",
       name: "Buy & Sell",
       description: "Quality pet supplies",
       gradient: ["#c084fc", "#9333ea"],
@@ -62,31 +57,28 @@ export default function Categories() {
   ];
 
   return (
-    <View style={categoriesStyles.section}>
-      {/* TITLE */}
-      <Text style={categoriesStyles.title}>
-        Explore Our <Text style={categoriesStyles.gradientText}>Services</Text>
+    <View style={styles.section}>
+      <Text style={styles.title}>
+        Explore Our <Text style={styles.gradientText}>Services</Text>
       </Text>
 
-      <Text style={categoriesStyles.subtitle}>
+      <Text style={styles.subtitle}>
         Everything your pet needs, all in one place
       </Text>
 
-      {/* SCROLL */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={categoriesStyles.scrollContainer}
+        contentContainerStyle={styles.scrollContainer}
       >
         {categories.map((item, index) => (
           <TouchableOpacity
             key={index}
-            style={[categoriesStyles.card, { backgroundColor: item.bgColor }]}
+            style={[styles.card, { backgroundColor: item.bgColor }]}
             activeOpacity={0.9}
           >
-            {/* ICON + GRADIENT */}
-            <View style={categoriesStyles.iconWrapper}>
-              <LinearGradient colors={item.gradient} style={categoriesStyles.iconBox}>
+            <View style={styles.iconWrapper}>
+              <LinearGradient colors={item.gradient} style={styles.iconBox}>
                 <MaterialCommunityIcons
                   name={item.icon}
                   size={36}
@@ -94,16 +86,14 @@ export default function Categories() {
                 />
               </LinearGradient>
 
-              <Text style={categoriesStyles.emoji}>{item.emoji}</Text>
+              <Text style={styles.emoji}>{item.emoji}</Text>
             </View>
 
-            {/* TEXT */}
-            <Text style={categoriesStyles.name}>{item.name}</Text>
-            <Text style={categoriesStyles.desc}>{item.description}</Text>
+            <Text style={styles.name}>{item.name}</Text>
+            <Text style={styles.desc}>{item.description}</Text>
 
-            {/* BUTTON */}
-            <LinearGradient colors={item.gradient} style={categoriesStyles.button}>
-              <Text style={categoriesStyles.buttonText}>Explore</Text>
+            <LinearGradient colors={item.gradient} style={styles.button}>
+              <Text style={styles.buttonText}>Explore</Text>
             </LinearGradient>
           </TouchableOpacity>
         ))}
@@ -111,5 +101,3 @@ export default function Categories() {
     </View>
   );
 }
-
-

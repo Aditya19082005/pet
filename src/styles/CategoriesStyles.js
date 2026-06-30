@@ -1,66 +1,104 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
+
+const screenWidth = Dimensions.get("window").width;
 
 export default StyleSheet.create({
   section: {
-    paddingHorizontal: 16,
-    paddingTop: 18,
+    paddingVertical: 30,
+    paddingHorizontal: 15,
+    backgroundColor: "#fff",
   },
+
   title: {
-    fontSize: 22,
-    fontWeight: "800",
-    color: "#111827",
+    fontSize: 28,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 6,
+    color: "#1f2937",
   },
-  subtitle: {
-    color: "#6b7280",
-    marginTop: 4,
-    marginBottom: 16,
-  },
+
   gradientText: {
-    color: "#6b21a8",
+    color: "#f97316",
   },
+
+  subtitle: {
+    textAlign: "center",
+    color: "#6b7280",
+    marginBottom: 25,
+    fontSize: 14,
+  },
+
   scrollContainer: {
-    paddingRight: 16,
+    paddingHorizontal: 10,
+    paddingBottom: 10,
   },
+
   card: {
-    width: 190,
-    borderRadius: 18,
-    padding: 14,
-    marginRight: 12,
-  },
-  iconWrapper: {
-    flexDirection: "row",
+    width: screenWidth * 0.72,
+    borderRadius: 28,
+    padding: 22,
+    marginRight: 18,
+    marginTop: 10,
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+
+    elevation: 6,
     alignItems: "center",
-    justifyContent: "space-between",
   },
+
+  iconWrapper: {
+    position: "relative",
+    marginBottom: 14,
+  },
+
   iconBox: {
-    width: 58,
-    height: 58,
-    borderRadius: 16,
+    width: 85,
+    height: 85,
+    borderRadius: 22,
     justifyContent: "center",
     alignItems: "center",
   },
+
   emoji: {
-    fontSize: 24,
+    position: "absolute",
+    top: -8,
+    right: -8,
+    fontSize: 22,
   },
+
   name: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: "#111827",
-    marginTop: 14,
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#1f2937",
+    marginBottom: 6,
+    textAlign: "center",
   },
+
   desc: {
     fontSize: 13,
-    color: "#4b5563",
-    marginTop: 4,
+    color: "#6b7280",
+    textAlign: "center",
+    marginBottom: 18,
+    minHeight: 36,
   },
+
   button: {
-    borderRadius: 999,
-    paddingVertical: 10,
+    width: "100%",
+    paddingVertical: 12,
+    borderRadius: 14,
+    justifyContent: "center",
     alignItems: "center",
-    marginTop: 14,
   },
+
   buttonText: {
     color: "#fff",
-    fontWeight: "700",
+    fontWeight: "600",
+    fontSize: 14,
   },
 });

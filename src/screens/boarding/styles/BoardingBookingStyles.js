@@ -3,6 +3,7 @@ import { StyleSheet } from "react-native";
 export default StyleSheet.create({
   bookingScreenContainer: {
     flex: 1,
+    backgroundColor: "#faf5ff",
   },
 
   bookingScreenContent: {

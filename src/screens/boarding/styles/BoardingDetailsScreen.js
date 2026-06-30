@@ -5,7 +5,7 @@ const { width } = Dimensions.get("window");
 export default StyleSheet.create({
   wrapper: {
     flex: 1,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#faf5ff",
   },
 
   loaderContainer: {
