@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import FloatingInput from "../inputs/FloatingInput";
 import { PasswordInput } from "../inputs/PasswordInput";
 import DateInput from "../inputs/DateInput";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { Picker } from "@react-native-picker/picker";
 import {
   View,
   Text,
@@ -64,7 +66,9 @@ export default function BoardingOwnerRegister({
 
   const [description, setDescription] = useState("");
 
-  const [pricePerDay, setPricePerDay] = useState("");
+  const [petPriceRows, setPetPriceRows] = useState([
+    { petType: "", price: "" },
+  ]);
 
   const [acceptedPetTypes, setAcceptedPetTypes] = useState("");
 
@@ -101,9 +105,13 @@ export default function BoardingOwnerRegister({
 
   const [insuranceExpiryDate, setInsuranceExpiryDate] = useState(null);
 
-  const [openingTime, setOpeningTime] = useState("");
+  const [openingTime, setOpeningTime] = useState(new Date());
 
-  const [closingTime, setClosingTime] = useState("");
+  const [closingTime, setClosingTime] = useState(new Date());
+
+  const [showOpeningPicker, setShowOpeningPicker] = useState(false);
+
+  const [showClosingPicker, setShowClosingPicker] = useState(false);
 
   const [specialInstructions, setSpecialInstructions] = useState("");
 
@@ -114,6 +122,8 @@ export default function BoardingOwnerRegister({
   const [signatureDate, setSignatureDate] = useState(null);
 
   const [termsAccepted, setTermsAccepted] = useState(false);
+
+  const PET_TYPES = ["dog", "cat", "bird", "rabbit", "turtle", "others"];
 
   const pickAadhar = async () => {
     const result = await DocumentPicker.getDocumentAsync({
@@ -159,6 +169,11 @@ export default function BoardingOwnerRegister({
         Alert.alert("Validation", "Please fill all owner details");
         return false;
       }
+
+      if (!/^\d{10}$/.test(mobileNumber)) {
+        Alert.alert("Validation", "Mobile number must be exactly 10 digits");
+        return false;
+      }
     }
 
     if (currentStep === 2) {
@@ -170,7 +185,8 @@ export default function BoardingOwnerRegister({
         !propertyType ||
         !fencingStatus ||
         !supervisionLevel ||
-        !totalCapacity
+        !totalCapacity ||
+        petPriceRows.some((row) => !row.petType || !row.price)
       ) {
         Alert.alert("Validation", "Please fill all boarding center details");
         return false;
@@ -250,7 +266,34 @@ export default function BoardingOwnerRegister({
 
       formData.append("description", description);
 
-      formData.append("price_per_day", pricePerDay);
+      const pricesObject = petPriceRows.reduce((acc, row) => {
+        const petType = row.petType.trim().toLowerCase();
+        const numericPrice = Number(row.price);
+
+        if (petType && !Number.isNaN(numericPrice)) {
+          acc[petType] = numericPrice;
+        }
+
+        return acc;
+      }, {});
+
+      const supportedPricesObject = Object.entries(pricesObject).reduce(
+        (acc, [petType, price]) => {
+          if (
+            ["dog", "cat", "bird", "rabbit", "turtle", "others"].includes(
+              petType,
+            )
+          ) {
+            acc[petType] = price;
+          }
+          return acc;
+        },
+        {},
+      );
+
+      if (Object.keys(supportedPricesObject).length > 0) {
+        formData.append("prices", JSON.stringify(supportedPricesObject));
+      }
 
       formData.append(
         "accepted_pet_types",
@@ -333,9 +376,23 @@ export default function BoardingOwnerRegister({
           : "",
       );
 
-      formData.append("opening_time", openingTime);
+      formData.append(
+        "opening_time",
+        openingTime.toLocaleTimeString("en-US", {
+          hour12: false,
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      );
 
-      formData.append("closing_time", closingTime);
+      formData.append(
+        "closing_time",
+        closingTime.toLocaleTimeString("en-US", {
+          hour12: false,
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      );
 
       formData.append("special_instructions", specialInstructions);
 
@@ -596,12 +653,71 @@ STEP 2 - CENTER DETAILS
             height={100}
           />
 
-          <FloatingInput
-            label="Price Per Day"
-            value={pricePerDay}
-            onChangeText={setPricePerDay}
-            keyboardType="number-pad"
-          />
+          <Text style={styles.helperText}>
+            Add pet prices for each animal type
+          </Text>
+
+          {petPriceRows.map((row, index) => (
+            <View key={index} style={styles.priceRow}>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={row.petType}
+                  onValueChange={(value) => {
+                    const updatedRows = [...petPriceRows];
+                    updatedRows[index].petType = value;
+                    setPetPriceRows(updatedRows);
+                  }}
+                >
+                  <Picker.Item label="Select Pet Type" value="" />
+                  <Picker.Item label="Dog" value="dog" />
+                  <Picker.Item label="Cat" value="cat" />
+                  <Picker.Item label="Bird" value="bird" />
+                  <Picker.Item label="Rabbit" value="rabbit" />
+                  <Picker.Item label="Turtle" value="turtle" />
+                  <Picker.Item label="Others" value="others" />
+                </Picker>
+              </View>
+
+              <TextInput
+                style={styles.priceInput}
+                placeholder="Price"
+                value={row.price}
+                keyboardType="number-pad"
+                onChangeText={(value) => {
+                  const updatedRows = [...petPriceRows];
+                  updatedRows[index].price = value;
+                  setPetPriceRows(updatedRows);
+                }}
+              />
+
+              {petPriceRows.length > 1 && (
+                <TouchableOpacity
+                  style={styles.removeRowButton}
+                  onPress={() => {
+                    const updatedRows = petPriceRows.filter(
+                      (_, rowIndex) => rowIndex !== index,
+                    );
+                    setPetPriceRows(
+                      updatedRows.length > 0
+                        ? updatedRows
+                        : [{ petType: "", price: "" }],
+                    );
+                  }}
+                >
+                  <Text style={styles.removeRowText}>-</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          ))}
+
+          <TouchableOpacity
+            style={styles.addRowButton}
+            onPress={() =>
+              setPetPriceRows([...petPriceRows, { petType: "", price: "" }])
+            }
+          >
+            <Text style={styles.addRowText}>+ Add More</Text>
+          </TouchableOpacity>
 
           <View
             style={{
@@ -843,17 +959,61 @@ STEP 5 - EXTRA DETAILS & SUBMIT
             onChange={(date) => setInsuranceExpiryDate(date)}
           />
 
-          <FloatingInput
-            label="Opening Time"
-            value={openingTime}
-            onChangeText={setOpeningTime}
-          />
+          <TouchableOpacity
+            style={styles.timePickerButton}
+            onPress={() => setShowOpeningPicker(true)}
+          >
+            <Text style={styles.timePickerLabel}>Opening Time</Text>
+            <Text style={styles.timePickerValue}>
+              {openingTime.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </Text>
+          </TouchableOpacity>
 
-          <FloatingInput
-            label="Closing Time"
-            value={closingTime}
-            onChangeText={setClosingTime}
-          />
+          {showOpeningPicker && (
+            <DateTimePicker
+              value={openingTime}
+              mode="time"
+              is24Hour={true}
+              display="default"
+              onChange={(_, selectedTime) => {
+                setShowOpeningPicker(false);
+                if (selectedTime) {
+                  setOpeningTime(selectedTime);
+                }
+              }}
+            />
+          )}
+
+          <TouchableOpacity
+            style={styles.timePickerButton}
+            onPress={() => setShowClosingPicker(true)}
+          >
+            <Text style={styles.timePickerLabel}>Closing Time</Text>
+            <Text style={styles.timePickerValue}>
+              {closingTime.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </Text>
+          </TouchableOpacity>
+
+          {showClosingPicker && (
+            <DateTimePicker
+              value={closingTime}
+              mode="time"
+              is24Hour={true}
+              display="default"
+              onChange={(_, selectedTime) => {
+                setShowClosingPicker(false);
+                if (selectedTime) {
+                  setClosingTime(selectedTime);
+                }
+              }}
+            />
+          )}
 
           <FloatingInput
             label="Special Instructions"
@@ -973,5 +1133,80 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontWeight: "700",
+  },
+
+  priceRow: {
+    flexDirection: "row",
+    gap: 10,
+    marginBottom: 10,
+  },
+
+  priceInput: {
+    flex: 1,
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+
+  addRowButton: {
+    alignSelf: "flex-start",
+    marginTop: 4,
+    marginBottom: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    backgroundColor: "#f3e8ff",
+  },
+
+  addRowText: {
+    color: "#6b21a8",
+    fontWeight: "600",
+  },
+
+  removeRowButton: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: 40,
+    height: 44,
+    borderRadius: 10,
+    backgroundColor: "#fee2e2",
+  },
+
+  removeRowText: {
+    color: "#dc2626",
+    fontSize: 16,
+    fontWeight: "700",
+  },
+
+  timePickerButton: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    marginBottom: 12,
+  },
+
+  timePickerLabel: {
+    color: "#666",
+    marginBottom: 4,
+  },
+
+  timePickerValue: {
+    color: "#222",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  pickerContainer: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 12,
+    backgroundColor: "#fff",
+    overflow: "hidden",
   },
 });
