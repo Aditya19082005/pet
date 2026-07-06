@@ -6,6 +6,7 @@ import {
   Dimensions,
   ActivityIndicator,
   Image,
+  TouchableOpacity,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -223,126 +224,282 @@ export default function BookingStatus() {
 
   return (
     <View style={styles.bookingStatusContainer}>
-      <Text style={styles.bookingStatusTitle}>
-        Your Booking <Text style={styles.bookingStatusGradientText}>Status</Text>
-      </Text>
+      <View style={styles.headerSection}>
+        <Text style={styles.bookingStatusTitle}>Booking Status</Text>
+        <Text style={styles.bookingStatusSubtitle}>
+          Track all your pet's boarding reservations
+        </Text>
+      </View>
 
-      <Text style={styles.bookingStatusSubtitle}>
-        Track all your pet's boarding reservations ??
-      </Text>
+      {bookings.length === 0 ? (
+        <View style={styles.emptyStateContainer}>
+          <MaterialCommunityIcons
+            name="calendar-check"
+            size={64}
+            color="#d1d5db"
+          />
+          <Text style={styles.emptyStateText}>No bookings yet</Text>
+          <Text style={styles.emptyStateSubtext}>
+            Start booking a boarding center for your pet
+          </Text>
+        </View>
+      ) : (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.bookingListContainer}
+        >
+          {bookings.map((booking) => {
+            const bookingInfo = getBookingType(booking);
+            const bookingPetId = getBookingPetId(booking);
+            const bookingPetImageUrl =
+              getBookingPetImageUrl(booking) ||
+              (bookingPetId ? petProfileImages[String(bookingPetId)] : "");
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.bookingStatusScrollContainer}
-      >
-        {bookings.map((booking) => {
-          const bookingInfo = getBookingType(booking);
-          const bookingPetId = getBookingPetId(booking);
-          const bookingPetImageUrl =
-            getBookingPetImageUrl(booking) ||
-            (bookingPetId ? petProfileImages[String(bookingPetId)] : "");
+            const daysRemaining = Math.ceil(
+              (new Date(booking.end_date) - new Date()) / (1000 * 60 * 60 * 24)
+            );
 
-          return (
-            <View
-              key={booking.id}
-              style={[
-                styles.bookingStatusCard,
-                { backgroundColor: bookingInfo.bg },
-              ]}
-            >
-              <View style={styles.bookingStatusRow}>
-                <View style={styles.bookingStatusPetRow}>
-                  {bookingPetImageUrl ? (
-                    <Image
-                      source={{ uri: bookingPetImageUrl }}
-                      style={styles.bookingStatusPetImage}
-                    />
-                  ) : (
-                    <LinearGradient
-                      colors={bookingInfo.gradient}
-                      style={styles.bookingStatusIconBox}
-                    >
-                      <Text style={styles.bookingStatusPetEmoji}>
-                        {booking.pet?.pet_type === "dog" ? "🐶" : "🐱"}
+            return (
+              <LinearGradient
+                key={booking.id}
+                colors={["#ffffff", "#f8fafc"]}
+                style={styles.bookingStatusCard}
+              >
+                {/* HEADER ROW */}
+                <View style={styles.cardHeaderRow}>
+                  <View style={styles.petInfoSection}>
+                    {bookingPetImageUrl ? (
+                      <Image
+                        source={{ uri: bookingPetImageUrl }}
+                        style={styles.bookingStatusPetImage}
+                      />
+                    ) : (
+                      <LinearGradient
+                        colors={bookingInfo.gradient}
+                        style={styles.bookingStatusIconBox}
+                      >
+                        <Text style={styles.bookingStatusPetEmoji}>
+                          {booking.pet?.pet_type === "dog" ? "🐶" : "🐱"}
+                        </Text>
+                      </LinearGradient>
+                    )}
+
+                    <View style={styles.petNameSection}>
+                      <Text style={styles.bookingStatusPetName}>
+                        {booking.pet?.pet_name}
                       </Text>
-                    </LinearGradient>
-                  )}
+                      <Text style={styles.petBreedText}>
+                        {booking.pet?.breed || "Pet"}
+                      </Text>
+                    </View>
+                  </View>
 
-                  <View>
-                    <Text style={styles.bookingStatusPetName}>
-                      {booking.pet?.pet_name}
+                  <View
+                    style={[
+                      styles.statusBadgeContainer,
+                      { backgroundColor: bookingInfo.badgeBg },
+                    ]}
+                  >
+                    <MaterialCommunityIcons
+                      name={
+                        bookingInfo.type === "Upcoming"
+                          ? "calendar-clock"
+                          : bookingInfo.type === "Active Boarding"
+                            ? "check-circle"
+                            : "check-all"
+                      }
+                      size={16}
+                      color={bookingInfo.badgeText}
+                      style={{ marginRight: 6 }}
+                    />
+                    <Text
+                      style={[
+                        styles.bookingStatusBadgeText,
+                        { color: bookingInfo.badgeText },
+                      ]}
+                    >
+                      {bookingInfo.type}
                     </Text>
-                    <Text style={styles.bookingStatusType}>{bookingInfo.type}</Text>
                   </View>
                 </View>
 
-                <MaterialCommunityIcons
-                  name="clock-outline"
-                  size={22}
-                  color={bookingInfo.iconColor}
-                />
-              </View>
+                {/* DIVIDER */}
+                <View style={styles.cardDivider} />
 
-              <View
-                style={[
-                  styles.bookingStatusBadge,
-                  { backgroundColor: bookingInfo.badgeBg },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.bookingStatusBadgeText,
-                    { color: bookingInfo.badgeText },
-                  ]}
-                >
-                  {booking.status?.toUpperCase()}
-                </Text>
-              </View>
+                {/* CENTER INFO */}
+                <View style={styles.infoSection}>
+                  <MaterialCommunityIcons
+                    name="home"
+                    size={18}
+                    color={bookingInfo.iconColor}
+                    style={{ marginRight: 10 }}
+                  />
+                  <View style={styles.infoContent}>
+                    <Text style={styles.infoLabel}>Boarding Center</Text>
+                    <Text style={styles.infoValue}>
+                      {booking.center?.center_name}
+                    </Text>
+                  </View>
+                </View>
 
-              <View style={styles.bookingStatusInfoBox}>
-                <Text style={styles.bookingStatusLabel}>Boarding Center</Text>
-                <Text style={styles.bookingStatusValue}>
-                  {booking.center?.center_name}
-                </Text>
-              </View>
+                {/* DATES ROW */}
+                <View style={styles.datesRow}>
+                  <View style={styles.dateBox}>
+                    <Text style={styles.dateLabel}>Check In</Text>
+                    <View style={styles.dateContent}>
+                      <MaterialCommunityIcons
+                        name="calendar-check"
+                        size={16}
+                        color={bookingInfo.iconColor}
+                        style={{ marginRight: 6 }}
+                      />
+                      <Text style={styles.dateValue}>{booking.start_date}</Text>
+                    </View>
+                  </View>
 
-              <View style={styles.bookingStatusInfoBox}>
-                <Text style={styles.bookingStatusLabel}>Check In</Text>
-                <Text style={styles.bookingStatusValue}>
-                  {booking.start_date}
-                </Text>
-              </View>
+                  <View style={styles.dateArrow}>
+                    <MaterialCommunityIcons
+                      name="arrow-right"
+                      size={20}
+                      color="#cbd5e1"
+                    />
+                  </View>
 
-              <View style={styles.bookingStatusInfoBox}>
-                <Text style={styles.bookingStatusLabel}>Check Out</Text>
-                <Text style={styles.bookingStatusValue}>
-                  {booking.end_date}
-                </Text>
-              </View>
+                  <View style={styles.dateBox}>
+                    <Text style={styles.dateLabel}>Check Out</Text>
+                    <View style={styles.dateContent}>
+                      <MaterialCommunityIcons
+                        name="calendar-remove"
+                        size={16}
+                        color={bookingInfo.iconColor}
+                        style={{ marginRight: 6 }}
+                      />
+                      <Text style={styles.dateValue}>{booking.end_date}</Text>
+                    </View>
+                  </View>
+                </View>
 
-              <View style={styles.bookingStatusInfoBox}>
-                <Text style={styles.bookingStatusLabel}>Total Days</Text>
-                <Text style={styles.bookingStatusValue}>
-                  {booking.total_days}
-                </Text>
-              </View>
+                {/* DETAILS GRID */}
+                <View style={styles.detailsGrid}>
+                  <View style={styles.detailBox}>
+                    <Text style={styles.detailLabel}>Duration</Text>
+                    <View style={styles.detailValueRow}>
+                      <Text style={styles.detailValue}>
+                        {booking.total_days}
+                      </Text>
+                      <Text style={styles.detailUnit}>days</Text>
+                    </View>
+                  </View>
 
-              <View style={styles.bookingStatusInfoBox}>
-                <Text style={styles.bookingStatusLabel}>Total Cost</Text>
-                <Text
-                  style={[
-                    styles.bookingStatusCostText,
-                    { color: bookingInfo.gradient[1] },
-                  ]}
-                >
-                  ₹{booking.total_price}
-                </Text>
-              </View>
-            </View>
-          );
-        })}
-      </ScrollView>
+                  <View style={styles.gridDivider} />
+
+                  <View style={styles.detailBox}>
+                    <Text style={styles.detailLabel}>Status</Text>
+                    <Text
+                      style={[
+                        styles.detailValue,
+                        { color: bookingInfo.badgeText },
+                      ]}
+                    >
+                      {booking.status?.toUpperCase()}
+                    </Text>
+                  </View>
+
+                  <View style={styles.gridDivider} />
+
+                  <View style={styles.detailBox}>
+                    <Text style={styles.detailLabel}>Total Cost</Text>
+                    <Text
+                      style={[
+                        styles.detailValue,
+                        styles.costValue,
+                        { color: bookingInfo.gradient[1] },
+                      ]}
+                    >
+                      ₹{booking.total_price}
+                    </Text>
+                  </View>
+                </View>
+
+                {/* PROGRESS BAR FOR ACTIVE BOOKINGS */}
+                {bookingInfo.type === "Active Boarding" && (
+                  <View style={styles.progressSection}>
+                    <View style={styles.progressLabel}>
+                      <Text style={styles.progressText}>
+                        {daysRemaining > 0
+                          ? `${daysRemaining} day${daysRemaining !== 1 ? "s" : ""} remaining`
+                          : "Last day"}
+                      </Text>
+                    </View>
+                    <View style={styles.progressBar}>
+                      <View
+                        style={[
+                          styles.progressFill,
+                          {
+                            width: `${Math.max(
+                              0,
+                              Math.min(
+                                100,
+                                100 -
+                                  (daysRemaining /
+                                    parseInt(booking.total_days)) *
+                                    100,
+                              ),
+                            )}%`,
+                            backgroundColor: bookingInfo.gradient[1],
+                          },
+                        ]}
+                      />
+                    </View>
+                  </View>
+                )}
+
+                {/* UPCOMING COUNTDOWN */}
+                {bookingInfo.type === "Upcoming" && (
+                  <View style={styles.countdownSection}>
+                    <MaterialCommunityIcons
+                      name="information"
+                      size={16}
+                      color="#6366f1"
+                      style={{ marginRight: 8 }}
+                    />
+                    <Text style={styles.countdownText}>
+                      Booking starts in{" "}
+                      {Math.ceil(
+                        (new Date(booking.start_date) - new Date()) /
+                          (1000 * 60 * 60 * 24),
+                      )}{" "}
+                      days
+                    </Text>
+                  </View>
+                )}
+
+                {/* ACTION BUTTONS */}
+                <View style={styles.actionButtonsRow}>
+                  <TouchableOpacity style={styles.secondaryButton}>
+                    <MaterialCommunityIcons
+                      name="phone"
+                      size={18}
+                      color="#6b21a8"
+                    />
+                    <Text style={styles.secondaryButtonText}>Contact</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity style={styles.secondaryButton}>
+                    <MaterialCommunityIcons
+                      name="file-document"
+                      size={18}
+                      color="#6b21a8"
+                    />
+                    <Text style={styles.secondaryButtonText}>Details</Text>
+                  </TouchableOpacity>
+                </View>
+              </LinearGradient>
+            );
+          })}
+        </ScrollView>
+      )}
     </View>
   );
 }

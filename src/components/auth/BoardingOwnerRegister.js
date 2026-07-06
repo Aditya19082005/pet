@@ -70,7 +70,7 @@ export default function BoardingOwnerRegister({
     { petType: "", price: "" },
   ]);
 
-  const [acceptedPetTypes, setAcceptedPetTypes] = useState("");
+  const [acceptedPetTypes, setAcceptedPetTypes] = useState([]);
 
   const [sizeWeightRestrictions, setSizeWeightRestrictions] = useState("");
 
@@ -194,7 +194,7 @@ export default function BoardingOwnerRegister({
     }
 
     if (currentStep === 3) {
-      if (!acceptedPetTypes || !vaccinationPolicy) {
+      if (!acceptedPetTypes || acceptedPetTypes.length === 0 || !vaccinationPolicy) {
         Alert.alert("Validation", "Please fill required service details");
         return false;
       }
@@ -295,15 +295,7 @@ export default function BoardingOwnerRegister({
         formData.append("prices", JSON.stringify(supportedPricesObject));
       }
 
-      formData.append(
-        "accepted_pet_types",
-        JSON.stringify(
-          acceptedPetTypes
-            .split(",")
-            .map((item) => item.trim())
-            .filter(Boolean),
-        ),
-      );
+      formData.append("accepted_pet_types", JSON.stringify(acceptedPetTypes));
 
       formData.append(
         "size_weight_restrictions",
@@ -744,15 +736,30 @@ STEP 3 - SERVICES & AMENITIES
         <View>
           <Text style={styles.heading}>Services & Amenities</Text>
 
-          <Text style={styles.helperText}>
-            Enter multiple values separated by commas (,)
-          </Text>
+          <Text style={styles.helperText}>Tap to toggle accepted pet types</Text>
 
-          <FloatingInput
-            label="Accepted Pet Types (Dogs, Cats, Birds) *"
-            value={acceptedPetTypes}
-            onChangeText={setAcceptedPetTypes}
-          />
+          <View style={{ flexDirection: "row", flexWrap: "wrap", marginBottom: 12 }}>
+            {PET_TYPES.map((pt) => {
+              const selected = acceptedPetTypes.includes(pt);
+              return (
+                <TouchableOpacity
+                  key={pt}
+                  style={[styles.chip, selected ? styles.chipSelected : null]}
+                  onPress={() => {
+                    if (selected) {
+                      setAcceptedPetTypes(acceptedPetTypes.filter((p) => p !== pt));
+                    } else {
+                      setAcceptedPetTypes([...acceptedPetTypes, pt]);
+                    }
+                  }}
+                >
+                  <Text style={[styles.chipText, selected ? styles.chipSelectedText : null]}>
+                    {pt.charAt(0).toUpperCase() + pt.slice(1)}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
 
           <FloatingInput
             label="Size / Weight Restrictions"
@@ -1179,6 +1186,38 @@ const styles = StyleSheet.create({
     color: "#dc2626",
     fontSize: 16,
     fontWeight: "700",
+  },
+
+  chip: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    marginRight: 8,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: "#e9d5ff",
+    shadowColor: "#000",
+    shadowOpacity: 0.03,
+    shadowRadius: 4,
+    elevation: 1,
+  },
+
+  chipText: {
+    color: "#4c1d95",
+    marginRight: 8,
+    fontWeight: "600",
+  },
+
+  chipSelected: {
+    backgroundColor: "#6b21a8",
+    borderColor: "#6b21a8",
+  },
+
+  chipSelectedText: {
+    color: "#fff",
   },
 
   timePickerButton: {

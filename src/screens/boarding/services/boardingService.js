@@ -100,6 +100,38 @@ export const fetchBookedDatesApi = async (centerId, year, month) => {
   return dates;
 };
 
+export const fetchPricingApi = async ({ centerId, petId, startDate, endDate, token }) => {
+  try {
+    const query = new URLSearchParams({
+      center_id: String(centerId),
+      pet_id: String(petId),
+      start_date: startDate,
+      end_date: endDate,
+    });
+
+    const response = await fetch(`${AVAILABILITY_API_URL}/pricing?${query.toString()}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    const text = await response.text();
+
+    if (!text || text.trim() === "") {
+      return null;
+    }
+
+    const json = JSON.parse(text);
+    return json?.data ?? json?.pricing ?? json?.result ?? json ?? null;
+  } catch (error) {
+    console.log("PRICING FETCH FAILED:", error);
+    return null;
+  }
+};
+
 export const fetchMyBookingsApi = async (token) => {
   try {
     const response = await fetch(`${BOOKING_API_URL}/my-bookings`, {

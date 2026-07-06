@@ -3,11 +3,10 @@ import {
   View,
   Text,
   FlatList,
-  TouchableOpacity,
-  Image,
   ActivityIndicator,
   useWindowDimensions,
 } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import styles from "../styles/BoardingCentersScreen";
 import CenterCard from "./CenterCard";
 import { fetchBoardingCentersApi } from "../services/boardingService";
@@ -68,16 +67,68 @@ export default function BoardingCentersScreen({ navigation, route }) {
     );
   }
 
- return (
-  <LinearGradient
-    colors={["#faf5ff", "#fdf2f8", "#fff7ed"]}
-    start={{ x: 0, y: 0 }}
-    end={{ x: 1, y: 1 }}
-    style={styles.wrapper}
-  >
+  return (
+    <View style={styles.wrapper}>
+      {/* HEADER */}
+      <LinearGradient
+        colors={["#ffffff", "#f8fafc"]}
+        style={styles.headerSection}
+      >
+        <View style={styles.headerContent}>
+          <View>
+            <Text style={styles.headerTitle}>Boarding Centers</Text>
+            <Text style={styles.headerSubtitle}>
+              Find the perfect place for your pet
+            </Text>
+          </View>
+          <View style={styles.centerCountBadge}>
+            <MaterialCommunityIcons
+              name="home-heart"
+              size={20}
+              color="#6b21a8"
+            />
+            <Text style={styles.centerCountText}>{centers.length}</Text>
+          </View>
+        </View>
+
+        {/* FILTER INFO */}
+        {(city || type) && (
+          <View style={styles.filterChipsContainer}>
+            {city && (
+              <View style={styles.filterChip}>
+                <MaterialCommunityIcons
+                  name="map-marker"
+                  size={14}
+                  color="#6b21a8"
+                />
+                <Text style={styles.filterChipText}>{city}</Text>
+              </View>
+            )}
+            {type && (
+              <View style={styles.filterChip}>
+                <MaterialCommunityIcons
+                  name="tag"
+                  size={14}
+                  color="#6b21a8"
+                />
+                <Text style={styles.filterChipText}>{type.toUpperCase()}</Text>
+              </View>
+            )}
+          </View>
+        )}
+      </LinearGradient>
+
       {centers.length === 0 ? (
         <View style={styles.emptyStateContainer}>
+          <MaterialCommunityIcons
+            name="home-search"
+            size={64}
+            color="#d1d5db"
+          />
           <Text style={styles.emptyStateText}>No boarding centers found</Text>
+          <Text style={styles.emptyStateSubtext}>
+            Try adjusting your search criteria
+          </Text>
         </View>
       ) : (
         <FlatList
@@ -86,10 +137,7 @@ export default function BoardingCentersScreen({ navigation, route }) {
           numColumns={numColumns}
           renderItem={renderCenter}
           keyExtractor={(item) => item.id.toString()}
-          contentContainerStyle={{
-            paddingHorizontal: 8,
-            paddingVertical: 12,
-          }}
+          contentContainerStyle={styles.listContent}
           columnWrapperStyle={
             numColumns > 1
               ? {
@@ -97,8 +145,9 @@ export default function BoardingCentersScreen({ navigation, route }) {
                 }
               : undefined
           }
+          scrollIndicatorInsets={{ right: 1 }}
         />
       )}
-    </LinearGradient>
+    </View>
   );
 }

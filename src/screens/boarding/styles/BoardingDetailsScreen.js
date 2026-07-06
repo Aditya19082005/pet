@@ -201,6 +201,87 @@ export default StyleSheet.create({
     fontSize: 13,
   },
 
+  tagBox: {
+    backgroundColor: "#e0e7ff",
+    borderWidth: 1,
+    borderColor: "#c7d2fe",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 50,
+    marginRight: 10,
+    marginBottom: 10,
+  },
+
+  tagText: {
+    color: "#4f46e5",
+    fontWeight: "700",
+    fontSize: 13,
+  },
+
+  serviceBox: {
+    backgroundColor: "#dbeafe",
+    borderWidth: 1,
+    borderColor: "#bfdbfe",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 50,
+    marginRight: 10,
+    marginBottom: 10,
+  },
+
+  serviceText: {
+    color: "#0369a1",
+    fontWeight: "700",
+    fontSize: 13,
+  },
+
+  sectionSubtitle: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#1e293b",
+    marginBottom: 8,
+  },
+
+  contactRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    marginBottom: 14,
+  },
+
+  contactLink: {
+    color: "#6b21a8",
+    textDecorationLine: "underline",
+  },
+
+  instructionsText: {
+    fontSize: 15,
+    color: "#475569",
+    lineHeight: 22,
+    fontStyle: "italic",
+  },
+
+  licenseLink: {
+    backgroundColor: "#f3e8ff",
+    borderWidth: 1,
+    borderColor: "#e9d5ff",
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: "center",
+    marginTop: 8,
+  },
+
+  licenseLinkText: {
+    color: "#6b21a8",
+    fontWeight: "700",
+    fontSize: 14,
+  },
+
+  spacing: {
+    height: 20,
+  },
+
   primaryBtn: {
     backgroundColor: "#6b21a8",
     paddingVertical: 16,

@@ -18,6 +18,7 @@ import {
   fetchCapacityApi,
   checkAvailabilityApi,
   fetchBookedDatesApi,
+  fetchPricingApi,
 } from "../services/boardingService";
 
 export default function BoardingBookingScreen({ route, navigation }) {
@@ -25,6 +26,7 @@ export default function BoardingBookingScreen({ route, navigation }) {
 
   const [pets, setPets] = useState([]);
   const [selectedPetId, setSelectedPetId] = useState(null);
+  const [token, setToken] = useState(null);
 
   const [checkInDate, setCheckInDate] = useState(new Date());
 
@@ -48,10 +50,16 @@ export default function BoardingBookingScreen({ route, navigation }) {
   const [bookingLoading, setBookingLoading] = useState(false);
 
   const [specialInstructions, setSpecialInstructions] = useState("");
+  const [pricingData, setPricingData] = useState(null);
+  const [pricingLoading, setPricingLoading] = useState(false);
+  const [pricingError, setPricingError] = useState("");
 
   useEffect(() => {
     const checkGuestAndLoad = async () => {
       const guestRole = await AsyncStorage.getItem("guestRole");
+      const storedToken = await AsyncStorage.getItem("token");
+      setToken(storedToken);
+
       if (guestRole) {
         Alert.alert(
           "Sign in required",
@@ -206,12 +214,69 @@ export default function BoardingBookingScreen({ route, navigation }) {
     loadBookedDatesForMonth(checkInDate);
   }, [centerId, checkInDate.getFullYear(), checkInDate.getMonth()]);
 
+  const startDateValue = formatDate(checkInDate);
+  const endDateValue = formatDate(checkOutDate);
+
+  useEffect(() => {
+    if (!selectedPetId || !centerId || !token) return;
+
+    fetchPricingDetails();
+  }, [selectedPetId, centerId, token, startDateValue, endDateValue]);
+
   const totalDays = Math.max(
     1,
     Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)),
   );
 
-  const totalCost = totalDays * Number(pricePerDay || 0);
+  const pricingPayload =
+    pricingData && typeof pricingData === "object" && "data" in pricingData && pricingData.data
+      ? pricingData.data
+      : pricingData;
+
+  const resolvedPricePerDay = Number(
+    pricingPayload?.price_per_day ??
+      pricingPayload?.daily_price ??
+      pricingPayload?.amount_per_day ??
+      pricePerDay ??
+      0,
+  );
+
+  const resolvedTotalDays = Number(
+    pricingPayload?.total_days ?? pricingPayload?.days ?? totalDays ?? 1,
+  );
+
+  const resolvedTotalPrice = Number(
+    pricingPayload?.total_price ??
+      pricingPayload?.final_amount ??
+      pricingPayload?.amount ??
+      resolvedTotalDays * resolvedPricePerDay,
+  );
+
+  const totalCost = resolvedTotalPrice || totalDays * Number(pricePerDay || 0);
+
+  const fetchPricingDetails = async () => {
+    try {
+      setPricingLoading(true);
+      setPricingError("");
+
+      const data = await fetchPricingApi({
+        centerId,
+        petId: selectedPetId,
+        startDate: startDateValue,
+        endDate: endDateValue,
+        token,
+      });
+
+      console.log("Pricing response:", JSON.stringify(data, null, 2));
+      setPricingData(data);
+    } catch (error) {
+      console.log("Pricing fetch error:", error);
+      setPricingData(null);
+      setPricingError("Unable to load pricing for selected dates.");
+    } finally {
+      setPricingLoading(false);
+    }
+  };
 
   const loadPets = async () => {
     try {
@@ -261,12 +326,14 @@ export default function BoardingBookingScreen({ route, navigation }) {
       setCheckingAvailability(true);
       const data = await checkAvailabilityApi({
         centerId,
-        startDate: formatDate(checkInDate),
-        endDate: formatDate(checkOutDate),
+        startDate: startDateValue,
+        endDate: endDateValue,
       });
 
       console.log("Availability:", data);
       setAvailable(data);
+
+      await fetchPricingDetails();
     } catch (error) {
       console.log(error);
 
@@ -375,8 +442,6 @@ export default function BoardingBookingScreen({ route, navigation }) {
       <ScrollView contentContainerStyle={styles.bookingScreenContent}>
         <View style={styles.bookingScreenCard}>
           <Text style={styles.bookingScreenCenterName}>{centerName}</Text>
-
-          <Text style={styles.bookingScreenPrice}>₹{pricePerDay} / day</Text>
         </View>
 
         <View style={styles.bookingScreenCard}>
@@ -487,24 +552,39 @@ export default function BoardingBookingScreen({ route, navigation }) {
             <ActivityIndicator style={styles.smallLoader} />
           )}
 
-          {available?.data && (
+          {(pricingLoading || pricingError || pricingData || available?.data) && (
             <View style={styles.availableInfoContainer}>
-              <Text>Total Days : {available.data.total_days}</Text>
+              {pricingLoading ? (
+                <ActivityIndicator style={styles.smallLoader} />
+              ) : (
+                <>
+                  <Text>Price Per Day : ₹{resolvedPricePerDay || "N/A"}</Text>
+                  <Text>Total Days : {resolvedTotalDays}</Text>
+                  <Text>Total Amount : ₹{resolvedTotalPrice || "N/A"}</Text>
+                  {pricingPayload?.pet_type ? (
+                    <Text>Pet Type : {pricingPayload.pet_type}</Text>
+                  ) : null}
+                </>
+              )}
 
-              <Text>Available Days : {available.data.available_days}</Text>
+              {pricingError ? (
+                <Text style={styles.warningText}>{pricingError}</Text>
+              ) : null}
 
-              <Text>Price Per Day : ₹{available.data.price_per_day}</Text>
-
-              <Text>Capacity : {available.data.capacity}</Text>
-
-              <Text
-                style={[
-                  styles.availabilityText,
-                  { color: available.data.is_available ? "green" : "red" },
-                ]}
-              >
-                {available.data.is_available ? "Available" : "Not Available"}
-              </Text>
+              {available?.data ? (
+                <>
+                  <Text>Available Days : {available.data.available_days}</Text>
+                  <Text>Capacity : {available.data.capacity}</Text>
+                  <Text
+                    style={[
+                      styles.availabilityText,
+                      { color: available.data.is_available ? "green" : "red" },
+                    ]}
+                  >
+                    {available.data.is_available ? "Available" : "Not Available"}
+                  </Text>
+                </>
+              ) : null}
             </View>
           )}
         </View>
