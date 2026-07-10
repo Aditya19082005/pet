@@ -1,6 +1,45 @@
-import { StyleSheet } from "react-native";
+// ../styles/PhaseOneFormStyles.js
+import { StyleSheet, Dimensions } from "react-native";
+
+const { width } = Dimensions.get("window");
+
+// Breakpoints: adjust these if needed
+const isTablet = width >= 768 && width < 1200;   // 2 columns
+const isDesktop = width >= 1200;                 // 3 columns
 
 export default StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: "#f5f5f5",
+  },
+
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+  },
+
+  formContainer: {
+  width: "100%",
+},
+
+  // Grid wrapper for column layout
+  gridRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    marginBottom: 12,
+  },
+
+  // One/two/three columns by width:
+  // - mobile: 100% (1 col)
+  // - tablet: 48% (2 cols)
+  // - desktop: 32% (3 cols)
+  gridItem: {
+  marginBottom: 12,
+},
+
+  // Original styles
   input: {
     borderWidth: 1,
     borderColor: "#e5e7eb",

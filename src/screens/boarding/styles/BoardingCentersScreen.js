@@ -1,14 +1,4 @@
-import { StyleSheet, Dimensions } from "react-native";
-
-const { width } = Dimensions.get("window");
-
-const isTablet = width >= 768;
-
-const scale = (size) => {
-  if (isTablet) return size * 1.25;
-  if (width < 360) return size * 0.9;
-  return size;
-};
+import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   wrapper: {
@@ -25,9 +15,9 @@ export default StyleSheet.create({
 
   /* HEADER SECTION */
   headerSection: {
-    paddingHorizontal: scale(20),
-    paddingTop: scale(20),
-    paddingBottom: scale(16),
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 16,
     borderBottomWidth: 1,
     borderBottomColor: "#e2e8f0",
   },
@@ -36,18 +26,18 @@ export default StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: scale(12),
+    marginBottom: 12,
   },
 
   headerTitle: {
-    fontSize: scale(28),
+    fontSize: 28,
     fontWeight: "800",
     color: "#0f172a",
-    marginBottom: scale(4),
+    marginBottom: 4,
   },
 
   headerSubtitle: {
-    fontSize: scale(14),
+    fontSize: 14,
     color: "#64748b",
     fontWeight: "500",
   },
@@ -56,14 +46,14 @@ export default StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#f3e8ff",
-    paddingHorizontal: scale(12),
-    paddingVertical: scale(8),
-    borderRadius: scale(12),
-    gap: scale(6),
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 12,
+    gap: 6,
   },
 
   centerCountText: {
-    fontSize: scale(16),
+    fontSize: 16,
     fontWeight: "800",
     color: "#6b21a8",
   },
@@ -71,32 +61,32 @@ export default StyleSheet.create({
   /* FILTER CHIPS */
   filterChipsContainer: {
     flexDirection: "row",
-    gap: scale(8),
+    gap: 8,
   },
 
   filterChip: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#e0e7ff",
-    paddingHorizontal: scale(12),
-    paddingVertical: scale(6),
-    borderRadius: scale(8),
-    gap: scale(6),
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    gap: 6,
     borderWidth: 1,
     borderColor: "#c7d2fe",
   },
 
   filterChipText: {
-    fontSize: scale(12),
+    fontSize: 12,
     fontWeight: "700",
     color: "#4f46e5",
   },
 
   /* LIST CONTENT */
   listContent: {
-    paddingHorizontal: scale(16),
-    paddingVertical: scale(16),
-    paddingBottom: scale(24),
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    paddingBottom: 24,
   },
 
   /* EMPTY STATE */
@@ -104,19 +94,19 @@ export default StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: scale(32),
+    paddingHorizontal: 32,
   },
 
   emptyStateText: {
-    fontSize: scale(20),
+    fontSize: 20,
     fontWeight: "800",
     color: "#0f172a",
-    marginTop: scale(16),
-    marginBottom: scale(8),
+    marginTop: 16,
+    marginBottom: 8,
   },
 
   emptyStateSubtext: {
-    fontSize: scale(14),
+    fontSize: 14,
     color: "#94a3b8",
     textAlign: "center",
     fontWeight: "500",
